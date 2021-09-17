@@ -1,5 +1,6 @@
 {
     "name": "markhuot/craft-pest",
+    "type": "craft-plugin",
     "authors": [
         {
             "name": "Mark Huot",
@@ -8,5 +9,16 @@
     ],
     "require": {
         "markhuot/pest-plugin-craftcms": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "markhuot\\craftpest\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "craft-pest",
+        "handle": "craftpest",
+        "changelogUrl": "#",
+        "class": "markhuot\\craftpest\\Pest"
     }
 }
