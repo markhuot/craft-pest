@@ -1,0 +1,12 @@
+{
+    "name": "markhuot/craft-pest",
+    "authors": [
+        {
+            "name": "Mark Huot",
+            "email": "mark@markhuot.com"
+        }
+    ],
+    "require": {
+        "markhuot/pest-plugin-craftcms": "dev-master"
+    }
+}
