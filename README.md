@@ -1,3 +1,5 @@
+![craft-pest screen shot](./screenshot.png)
+
 # Pest for Craft CMS
 
 ```shell
