@@ -21,5 +21,8 @@
         "handle": "pest",
         "changelogUrl": "#",
         "class": "markhuot\\craftpest\\Pest"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.16"
     }
 }

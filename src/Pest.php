@@ -3,6 +3,9 @@
 namespace markhuot\craftpest;
 
 use craft\base\Plugin;
+use craft\elements\Entry;
+use craft\events\DefineBehaviorsEvent;
+use yii\base\Event;
 
 class Pest extends Plugin {
 
