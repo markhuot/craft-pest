@@ -3,7 +3,7 @@
 # Pest for Craft CMS
 
 ```shell
-composer require markhuot/craft-pest
+composer require markhuot/craft-pest --dev
 ./craft pest/test
 ```
 
