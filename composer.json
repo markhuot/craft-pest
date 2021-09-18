@@ -8,6 +8,7 @@
         }
     ],
     "require": {
+        "fakerphp/faker": "^1.16",
         "markhuot/pest-plugin-craftcms": "dev-master",
         "symfony/process": "^5.3"
     },
@@ -21,8 +22,5 @@
         "handle": "pest",
         "changelogUrl": "#",
         "class": "markhuot\\craftpest\\Pest"
-    },
-    "require-dev": {
-        "fakerphp/faker": "^1.16"
     }
 }

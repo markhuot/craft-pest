@@ -4,6 +4,7 @@ namespace markhuot\craftpest\factories;
 
 use craft\models\EntryType;
 use craft\models\Section;
+use Faker\Factory;
 
 /**
  * @method self title(string $name) Set the title
@@ -20,6 +21,16 @@ class Entry {
 
     /** @var string */
     protected $title;
+
+    /** @var \Faker\Generator */
+    protected $faker;
+
+    /**
+     * Insert deps
+     */
+    function __construct($faker=null) {
+        $this->faker = $faker ?? Factory::create();
+    }
 
     /**
      * Create a new factory
