@@ -40,6 +40,7 @@ it('shows news on the homepage', function() {
 
     expect($this->get('/'))
         ->querySelector('.news__title')
+        ->count->toBe(3)
         ->text
         ->sequence($titles);
 });
