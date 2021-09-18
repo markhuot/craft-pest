@@ -7,7 +7,7 @@ composer require markhuot/craft-pest --dev
 ./craft pest/test
 ```
 
-Handles the setup and installation of [Pest PHP](https://pestphp.com) in to [Craft CMS](https://craftcms.com). This allows you to write tests that look something like this!
+Handles the setup and installation of [Pest](https://pestphp.com) in to [Craft CMS](https://craftcms.com). This allows you to write tests that look something like this!
 
 ```php
 it('loads the homepage')
