@@ -28,7 +28,7 @@ it('expects nine list items')
     ->querySelector('li')
     ->count->toBe(9);
 
-test('promotes craft')
+it('promotes craft')
     ->get('/')
     ->assertHeader('x-powered-by', 'Craft CMS');
 
