@@ -159,6 +159,14 @@ class Entry {
     function create($count=1) {
         $entry = new \craft\elements\Entry();
 
+        if ($count > 1) {
+            $result = [];
+            for ($i=0; $i<$count; $i++) {
+                $result[] = $this->create();
+            }
+            return $result;
+        }
+
         [$section, $type] = $this->getSectionAndType();
         $entry->sectionId = $section->id;
         $entry->typeId = $type->id;
