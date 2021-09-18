@@ -41,6 +41,6 @@ it('saves news', function() {
     expect(get('/'))
         ->querySelector('.news__title')
         ->text
-        ->toBe($titles);
+        ->sequence($titles);
 });
 ```
