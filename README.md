@@ -32,13 +32,13 @@ it('promotes craft')
     ->get('/')
     ->assertHeader('x-powered-by', 'Craft CMS');
 
-it('saves news', function() {
+it('shows news on the homepage', function() {
     $titles = Craft::factory()
         ->section('news')
         ->create(3)
         ->pluck('title');
 
-    expect(get('/'))
+    expect($this->get('/'))
         ->querySelector('.news__title')
         ->text
         ->sequence($titles);
