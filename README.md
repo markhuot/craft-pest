@@ -35,8 +35,7 @@ it('promotes craft')
 it('shows news on the homepage', function() {
     $titles = News::factory()->create(3)->pluck('title');
 
-    expect($this->get('/'))
-        ->querySelector('.news__title')
+    expect($this->get('/')->querySelector('.news__title'))
         ->count->toBe(3)
         ->text->sequence(...$titles);
 });
