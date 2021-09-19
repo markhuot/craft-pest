@@ -10,7 +10,8 @@
     "require": {
         "fakerphp/faker": "^1.16",
         "markhuot/pest-plugin-craftcms": "dev-master",
-        "symfony/process": "^5.3"
+        "symfony/process": "^5.3",
+        "illuminate/collections": "^8.61"
     },
     "autoload": {
         "psr-4": {
@@ -22,8 +23,5 @@
         "handle": "pest",
         "changelogUrl": "#",
         "class": "markhuot\\craftpest\\Pest"
-    },
-    "require-dev": {
-        "illuminate/collections": "^8.61"
     }
 }
