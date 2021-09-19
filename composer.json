@@ -22,5 +22,8 @@
         "handle": "pest",
         "changelogUrl": "#",
         "class": "markhuot\\craftpest\\Pest"
+    },
+    "require-dev": {
+        "illuminate/collections": "^8.61"
     }
 }
