@@ -5,6 +5,7 @@ namespace markhuot\craftpest\factories;
 use craft\models\EntryType;
 use craft\models\Section;
 use Faker\Factory;
+use Illuminate\Support\Collection;
 
 /**
  * @method self title(string $name) Set the title
@@ -154,7 +155,7 @@ class Entry {
      *
      * @param int $count How many entries to create
      *
-     * @return array|\craft\elements\Entry
+     * @return Collection|\craft\elements\Entry
      */
     function create($count=1) {
         $entry = new \craft\elements\Entry();
@@ -164,7 +165,7 @@ class Entry {
             for ($i=0; $i<$count; $i++) {
                 $result[] = $this->create();
             }
-            return $result;
+            return collect($result);
         }
 
         [$section, $type] = $this->getSectionAndType();
@@ -180,6 +181,11 @@ class Entry {
         if ($this->title !== null) {
             $entry->title = $this->title;
         }
+
+        // Have to set the template mode here so when Craft tries to render
+        // out slugs or any other string templates it doesn't accidentally
+        // throw us to an install request or something like that
+        \Craft::$app->view->setTemplateMode(\craft\web\View::TEMPLATE_MODE_SITE);
 
         if (!\Craft::$app->elements->saveElement($entry)) {
             throw new \Exception(implode(" ", $entry->getErrorSummary(false)));
