@@ -11,7 +11,7 @@ class TestController extends Controller {
      * Run the Pest tests
      */
     function actionIndex() {
-        $this->install();
+        $this->runInit();
         $this->runTests();
     }
 
@@ -19,13 +19,13 @@ class TestController extends Controller {
      * Install Pest
      */
     function actionInit() {
-        $this->install();
+        $this->runInit();
     }
 
     /**
      * Do the install
      */
-    protected function install() {
+    protected function runInit() {
         if (!file_exists(CRAFT_BASE_PATH . '/phpunit.xml')) {
             $process = new Process(['./vendor/bin/pest', '--init']);
             $process->setTty(true);
@@ -38,6 +38,9 @@ class TestController extends Controller {
                     echo $data;
                 }
             }
+
+            copy(__DIR__ . DIRECTORY_SEPARATOR . '../stubs/init/ExampleTest.php', './tests/ExampleTest.php');
+            copy(__DIR__ . DIRECTORY_SEPARATOR . '../stubs/init/Pest.php', './tests/Pest.php');
         }
     }
 
@@ -47,6 +50,7 @@ class TestController extends Controller {
     protected function runTests() {
         $process = new Process(['./vendor/bin/pest']);
         $process->setTty(true);
+        $process->setTimeout(null);
         $process->start();
 
         foreach ($process as $type => $data) {

@@ -9,19 +9,27 @@
     ],
     "require": {
         "fakerphp/faker": "^1.16",
-        "markhuot/pest-plugin-craftcms": "dev-master",
+        "symfony/css-selector": "^6.0.3",
+        "symfony/dom-crawler": "^6.0.3",
         "symfony/process": "^5.3",
-        "illuminate/collections": "^8.61"
+        "illuminate/collections": "^8.61",
+        "pestphp/pest": "^1.21.1"
     },
     "autoload": {
         "psr-4": {
             "markhuot\\craftpest\\": "src/"
-        }
+        },
+        "files": [
+            "src/helpers/Http.php"
+        ]
     },
     "extra": {
         "name": "craft-pest",
         "handle": "pest",
         "changelogUrl": "#",
-        "class": "markhuot\\craftpest\\Pest"
+        "class": "markhuot\\craftpest\\Pest",
+        "components": {
+            "http": "markhuot\\craftpest\\services\\Http"
+        }
     }
 }

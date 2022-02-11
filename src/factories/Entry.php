@@ -187,6 +187,7 @@ class Entry {
         // throw us to an install request or something like that
         \Craft::$app->view->setTemplateMode(\craft\web\View::TEMPLATE_MODE_SITE);
 
+        dump('about to save');
         if (!\Craft::$app->elements->saveElement($entry)) {
             throw new \Exception(implode(" ", $entry->getErrorSummary(false)));
         }
