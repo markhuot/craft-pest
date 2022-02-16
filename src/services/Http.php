@@ -11,29 +11,51 @@ use yii\base\Event;
 
 class Http
 {
-    /** @var Response */
-    public $response;
-
     /**
      * Example description.
      */
     public function get(string $uri=null): \markhuot\craftpest\test\Response
     {
-        $binPath = realpath(implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'bin', 'serve']));
-        $process = new Process([$binPath, '-v', CRAFT_VENDOR_PATH, $uri]);
-        $process->setTimeout(null);
-        $process->run();
+        $request = (new \markhuot\craftpest\web\Request)->setRaw([
+            '_isConsoleRequest' => false,
+            '_fullPath' => $uri,
+            '_path' => $uri,
+            '_fullUri' => $uri,
+            '_ipAddress' => '::1',
+            '_rawBody' => '',
+            '_bodyParams' => [],
+            '_queryParams' => [],
+            '_hostInfo' => 'http://localhost:8080',
+            '_hostName' => 'localhost',
+            '_baseUrl' => '',
+            '_scriptUrl' => '/index.php',
+            '_scriptFile' => '',
+            '_pathInfo' => $uri,
+            '_url' => "/{$uri}",
+            '_port' => 8080,
+        ]);
 
-        $output = $process->getOutput();
+        $craft = \Craft::$app;
 
-        $data = Message::parseMessage($output);
-        $parts = explode(' ', $data['start-line'], 3);
-        return new \markhuot\craftpest\test\Response(
-            (int) $parts[1],
-            $data['headers'],
-            $data['body'],
-            explode('/', $parts[0])[1],
-            $parts[2] ?? null
-        );
+        $craft->trigger(Application::EVENT_BEFORE_REQUEST);
+
+        // Run the application
+        try {
+            $originalRequest = $craft->request;
+            $craft->setComponents(['request' => $request]);
+            $response = $craft->handleRequest($request);
+            $craft->setComponents(['request' => $originalRequest]);
+        }
+
+            // Catch any exceptions during handling
+        catch (\Exception $e) {
+            $craft->errorHandler->silentExitOnException = true;
+            $craft->errorHandler->discardExistingOutput = false;
+            $craft->errorHandler->handleException($e);
+            $response = $craft->response;
+        }
+
+        $craft->trigger(Application::EVENT_AFTER_REQUEST);
+        return $response;
     }
 }

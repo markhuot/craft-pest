@@ -47,7 +47,7 @@ trait RefreshesDatabase {
     }
 
     protected function beginTransaction() {
-        $this->transaction = $this->craft->db->beginTransaction('READ UNCOMMITTED');
+        $this->transaction = \Craft::$app->db->beginTransaction('READ UNCOMMITTED');
     }
 
     protected function endTransaction() {

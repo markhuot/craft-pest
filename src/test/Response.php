@@ -4,35 +4,17 @@ namespace markhuot\craftpest\test;
 
 use markhuot\craftpest\dom\NodeList;
 use Symfony\Component\DomCrawler\Crawler;
-use yii\base\UnknownPropertyException;
 
-class Response extends \GuzzleHttp\Psr7\Response
+class Response extends \craft\web\Response
 {
-    /**
-     * Magic property getter to turn Guzzle's getStatusCode style methods in to
-     * expectable `->statusCode->toBe(200)` style properties.
-     */
-    function __get(string $key) {
-        $method = 'get' . ucfirst($key);
-        if (method_exists($this, $method)) {
-            return $this->{$method}();
-        }
-
-        throw new UnknownPropertyException('Could not find ' . $key);
-    }
-
-    protected $_bodyContents = null;
-
-    public function getBodyContents() {
-        if ($this->_bodyContents !== null) {
-            return $this->_bodyContents;
-        }
-
-        return $this->_bodyContents = $this->getBody()->getContents();
+    public function send()
+    {
+        // This page intentionally left blank so we can inspect the response body without it
+        // being prematurely written to the screen
     }
 
     public function querySelector($selector) {
-        $html = $this->getBodyContents();
+        $html = $this->data;
         $crawler = new Crawler($html);
         return new NodeList($crawler->filter($selector));
     }
@@ -62,7 +44,7 @@ class Response extends \GuzzleHttp\Psr7\Response
     }
 
     function assertDontSee(string $text) {
-        test()->assertStringNotContainsString($text, $this->getBodyContents());
+        test()->assertStringNotContainsString($text, $this->data);
         return $this;
     }
 
@@ -179,7 +161,7 @@ class Response extends \GuzzleHttp\Psr7\Response
     // }
 
     function assertSee($text) {
-        test()->assertStringContainsString($text, $this->getBodyContents());
+        test()->assertStringContainsString($text, $this->data);
         return $this;
     }
 

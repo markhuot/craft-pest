@@ -41,6 +41,18 @@ define('CRAFT_ENVIRONMENT', getenv('ENVIRONMENT') ?: 'production');
 /** @var craft\web\Application $app */
 $app = require CRAFT_VENDOR_PATH . '/craftcms/cms/bootstrap/web.php';
 
+// Bring over our shared DB connection 😈
+// if (function_exists('apcu_enabled') && apcu_enabled()) {
+//     $db = apcu_fetch('com.markhuot.craftpest.db');
+//     var_dump($db);
+//     die;
+//     // if ($db) {
+//     //     $app->setComponents([
+//     //         'db' => $db,
+//     //     ]);
+//     // }
+// }
+
 // Set up custom request and response objects so we have more control
 // over how things are handled
 if (count($argv) < 2) {
