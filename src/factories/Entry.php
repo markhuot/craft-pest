@@ -4,15 +4,10 @@ namespace markhuot\craftpest\factories;
 
 use craft\models\EntryType;
 use craft\models\Section;
-use Faker\Factory;
+use Faker\Factory as Faker;
 use Illuminate\Support\Collection;
 
-/**
- * @method self title(string $name) Set the title
- */
 class Entry {
-
-    static $namespace = 'factories';
 
     /** @var Section */
     protected $section;
@@ -20,17 +15,20 @@ class Entry {
     /** @var EntryType */
     protected $type;
 
-    /** @var string */
-    protected $title;
-
     /** @var \Faker\Generator */
     protected $faker;
+
+    /** @var int */
+    protected $count = 1;
+
+    /** @var array */
+    protected $attributes = [];
 
     /**
      * Insert deps
      */
     function __construct($faker=null) {
-        $this->faker = $faker ?? Factory::create();
+        $this->faker = $faker ?? Faker::create();
     }
 
     /**
@@ -94,6 +92,19 @@ class Entry {
     }
 
     /**
+     * Set the number of entries to be created
+     *
+     * @param int $count
+     *
+     * @return $this
+     */
+    function count($count=1) {
+        $this->count = $count;
+
+        return $this;
+    }
+
+    /**
      * Infer the section based on the class name
      *
      * @return $this
@@ -139,60 +150,93 @@ class Entry {
             return $this->{$setter}($value);
         }
 
-        if (property_exists($this, $method)) {
-            $this->{$method} = $value;
-        }
-
-        if (false) {
-            // $this->customFields[$method] = $value;
-        }
+        $this->attributes[$method] = $args[0] ?? null;
 
         return $this;
     }
 
-    /**
-     * Persist the entry to our storage
-     *
-     * @param int $count How many entries to create
-     *
-     * @return Collection|\craft\elements\Entry
-     */
-    function create($count=1) {
-        $entry = new \craft\elements\Entry();
+    function __isset($key) {
+        return isset($this->attributes[$key]);
+    }
 
-        if ($count > 1) {
-            $result = [];
-            for ($i=0; $i<$count; $i++) {
-                $result[] = $this->create();
-            }
-            return collect($result);
-        }
+    protected function internalMake() {
+        $entry = new \craft\elements\Entry();
 
         [$section, $type] = $this->getSectionAndType();
         $entry->sectionId = $section->id;
         $entry->typeId = $type->id;
 
+        // array_merge to ensure we get a copy of the array and not a reference
+        $attributes = array_merge($this->attributes);
+
         if ($this->hasDefinition()) {
             foreach ($this->definition() as $key => $value) {
-                $this->{$key}($value);
+                if (!isset($attributes[$key])) {
+                    $attributes[$key] = ($value);
+                }
             }
         }
 
-        if ($this->title !== null) {
-            $entry->title = $this->title;
+        $modelFields = ['title' => null, 'slug' => null];
+        $customFields = [];
+
+        foreach ($attributes as $key => $value) {
+            if (in_array($key, array_keys($modelFields))) {
+                $modelFields[$key] = $value;
+            }
+            else {
+                $customFields[$key] = $value;
+            }
         }
 
-        // Have to set the template mode here so when Craft tries to render
-        // out slugs or any other string templates it doesn't accidentally
-        // throw us to an install request or something like that
-        \Craft::$app->view->setTemplateMode(\craft\web\View::TEMPLATE_MODE_SITE);
-
-        dump('about to save');
-        if (!\Craft::$app->elements->saveElement($entry)) {
-            throw new \Exception(implode(" ", $entry->getErrorSummary(false)));
-        }
+        $entry->setAttributes(array_filter($modelFields));
+        $entry->setFieldValues(array_filter($customFields));
 
         return $entry;
+    }
+
+    /**
+     * Instantiate an Entry
+     *
+     * @return \craft\elements\Entry
+     */
+    function make() {
+        $entries = collect([])
+            ->pad($this->count, null)
+            ->map(fn () => $this->internalMake());
+
+        if ($this->count === 1) {
+            return $entries->first();
+        }
+
+        return $entries;
+    }
+
+    /**
+     * Persist the entry to our storage
+     *
+     * @return Collection|\craft\elements\Entry
+     */
+    function create() {
+        $entries = $this->make();
+
+        if (!is_a($entries, Collection::class)) {
+            $entries = collect()->push($entries);
+        }
+
+        $entries = $entries->map(function ($entry) {
+            if (!\Craft::$app->elements->saveElement($entry)) {
+                throw new \Exception(implode(" ", $entry->getErrorSummary(false)));
+            }
+
+            return $entry;
+        });
+
+        if ($this->count === 1) {
+            return $entries->first();
+        }
+
+        return $entries->reverse();
     }
 
 }

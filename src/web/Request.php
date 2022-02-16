@@ -26,6 +26,8 @@ class Request extends \craft\web\Request {
                 $propertyRef->setAccessible(false);
             }
         }
+
+        return $this;
     }
 
 }

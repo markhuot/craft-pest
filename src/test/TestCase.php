@@ -2,6 +2,7 @@
 
 namespace markhuot\craftpest\test;
 
+use craft\helpers\ArrayHelper;
 use markhuot\craftpest\Pest;
 use markhuot\craftpest\web\Application;
 use markhuot\craftpest\web\Request;
@@ -11,6 +12,9 @@ class TestCase extends \PHPUnit\Framework\TestCase {
 
     /** @var Application */
     protected $craft;
+
+    protected $original;
+
     static $craftConfig;
 
     protected function setUp(): void {
@@ -62,12 +66,30 @@ class TestCase extends \PHPUnit\Framework\TestCase {
 
         // Load and run Craft
         /** @var craft\web\Application $app */
-        require CRAFT_VENDOR_PATH . '/craftcms/cms/bootstrap/web.php';
+        require CRAFT_VENDOR_PATH . '/craftcms/cms/bootstrap/console.php';
         self::$craftConfig = $config;
+    }
 
-        self::$craftConfig['class'] = \markhuot\craftpest\web\Application::class;
+    protected function getCraftWebApplication() {
+        $this->original = \Craft::$app;
 
-        self::$craftConfig['components']['request'] = function() {
+        $cmsPath = CRAFT_VENDOR_PATH . DIRECTORY_SEPARATOR . 'craftcms' . DIRECTORY_SEPARATOR . 'cms';
+        $srcPath = $cmsPath . DIRECTORY_SEPARATOR . 'src';
+        $config = ArrayHelper::merge(
+            [
+                'vendorPath' => CRAFT_VENDOR_PATH,
+                'env' => CRAFT_ENVIRONMENT,
+                'components' => ['config' => \Craft::$app->config],
+            ],
+            require $srcPath . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'app.php',
+            require $srcPath . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . "app.web.php",
+            \Craft::$app->config->getConfigFromFile('app'),
+            \Craft::$app->config->getConfigFromFile("app.web")
+        );
+
+        $config['class'] = \markhuot\craftpest\web\Application::class;
+
+        $config['components']['request'] = function() {
             $config = \craft\helpers\App::webRequestConfig();
             $config['class'] = Request::class;
             /** @var \craft\web\Request $request */
@@ -76,20 +98,24 @@ class TestCase extends \PHPUnit\Framework\TestCase {
             return $request;
         };
 
-        self::$craftConfig['components']['response'] = function () {
+        $config['components']['response'] = function () {
             $config = \craft\helpers\App::webResponseConfig();
             $config['class'] = Response::class;
             return \Craft::createObject($config);
         };
+
+        /** @var Application $craft */
+        $craft = \Craft::createObject($config);
+        // $craft->setComponents(['db' => $this->original->db]);
+        // \Craft::$app = $this->original;
+        return $craft;
     }
 
     /**
      * Passthrough for the HTTP service
-     *
-     * @return Response
      */
-    function get(...$args) {
-        return Pest::getInstance()->http->get($this->craft, ...$args);
+    function get(...$args): \markhuot\craftpest\test\Response {
+        return Pest::getInstance()->http->get(...$args);
     }
 
 }
