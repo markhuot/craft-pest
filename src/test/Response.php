@@ -1,13 +1,18 @@
 <?php
 
-namespace markhuot\craftpest\web;
+namespace markhuot\craftpest\test;
 
-use Symfony\Component\DomCrawler\Crawler;
 use markhuot\craftpest\dom\NodeList;
-use yii\base\Event;
+use Symfony\Component\DomCrawler\Crawler;
 
 class Response extends \craft\web\Response
 {
+    public function send()
+    {
+        // This page intentionally left blank so we can inspect the response body without it
+        // being prematurely written to the screen
+    }
+
     public function querySelector($selector) {
         $html = $this->data;
         $crawler = new Crawler($html);
@@ -215,7 +220,7 @@ class Response extends \craft\web\Response
     }
 
     function assertStatus($code) {
-        test()->assertSame($code, $this->statusCode);
+        test()->assertSame($code, $this->getStatusCode());
         return $this;
     }
 

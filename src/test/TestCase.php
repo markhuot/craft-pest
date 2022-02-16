@@ -2,6 +2,7 @@
 
 namespace markhuot\craftpest\test;
 
+use craft\helpers\ArrayHelper;
 use markhuot\craftpest\Pest;
 use markhuot\craftpest\web\Application;
 use markhuot\craftpest\web\Request;
@@ -9,12 +10,8 @@ use markhuot\craftpest\web\Response;
 
 class TestCase extends \PHPUnit\Framework\TestCase {
 
-    /** @var Application */
-    protected $craft;
-    static $craftConfig;
-
     protected function setUp(): void {
-        $this->craft = $this->createApplication();
+        $this->createApplication();
 
         if (method_exists($this, 'refreshDatabase')) {
             $this->refreshDatabase();
@@ -36,7 +33,7 @@ class TestCase extends \PHPUnit\Framework\TestCase {
             $this->requireCraft();
         }
 
-        return \Craft::createObject(self::$craftConfig);
+        return \Craft::$app;
     }
 
     protected function needsRequireStatements() {
@@ -61,35 +58,40 @@ class TestCase extends \PHPUnit\Framework\TestCase {
         define('CRAFT_ENVIRONMENT', getenv('ENVIRONMENT') ?: 'production');
 
         // Load and run Craft
-        /** @var craft\web\Application $app */
-        require CRAFT_VENDOR_PATH . '/craftcms/cms/bootstrap/web.php';
-        self::$craftConfig = $config;
+        /** @var \craft\web\Application $app */
+        $app = require CRAFT_VENDOR_PATH . '/craftcms/cms/bootstrap/web.php';
 
-        self::$craftConfig['class'] = \markhuot\craftpest\web\Application::class;
+        $uri = '/';
+        $app->setComponents([
+            'request' => (new \markhuot\craftpest\web\Request)->setRaw([
+                '_isConsoleRequest' => false,
+                '_fullPath' => $uri,
+                '_path' => $uri,
+                '_fullUri' => $uri,
+                '_ipAddress' => '::1',
+                '_rawBody' => '',
+                '_bodyParams' => [],
+                '_queryParams' => [],
+                '_hostInfo' => 'http://localhost:8080',
+                '_hostName' => 'localhost',
+                '_baseUrl' => '',
+                '_scriptUrl' => '/index.php',
+                '_scriptFile' => '',
+                '_pathInfo' => $uri,
+                '_url' => "/{$uri}",
+                '_port' => 8080,
+            ]),
+            'response' => (new \markhuot\craftpest\test\Response)
+        ]);
 
-        self::$craftConfig['components']['request'] = function() {
-            $config = \craft\helpers\App::webRequestConfig();
-            $config['class'] = Request::class;
-            /** @var \craft\web\Request $request */
-            $request = \Craft::createObject($config);
-            $request->csrfCookie = \Craft::cookieConfig([], $request);
-            return $request;
-        };
-
-        self::$craftConfig['components']['response'] = function () {
-            $config = \craft\helpers\App::webResponseConfig();
-            $config['class'] = Response::class;
-            return \Craft::createObject($config);
-        };
+        return $app;
     }
 
     /**
      * Passthrough for the HTTP service
-     *
-     * @return Response
      */
-    function get(...$args) {
-        return Pest::getInstance()->http->get($this->craft, ...$args);
+    function get(...$args): \markhuot\craftpest\test\Response {
+        return Pest::getInstance()->http->get(...$args);
     }
 
 }
