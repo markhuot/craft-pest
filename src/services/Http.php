@@ -4,6 +4,7 @@ namespace markhuot\craftpest\services;
 
 use craft\web\Application;
 use craft\web\Response;
+use craft\web\UrlManager;
 use GuzzleHttp\Psr7\Message;
 use markhuot\craftpest\web\Request;
 use Symfony\Component\Process\Process;
@@ -16,6 +17,8 @@ class Http
      */
     public function get(string $uri=null): \markhuot\craftpest\test\Response
     {
+        $uri = ltrim($uri, '/');
+
         $request = (new \markhuot\craftpest\web\Request)->setRaw([
             '_isConsoleRequest' => false,
             '_fullPath' => $uri,
@@ -37,17 +40,23 @@ class Http
 
         $craft = \Craft::$app;
 
-        $craft->trigger(Application::EVENT_BEFORE_REQUEST);
-
         // Run the application
         try {
-            $originalRequest = $craft->request;
-            $craft->setComponents(['request' => $request]);
-            $response = $craft->handleRequest($request);
-            $craft->setComponents(['request' => $originalRequest]);
+            $craft->setComponents([
+                'request' => $request,
+                'urlManager' => [
+                    'class' => \craft\web\UrlManager::class,
+                    'enablePrettyUrl' => true,
+                    'ruleConfig' => ['class' => \craft\web\UrlRule::class],
+                ],
+            ]);
+
+            $craft->trigger(Application::EVENT_BEFORE_REQUEST);
+            $response = $craft->handleRequest($request, true);
+            $craft->trigger(Application::EVENT_AFTER_REQUEST);
         }
 
-            // Catch any exceptions during handling
+        // Catch any exceptions during handling
         catch (\Exception $e) {
             $craft->errorHandler->silentExitOnException = true;
             $craft->errorHandler->discardExistingOutput = false;
@@ -55,7 +64,6 @@ class Http
             $response = $craft->response;
         }
 
-        $craft->trigger(Application::EVENT_AFTER_REQUEST);
         return $response;
     }
 }
