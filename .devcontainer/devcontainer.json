@@ -1,0 +1,7 @@
+{
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "php",
+    "extensions": [
+        "bmewburn.vscode-intelephense-client"
+    ]
+}
