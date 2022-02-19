@@ -24,6 +24,12 @@ class Entry {
     /** @var array */
     protected $attributes = [];
 
+    /** @var array */
+    protected $definition = [];
+
+    /** @var string */
+    protected $sectionHandle;
+
     /**
      * Insert deps
      */
@@ -39,12 +45,28 @@ class Entry {
     }
 
     /**
+     * Set a faker definition at run time
+     *
+     * @param array|callable $definition
+     */
+    public function define($definition) {
+        if (is_callable($definition)) {
+            $this->definition = $definition($this->faker);
+        }
+        else {
+            $this->definition = $definition;
+        }
+
+        return $this;
+    }
+
+    /**
      * The faker definition
      *
      * @return array
      */
     protected function definition() {
-        return [];
+        return $this->definition;
     }
 
     /**
@@ -63,32 +85,18 @@ class Entry {
      *
      * @return self
      */
-    function section($name) {
-        if (is_numeric($name)) {
-            $this->sectionId = $name;
-        }
-
-        $section = \Craft::$app->sections->getSectionByHandle($name);
-        if (!$section) {
-            throw new \Exception("Unknown section `{$name}`");
-        }
-
-        $this->section = $section;
-        $this->type = $section->entryTypes[0];
-
+    function section($handle) {
+        $this->sectionHandle = $handle;
         return $this;
     }
 
-    function getSectionAndType() {
-        if ($this->section === null) {
-            $this->inferSection();
-        }
+    /**
+     * Set the entry type
+     *
+     * @param string $handle The entry type handle
+     */
+    function type($handle) {
 
-        if ($this->type === null) {
-            $this->inferType();
-        }
-
-        return [$this->section, $this->type];
     }
 
     /**
@@ -107,15 +115,22 @@ class Entry {
     /**
      * Infer the section based on the class name
      *
-     * @return $this
+     * @return int
      */
-    function inferSection() {
-        $reflector = new \ReflectionClass($this);
-        $className = $reflector->getShortName();
-        $sectionHandle = lcfirst($className);
-        $this->section = \Craft::$app->sections->getSectionByHandle($sectionHandle);
+    function inferSectionId() {
+        if (empty($this->sectionHandle)) {
+            $reflector = new \ReflectionClass($this);
+            $className = $reflector->getShortName();
+            $this->sectionHandle = lcfirst($className);
+        }
 
-        return $this;
+        $section = \Craft::$app->sections->getSectionByHandle($this->sectionHandle);
+
+        if (empty($section)) {
+            throw new \Exception('A section could not be inferred from this factory. Make sure you set a ::factory()->section("handle") in your test.');
+        }
+
+        return $section->id;
     }
 
     /**
@@ -123,17 +138,16 @@ class Entry {
      *
      * @return $this
      */
-    function inferType() {
+    function inferTypeId($sectionid) {
         $reflector = new \ReflectionClass($this);
         $className = $reflector->getShortName();
         $typeHandle = lcfirst($className);
-        $matches = array_filter($this->section->entryTypes, fn($e) => $e->handle === $typeHandle);
+        $section = \Craft::$app->sections->getSectionById($sectionid);
+        $matches = array_filter($section->entryTypes, fn($e) => $e->handle === $typeHandle);
         if (count($matches) === 0) {
-            $matches = $this->section->entryTypes;
+            $matches = $section->entryTypes;
         }
-        $this->type = $matches[0];
-
-        return $this;
+        return $matches[0]->id;
     }
 
     /**
@@ -162,35 +176,34 @@ class Entry {
     protected function internalMake() {
         $entry = new \craft\elements\Entry();
 
-        [$section, $type] = $this->getSectionAndType();
-        $entry->sectionId = $section->id;
-        $entry->typeId = $type->id;
-
         // array_merge to ensure we get a copy of the array and not a reference
         $attributes = array_merge($this->attributes);
 
         if ($this->hasDefinition()) {
             foreach ($this->definition() as $key => $value) {
                 if (!isset($attributes[$key])) {
-                    $attributes[$key] = ($value);
+                    $attributes[$key] = $value;
                 }
             }
         }
 
-        $modelFields = ['title' => null, 'slug' => null];
-        $customFields = [];
-
-        foreach ($attributes as $key => $value) {
-            if (in_array($key, array_keys($modelFields))) {
-                $modelFields[$key] = $value;
-            }
-            else {
-                $customFields[$key] = $value;
-            }
+        if (!isset($attributes['sectionId'])) {
+            $attributes['sectionId'] = $this->inferSectionId();
         }
 
-        $entry->setAttributes(array_filter($modelFields));
-        $entry->setFieldValues(array_filter($customFields));
+        if (!isset($attributes['typeId'])) {
+            $attributes['typeId'] = $this->inferTypeId($attributes['sectionId']);
+        }
+
+        $modelKeys = array_keys($entry->fields());
+        foreach ($attributes as $key => $value) {
+            if (in_array($key, $modelKeys)) {
+                $entry->{$key} = $value;
+            }
+            else {
+                $entry->setFieldValue($key, $value);
+            }
+        }
 
         return $entry;
     }

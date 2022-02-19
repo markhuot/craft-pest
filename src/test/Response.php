@@ -19,6 +19,10 @@ class Response extends \craft\web\Response
         return new NodeList($crawler->filter($selector));
     }
 
+    public function q(...$args) {
+        return $this->querySelector(...$args);
+    }
+
     function assertCookie() {
         // TODO
         return $this;

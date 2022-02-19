@@ -2,6 +2,8 @@
 
 namespace markhuot\craftpest\helpers\http;
 
-function get($uri='/') {
+use markhuot\craftpest\test\Response;
+
+function get($uri='/'): Response {
     return test()->get($uri);
 }
