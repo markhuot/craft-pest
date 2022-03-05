@@ -13,14 +13,22 @@ class Response extends \craft\web\Response
         // being prematurely written to the screen
     }
 
+    public function expect() {
+        return $this->expect($this);
+    }
+
     public function querySelector($selector) {
         $html = $this->data;
         $crawler = new Crawler($html);
         return new NodeList($crawler->filter($selector));
     }
 
-    public function q(...$args) {
-        return $this->querySelector(...$args);
+    public function __isset($key) {
+        return $this->querySelector($key)->count() > 0;
+    }
+
+    public function __get($key) {
+        return $this->querySelector($key);
     }
 
     function assertCookie() {
@@ -62,8 +70,8 @@ class Response extends \craft\web\Response
         return $this;
     }
 
-    function assertExactJson() {
-        // TODO
+    function assertExactJson(array $json) {
+        test()->assertExact($json, $this->data);
         return $this;
     }
 
@@ -137,8 +145,17 @@ class Response extends \craft\web\Response
         return $this;
     }
 
-    function assertNoContent() {
-        // TODO
+    /**
+     * Assert that the response has the given status code and no content.
+     *
+     * @param  int  $status
+     * @return $this
+     */
+    function assertNoContent($status = 204) {
+        $this->assertStatus($status);
+
+        test()->assertEmpty($this->data, 'Response content is not empty.');
+
         return $this;
     }
 
@@ -229,13 +246,14 @@ class Response extends \craft\web\Response
     }
 
     function assertSuccessful() {
-        // TODO
+        test()->assertGreaterThanOrEqual(200, $this->getStatusCode());
+        test()->assertLessThan(300, $this->getStatusCode());
+
         return $this;
     }
 
     function assertUnauthorized() {
-        // TODO
-        return $this;
+        return $this->assertStatus(401);
     }
 
     function assertValid() {
