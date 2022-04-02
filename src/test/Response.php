@@ -24,10 +24,18 @@ class Response extends \craft\web\Response
     }
 
     public function __isset($key) {
+        if (parent::__isset($key)) {
+            return true;
+        }
+
         return $this->querySelector($key)->count() > 0;
     }
 
     public function __get($key) {
+        if ($value = parent::__get($key)) {
+            return $value;
+        }
+
         return $this->querySelector($key);
     }
 

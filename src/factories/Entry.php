@@ -2,12 +2,13 @@
 
 namespace markhuot\craftpest\factories;
 
+use craft\base\ElementInterface;
 use craft\models\EntryType;
 use craft\models\Section;
 use Faker\Factory as Faker;
 use Illuminate\Support\Collection;
 
-class Entry {
+class Entry extends Element {
 
     /** @var Section */
     protected $section;
@@ -15,68 +16,8 @@ class Entry {
     /** @var EntryType */
     protected $type;
 
-    /** @var \Faker\Generator */
-    protected $faker;
-
-    /** @var int */
-    protected $count = 1;
-
-    /** @var array */
-    protected $attributes = [];
-
-    /** @var array */
-    protected $definition = [];
-
     /** @var string */
     protected $sectionHandle;
-
-    /**
-     * Insert deps
-     */
-    function __construct($faker=null) {
-        $this->faker = $faker ?? Faker::create();
-    }
-
-    /**
-     * Create a new factory
-     */
-    static function factory() {
-        return (new static);
-    }
-
-    /**
-     * Set a faker definition at run time
-     *
-     * @param array|callable $definition
-     */
-    public function define($definition) {
-        if (is_callable($definition)) {
-            $this->definition = $definition($this->faker);
-        }
-        else {
-            $this->definition = $definition;
-        }
-
-        return $this;
-    }
-
-    /**
-     * The faker definition
-     *
-     * @return array
-     */
-    protected function definition() {
-        return $this->definition;
-    }
-
-    /**
-     * Whether a faker definition is provided
-     *
-     * @return bool
-     */
-    protected function hasDefinition() {
-        return !empty($this->definition());
-    }
 
     /**
      * Set the section
@@ -97,19 +38,6 @@ class Entry {
      */
     function type($handle) {
 
-    }
-
-    /**
-     * Set the number of entries to be created
-     *
-     * @param int $count
-     *
-     * @return $this
-     */
-    function count($count=1) {
-        $this->count = $count;
-
-        return $this;
     }
 
     /**
@@ -151,105 +79,29 @@ class Entry {
     }
 
     /**
-     * Set custom fields
+     * Get the element to be generated
      *
-     * @param string $method The method name
-     * @param array $args Any args passed to the method
+     * @return ElementInterface
      */
-    function __call($method, $args) {
-        $value = $args[0];
-
-        $setter = 'set' . ucfirst($method);
-        if (method_exists($this, $setter)) {
-            return $this->{$setter}($value);
-        }
-
-        $this->attributes[$method] = $args[0] ?? null;
-
-        return $this;
-    }
-
-    function __isset($key) {
-        return isset($this->attributes[$key]);
-    }
-
-    protected function internalMake() {
-        $entry = new \craft\elements\Entry();
-
-        // array_merge to ensure we get a copy of the array and not a reference
-        $attributes = array_merge($this->attributes);
-
-        if ($this->hasDefinition()) {
-            foreach ($this->definition() as $key => $value) {
-                if (!isset($attributes[$key])) {
-                    $attributes[$key] = $value;
-                }
-            }
-        }
-
-        if (!isset($attributes['sectionId'])) {
-            $attributes['sectionId'] = $this->inferSectionId();
-        }
-
-        if (!isset($attributes['typeId'])) {
-            $attributes['typeId'] = $this->inferTypeId($attributes['sectionId']);
-        }
-
-        $modelKeys = array_keys($entry->fields());
-        foreach ($attributes as $key => $value) {
-            if (in_array($key, $modelKeys)) {
-                $entry->{$key} = $value;
-            }
-            else {
-                $entry->setFieldValue($key, $value);
-            }
-        }
-
-        return $entry;
+    function newElement() {
+        return new \craft\elements\Entry();
     }
 
     /**
-     * Instantiate an Entry
+     * Get the attribute definition for the factory
      *
-     * @return \craft\elements\Entry
-     */
-    function make() {
-        $entries = collect([])
-            ->pad($this->count, null)
-            ->map(fn () => $this->internalMake());
-
-        if ($this->count === 1) {
-            return $entries->first();
-        }
-
-        return $entries;
-    }
-
-    /**
-     * Persist the entry to our storage
+     * @param int $index
      *
-     * @return Collection|\craft\elements\Entry
+     * @return array
      */
-    function create() {
-        $entries = $this->make();
+    function definition(int $index = 0) {
+        $sectionId = $this->inferSectionId();
+        $typeId = $this->inferTypeId($sectionId);
 
-        if (!is_a($entries, Collection::class)) {
-            $entries = collect()->push($entries);
-        }
-
-        $entries = $entries->map(function ($entry) {
-            if (!\Craft::$app->elements->saveElement($entry)) {
-                throw new \Exception(implode(" ", $entry->getErrorSummary(false)));
-            }
-
-            return $entry;
-        });
-
-        if ($this->count === 1) {
-            return $entries->first();
-        }
-
-        return $entries->reverse();
+        return array_merge(parent::definition($index), [
+            'sectionId' => $sectionId,
+            'typeId' => $typeId,
+        ]);
     }
 
 }

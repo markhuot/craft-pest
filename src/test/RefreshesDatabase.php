@@ -2,7 +2,10 @@
 
 namespace markhuot\craftpest\test;
 
+use craft\events\ModelEvent;
+use craft\helpers\ProjectConfig;
 use Symfony\Component\Process\Process;
+use yii\base\Event;
 use yii\db\Transaction;
 
 trait RefreshesDatabase {
@@ -10,26 +13,26 @@ trait RefreshesDatabase {
     /**
      * @var bool
      */
-    protected $projectConfigChecked = false;
+    public static $projectConfigCheckedOnce = false;
 
     /**
      * @var Transaction
      */
     protected $transaction;
 
+    /**
+     * @TODO projectConfigChecked is reset on each test run, this runs every test not once before all tests
+     */
     function refreshDatabase() {
-        if (!$this->projectConfigChecked && $this->isProjectConfigDirty()) {
+        if (!static::$projectConfigCheckedOnce && $this->isProjectConfigDirty()) {
             $this->projectConfigApply();
         }
 
-        $this->projectConfigChecked = true;
+        static::$projectConfigCheckedOnce = true;
     }
 
     protected function isProjectConfigDirty() {
-        $process = new Process(['./craft', 'project-config/diff']);
-        $exitCode = $process->run();
-
-        return $exitCode !== 0;
+        return ProjectConfig::diff() !== '';
     }
 
     protected function projectConfigApply() {
@@ -52,6 +55,10 @@ trait RefreshesDatabase {
 
     protected function endTransaction() {
         $this->transaction->rollBack();
+
+        $event = new RollbackTransactionEvent();
+        $event->sender = $this;
+        Event::trigger(RefreshesDatabase::class, 'EVENT_ROLLBACK_TRANSACTION', $event);
     }
 
 }
