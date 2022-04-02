@@ -5,6 +5,7 @@ namespace markhuot\craftpest\factories;
 use craft\base\ElementInterface;
 use Faker\Factory as Faker;
 use Illuminate\Support\Collection;
+use function markhuot\craftpest\helpers\model\collectOrCollection;
 
 abstract class Element {
 
@@ -34,14 +35,14 @@ abstract class Element {
      * @param array $args Any args passed to the method
      */
     function __call($method, $args) {
-        $value = $args[0];
+        $value = $args[0] ?? null;
 
         $setter = 'set' . ucfirst($method);
         if (method_exists($this, $setter)) {
             return $this->{$setter}($value);
         }
 
-        $this->attributes[$method] = $args[0] ?? null;
+        $this->attributes[$method] = $value;
 
         return $this;
     }
@@ -95,12 +96,38 @@ abstract class Element {
         ];
     }
 
+    /**
+     * Take a passed in definition and extend the native definition(). In both cases there
+     * could be callables that need to be resolved so resolve a callable that returns
+     * the entire collection and resolve any callables that return a single attribute
+     *
+     * @param array $extra
+     * @param int $index
+     *
+     * @return array
+     */
     function extendDefinition($extra = [], $index=0) {
         if (is_callable($extra)) {
             $extra = $extra($this->faker, $index);
         }
 
-        return array_merge($extra, $this->definition($index));
+        foreach ($extra as $key => &$value) {
+            if  (method_exists($this, $key)) {
+                $this->{$key}($value);
+                unset($extra[$key]);
+                continue;
+            }
+        }
+
+        $attributes = array_merge($this->definition($index), $extra);
+
+        foreach ($attributes as $key => &$value) {
+            if (is_callable($value)) {
+                $value = $value($this->faker, $index);
+            }
+        }
+
+        return $attributes;
     }
 
     /**
@@ -126,11 +153,7 @@ abstract class Element {
      * @return Collection|\craft\elements\Entry
      */
     function create($definition=[]) {
-        $elements = $this->make($definition);
-
-        if (!is_a($elements, Collection::class)) {
-            $elements = collect()->push($elements);
-        }
+        $elements = collectOrCollection($this->make($definition));
 
         $elements = $elements->map(function ($element) {
             if (!\Craft::$app->elements->saveElement($element)) {
@@ -174,6 +197,10 @@ abstract class Element {
 
         $modelKeys = array_keys($entry->fields());
         foreach ($attributes as $key => $value) {
+            if (is_callable($value)) {
+                $value = $value($this->faker, $index);
+            }
+
             if (in_array($key, $modelKeys)) {
                 $entry->{$key} = $value;
             }

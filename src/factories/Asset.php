@@ -5,6 +5,7 @@ namespace markhuot\craftpest\factories;
 use Illuminate\Support\Collection;
 use markhuot\craftpest\test\RefreshesDatabase;
 use yii\base\Event;
+use function markhuot\craftpest\helpers\model\collectOrCollection;
 
 class Asset extends Element {
 
@@ -13,6 +14,9 @@ class Asset extends Element {
 
     /** @var string */
     protected $folderHandle;
+
+    /** @var string */
+    protected $source;
 
     function volume($handle) {
         $this->volumeHandle = $handle;
@@ -26,6 +30,12 @@ class Asset extends Element {
         return $this;
     }
 
+    function source($source) {
+        $this->source = $source;
+
+        return $this;
+    }
+
     function newElement() {
         return new \craft\elements\Asset();
     }
@@ -35,30 +45,31 @@ class Asset extends Element {
         $volume = \Craft::$app->volumes->getVolumeByHandle($this->volumeHandle);
         $folder = \Craft::$app->assets->getRootFolderByVolumeId($volume->id);
 
-        $originalFile = CRAFT_BASE_PATH . '/storage/temp/leaves.png';
-
         $tempPath = \Craft::$app->path->getTempPath();
         $tempFile = tempnam($tempPath, 'pest');
-        file_put_contents($tempFile, file_get_contents($originalFile));
+        file_put_contents($tempFile, file_get_contents($this->source));
 
         return array_merge(parent::definition($index), [
             'folderId' => $folder->id,
             'tempFilePath' => $tempFile,
-            'filename' => basename($originalFile),
+            'filename' => basename($this->source),
         ]);
     }
 
-    function create($definition=[]) {
-        $return = parent::create($definition);
 
-        /** @var Collection $assets */
-        $assets = is_a($return, Collection::class) ? $return : collect()->push($return);
+    /**
+     * @param array $definition
+     *
+     * @return \craft\elements\Asset|Collection
+     */
+    function create($definition=[]) {
+        $assets = parent::create($definition);
 
         Event::on(RefreshesDatabase::class, 'EVENT_ROLLBACK_TRANSACTION', function () use ($assets) {
-            $assets->each(fn (\craft\elements\Asset $asset) => $asset->volume->deleteFile($asset->path));
+            collectOrCollection($assets)->each(fn (\craft\elements\Asset $asset) => $asset->volume->deleteFile($asset->path));
         });
 
-        return $return;
+        return $assets;
     }
 
 }
