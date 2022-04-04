@@ -179,7 +179,7 @@ abstract class Element {
      * @return mixed
      */
     protected function internalMake($definition=[], $index=0) {
-        $entry = $this->newElement();
+        $element = $this->newElement();
 
         // array_merge to ensure we get a copy of the array and not a reference
         $attributes = array_merge($this->attributes);
@@ -194,22 +194,39 @@ abstract class Element {
                 }
             }
         }
+        
+        // A few important attributes have to be set in order to determine the custom field
+        // layouts. We'll set those here first.
+        foreach (['sectionId', 'typeId', 'groupId'] as $key) {
+            if (!isset($attributes[$key])) {
+                continue;
+            }
+            
+            $value = $attributes[$key];
+            
+            if (is_callable($value)) {
+                $value = $value($this->faker, $index);
+            }
+            
+            $element->{$key} = $value;
+            unset($attributes[$key]);
+        }
 
-        $modelKeys = array_keys($entry->fields());
+        $modelKeys = array_keys($element->fields());
         foreach ($attributes as $key => $value) {
             if (is_callable($value)) {
                 $value = $value($this->faker, $index);
             }
 
             if (in_array($key, $modelKeys)) {
-                $entry->{$key} = $value;
+                $element->{$key} = $value;
             }
             else {
-                $entry->setFieldValue($key, $value);
+                $element->setFieldValue($key, $value);
             }
         }
 
-        return $entry;
+        return $element;
     }
 
 }

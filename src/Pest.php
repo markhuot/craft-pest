@@ -22,9 +22,7 @@ class Pest extends Plugin {
         parent::init();
 
         Event::on(Entry::class, Entry::EVENT_DEFINE_BEHAVIORS, function (DefineBehaviorsEvent $event) {
-            $event->behaviors = [
-                Macroable::class,
-            ];
+            $event->behaviors[] = Macroable::class;
         });
     }
 
