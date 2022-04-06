@@ -2,6 +2,11 @@
     "dockerComposeFile": "docker-compose.yml",
     "service": "php",
     "extensions": [
-        "bmewburn.vscode-intelephense-client"
-    ]
+        "bmewburn.vscode-intelephense-client",
+        "github.codespaces"
+    ],
+    "postCreateCommand": "CRAFT_ALLOW_SUPERUSER=1 .devcontainer/install.sh",
+    "containerEnv": {
+        "CRAFT_ALLOW_SUPERUSER": "1"
+    }
 }
