@@ -7,6 +7,7 @@ use craft\web\Application;
 use craft\web\Response;
 use craft\web\UrlManager;
 use GuzzleHttp\Psr7\Message;
+use markhuot\craftpest\behaviors\TestableResponseBehavior;
 use markhuot\craftpest\web\Request;
 use Symfony\Component\Process\Process;
 use yii\base\Event;
@@ -16,7 +17,7 @@ class Http
     /**
      * Example description.
      */
-    public function get(string $uri=null): \markhuot\craftpest\test\Response
+    public function get(string $uri=null): \craft\web\Response
     {
         $uri = ltrim($uri, '/');
 
@@ -45,9 +46,18 @@ class Http
 
         // Run the application
         try {
+            $response = $craft->response;
+            $response->attachBehavior('testableResponse', TestableResponseBehavior::class);
+
+            // $response = (new \markhuot\craftpest\test\Response);
+            // $response->attachBehavior('testableResponse', TestableResponseBehavior::class);
+            // foreach ($craft->response->getBehaviors() as $key => $value) {
+            //     $response->attachBehavior($key, $value);
+            // }
+
             $craft->setComponents([
                 'request' => $request,
-                'response' => (new \markhuot\craftpest\test\Response),
+                'response' => $response,
 
                 // Since we just modified the request on demand a lot of Craft's native assumptions
                 // are out of date. Craft works off a request/response paradigm and by sending

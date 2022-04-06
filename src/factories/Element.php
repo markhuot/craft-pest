@@ -97,37 +97,38 @@ abstract class Element {
     }
 
     /**
-     * Take a passed in definition and extend the native definition(). In both cases there
-     * could be callables that need to be resolved so resolve a callable that returns
-     * the entire collection and resolve any callables that return a single attribute
+     * Definitions are complex beasts so simplify all the logic around resolving a definition
+     * to an actionable array here.
      *
-     * @param array $extra
-     * @param int $index
+     * @param $definition
      *
      * @return array
      */
-    function extendDefinition($extra = [], $index=0) {
-        if (is_callable($extra)) {
-            $extra = $extra($this->faker, $index);
+    function resolveDefinition($definition) {
+        if (is_callable($definition)) {
+            $definition = $definition($this->faker);
         }
 
-        foreach ($extra as $key => &$value) {
+        if (!is_array($definition)) {
+            $definition = [];
+        }
+
+        foreach ($definition as $key => &$value) {
+            if (is_callable($value)) {
+                $value = $value($this->faker);
+            }
+
             if  (method_exists($this, $key)) {
                 $this->{$key}($value);
-                unset($extra[$key]);
-                continue;
+                unset($definition[$key]);
             }
         }
 
-        $attributes = array_merge($this->definition($index), $extra);
+        return $definition;
+    }
 
-        foreach ($attributes as $key => &$value) {
-            if (is_callable($value)) {
-                $value = $value($this->faker, $index);
-            }
-        }
-
-        return $attributes;
+    function inferences() {
+        return [];
     }
 
     /**
@@ -181,12 +182,14 @@ abstract class Element {
     protected function internalMake($definition=[], $index=0) {
         $element = $this->newElement();
 
-        // array_merge to ensure we get a copy of the array and not a reference
-        $attributes = array_merge($this->attributes);
+        $attributes = array_merge(
+            $this->resolveDefinition($this->definition()),
+            $this->resolveDefinition($this->attributes),
+            $this->resolveDefinition($definition),
+            $this->inferences(),
+        );
 
-        // Fill out our attributes with default/definition data if it's not already
-        // set via an earlier call
-        $definition = $this->extendDefinition($definition, $index);
+        // add in any definition items that aren't already set
         if (!empty($definition)) {
             foreach ($definition as $key => $value) {
                 if (!isset($attributes[$key])) {
@@ -194,7 +197,7 @@ abstract class Element {
                 }
             }
         }
-        
+
         // A few important attributes have to be set in order to determine the custom field
         // layouts. We'll set those here first.
         foreach (['sectionId', 'typeId', 'groupId'] as $key) {

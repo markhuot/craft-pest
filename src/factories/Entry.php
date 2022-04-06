@@ -55,7 +55,7 @@ class Entry extends Element {
         $section = \Craft::$app->sections->getSectionByHandle($this->sectionHandle);
 
         if (empty($section)) {
-            throw new \Exception('A section could not be inferred from this factory. Make sure you set a ::factory()->section("handle") in your test.');
+            throw new \Exception("A section could not be inferred from this factory. Make sure you set a ::factory()->section(\"handle\") in your test. Tried to find `{$this->sectionHandle}");
         }
 
         return $section->id;
@@ -94,14 +94,14 @@ class Entry extends Element {
      *
      * @return array
      */
-    function definition(int $index = 0) {
+    function inferences(int $index = 0) {
         $sectionId = $this->inferSectionId();
         $typeId = $this->inferTypeId($sectionId);
 
-        return array_merge(parent::definition($index), [
+        return [
             'sectionId' => $sectionId,
             'typeId' => $typeId,
-        ]);
+        ];
     }
 
 }

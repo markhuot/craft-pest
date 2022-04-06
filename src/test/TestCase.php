@@ -72,7 +72,7 @@ class TestCase extends \PHPUnit\Framework\TestCase {
     /**
      * Passthrough for the HTTP service
      */
-    function get(...$args): \markhuot\craftpest\test\Response
+    function get(...$args): \craft\web\Response
     {
         return Pest::getInstance()->http->get(...$args);
     }
