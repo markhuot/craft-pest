@@ -4,6 +4,11 @@ namespace markhuot\craftpest\dom;
 
 use function Webmozart\Assert\Tests\StaticAnalysis\methodExists;
 
+/**
+ * @property string $text
+ * @property string $innerHTML
+ * @property int $count
+ */
 class NodeList implements \Countable {
     /** @var \Symfony\Component\DomCrawler\Crawler */
     public $crawler;
@@ -22,18 +27,26 @@ class NodeList implements \Countable {
         throw new \Exception("Property `{$property}` not found on Pest\\CraftCms\\NodeList");
     }
 
-    function getText() {
+    function getNodeOrNodes(callable $callback) {
         if ($this->crawler->count() === 1) {
-            return $this->crawler->eq(0)->text();
+            return $callback($this->crawler->eq(0));
         }
 
         $result = [];
         for ($i=0; $i<$this->crawler->count(); $i++) {
             $node = $this->crawler->eq($i);
-            $result[] = $node->text();
+            $result[] = $callback($node);
         }
 
         return $result;
+    }
+
+    function getText() {
+        return $this->getNodeOrNodes(fn ($node) => $node->text());
+    }
+
+    public function getInnerHTML() {
+        return $this->getNodeOrNodes(fn ($node) => $node->html());
     }
 
     public function count() {

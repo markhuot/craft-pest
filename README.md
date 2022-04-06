@@ -33,7 +33,7 @@ it('promotes craft')
     ->assertHeader('x-powered-by', 'Craft CMS');
 
 it('shows news on the homepage', function() {
-    $titles = News::factory()->create(3)->title;
+    $titles = News::factory()->count(3)->create()->title;
 
     expect($this->get('/')->querySelector('.news__title'))
         ->count->toBe(3)

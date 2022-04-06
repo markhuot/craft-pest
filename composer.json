@@ -20,7 +20,9 @@
             "markhuot\\craftpest\\": "src/"
         },
         "files": [
-            "src/helpers/Http.php"
+            "src/helpers/Base.php",
+            "src/helpers/Http.php",
+            "src/helpers/Model.php"
         ]
     },
     "extra": {

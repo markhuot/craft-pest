@@ -1,65 +1,57 @@
 <?php
 
-namespace markhuot\craftpest\test;
+namespace markhuot\craftpest\behaviors;
 
 use markhuot\craftpest\dom\NodeList;
+use markhuot\craftpest\test\Response;
 use Symfony\Component\DomCrawler\Crawler;
+use yii\base\Behavior;
 
 /**
- * @deprecated
+ * @property \craft\web\Response $owner
  */
-class Response extends \craft\web\Response
-{
-    public function send()
-    {
-        // This page intentionally left blank so we can inspect the response body without it
-        // being prematurely written to the screen
-    }
-
-    public function expect() {
-        return $this->expect($this);
-    }
+class TestableResponseBehavior extends Behavior {
 
     public function querySelector($selector) {
-        $html = $this->data;
+        $html = $this->owner->data;
         $crawler = new Crawler($html);
         return new NodeList($crawler->filter($selector));
     }
 
-    public function __isset($key) {
-        if (parent::__isset($key)) {
-            return true;
-        }
+    // public function __isset($key) {
+    //     if (parent::__isset($key)) {
+    //         return true;
+    //     }
+    //
+    //     return $this->querySelector($key)->count() > 0;
+    // }
 
-        return $this->querySelector($key)->count() > 0;
-    }
-
-    public function __get($key) {
-        if ($value = parent::__get($key)) {
-            return $value;
-        }
-
-        return $this->querySelector($key);
-    }
+    // public function __get($key) {
+    //     if ($value = parent::__get($key)) {
+    //         return $value;
+    //     }
+    //
+    //     return $this->querySelector($key);
+    // }
 
     function assertCookie() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertCookieExpired() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertCookieNotExpired() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertCookieMissing() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertCreated() {
@@ -67,23 +59,23 @@ class Response extends \craft\web\Response
     }
 
     function assertDontSee(string $text) {
-        test()->assertStringNotContainsString($text, $this->data);
-        return $this;
+        test()->assertStringNotContainsString($text, $this->owner->data);
+        return $this->owner;
     }
 
     function assertDontSeeText() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertDownload() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertExactJson(array $json) {
-        test()->assertExact($json, $this->data);
-        return $this;
+        test()->assertExact($json, $this->owner->data);
+        return $this->owner;
     }
 
     function assertForbidden() {
@@ -91,69 +83,69 @@ class Response extends \craft\web\Response
     }
 
     function assertHeader($name, $expected=null) {
-        $value = $this->headers->get($name);
+        $value = $this->owner->headers->get($name);
         if ($expected === null) {
             test()->assertNotNull($value);
         }
         else {
             test()->assertSame($expected, $value);
         }
-        return $this;
+        return $this->owner;
     }
 
     function assertHeaderMissing($name) {
-        test()->assertNull($this->headers->get($name));
-        return $this;
+        test()->assertNull($this->owner->headers->get($name));
+        return $this->owner;
     }
 
     function assertJson() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertJsonCount() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertJsonFragment() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertJsonMissing() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertJsonMissingExact() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertJsonMissingValidationErrors() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertJsonPath() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertJsonStructure() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertJsonValidationErrors() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertLocation() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     /**
@@ -167,7 +159,7 @@ class Response extends \craft\web\Response
 
         test()->assertEmpty($this->data, 'Response content is not empty.');
 
-        return $this;
+        return $this->owner;
     }
 
     function assertNotFound() {
@@ -180,26 +172,27 @@ class Response extends \craft\web\Response
 
     function assertPlainCookie() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertRedirect() {
         test()->toBeGreaterThanOrEqual(300)
             ->toBeLessThanOrEqual(399);
-        return $this;
+
+        return $this->owner;
     }
 
     // function assertRedirectToSignedRoute() {
     // }
 
     function assertSee($text) {
-        test()->assertStringContainsString($text, $this->data);
-        return $this;
+        test()->assertStringContainsString($text, $this->owner->data);
+        return $this->owner;
     }
 
     function assertSeeInOrder() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertSeeText(string $text) {
@@ -208,59 +201,59 @@ class Response extends \craft\web\Response
 
     function assertSeeTextInOrder() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertSessionHas() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertSessionHasInput() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertSessionHasAll() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertSessionHasErrors() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertSessionHasErrorsIn() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertSessionHasNoErrors() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertSessionDoesntHaveErrors() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertSessionMissing() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertStatus($code) {
-        test()->assertSame($code, $this->getStatusCode());
-        return $this;
+        test()->assertSame($code, $this->owner->getStatusCode());
+        return $this->owner;
     }
 
     function assertSuccessful() {
-        test()->assertGreaterThanOrEqual(200, $this->getStatusCode());
-        test()->assertLessThan(300, $this->getStatusCode());
+        test()->assertGreaterThanOrEqual(200, $this->owner->getStatusCode());
+        test()->assertLessThan(300, $this->owner->getStatusCode());
 
-        return $this;
+        return $this->owner;
     }
 
     function assertUnauthorized() {
@@ -269,31 +262,32 @@ class Response extends \craft\web\Response
 
     function assertValid() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertInvalid() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertViewHas() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertViewHasAll() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertViewIs() {
         // TODO
-        return $this;
+        return $this->owner;
     }
 
     function assertViewMissing() {
         // TODO
-        return $this;
+        return $this->owner;
     }
+
 }
