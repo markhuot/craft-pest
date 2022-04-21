@@ -4,6 +4,7 @@ namespace markhuot\craftpest;
 
 use craft\base\Plugin;
 use craft\elements\Entry;
+use craft\elements\GlobalSet;
 use craft\events\DefineBehaviorsEvent;
 use markhuot\craftpest\behaviors\Macroable;
 use markhuot\craftpest\services\Http;
@@ -21,9 +22,16 @@ class Pest extends Plugin {
 
         parent::init();
 
-        Event::on(Entry::class, Entry::EVENT_DEFINE_BEHAVIORS, function (DefineBehaviorsEvent $event) {
-            $event->behaviors[] = Macroable::class;
-        });
+        $macroableClasses = [
+            Entry::class,
+            GlobalSet::class,
+        ];
+
+        foreach ($macroableClasses as $class) {
+            Event::on($class, $class::EVENT_DEFINE_BEHAVIORS, function (DefineBehaviorsEvent $event) {
+                $event->behaviors[] = Macroable::class;
+            });
+        }
     }
 
 }

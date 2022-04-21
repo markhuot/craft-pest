@@ -10,23 +10,27 @@ class TestCase extends \PHPUnit\Framework\TestCase {
     {
         $this->createApplication();
 
-        if (method_exists($this, 'refreshDatabase')) {
-            $this->refreshDatabase();
-        }
-
-        if (method_exists($this, 'beginTransaction')) {
-            $this->beginTransaction();
-        }
+        $this->callTraits('setUp');
     }
 
     protected function tearDown(): void
     {
-        if (method_exists($this, 'endTransaction')) {
-            $this->endTransaction();
+        $this->callTraits('tearDown');
+    }
+
+    protected function callTraits($prefix)
+    {
+        $reflect = new \ReflectionClass($this);
+        $traits = $reflect->getTraits();
+        foreach ($traits as $trait) {
+            $method = $prefix . $trait->getShortName();
+            if ($trait->hasMethod($method)) {
+                $this->{$method}();
+            }
         }
     }
 
-    protected function createApplication()
+    public function createApplication()
     {
         if ($this->needsRequireStatements()) {
             $this->requireCraft();

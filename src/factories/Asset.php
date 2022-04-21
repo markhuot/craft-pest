@@ -5,7 +5,7 @@ namespace markhuot\craftpest\factories;
 use Illuminate\Support\Collection;
 use markhuot\craftpest\test\RefreshesDatabase;
 use yii\base\Event;
-use function markhuot\craftpest\helpers\model\collectOrCollection;
+use function markhuot\craftpest\helpers\base\collectOrCollection;
 
 class Asset extends Element {
 

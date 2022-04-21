@@ -1,6 +1,6 @@
 <?php
 
-namespace markhuot\craftpest\helpers\model;
+namespace markhuot\craftpest\helpers\base;
 
 use Illuminate\Support\Collection;
 

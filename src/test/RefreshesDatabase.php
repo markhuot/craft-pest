@@ -20,24 +20,54 @@ trait RefreshesDatabase {
      */
     protected $transaction;
 
-    /**
-     * @TODO projectConfigChecked is reset on each test run, this runs every test not once before all tests
-     */
-    function refreshDatabase() {
-        if (!static::$projectConfigCheckedOnce && $this->isProjectConfigDirty()) {
-            $this->projectConfigApply();
-        }
-
-        static::$projectConfigCheckedOnce = true;
+    function setUpRefreshesDatabase()
+    {
+        $this->refreshDatabase();
+        $this->beginTransaction();
     }
 
-    protected function isProjectConfigDirty() {
+    function refreshDatabase()
+    {
+        if (static::$projectConfigCheckedOnce) {
+            return;
+        }
+        static::$projectConfigCheckedOnce = true;
+
+        if ($this->hasPendingMigrations()) {
+            $this->runMigrations();
+        }
+
+        if ($this->isProjectConfigDirty()) {
+            $this->projectConfigApply();
+        }
+    }
+
+    /**
+     * @todo
+     */
+    protected function hasPendingMigrations()
+    {
+        return false;
+    }
+
+    /**
+     * @todo
+     */
+    protected function runMigrations()
+    {
+
+    }
+
+    protected function isProjectConfigDirty()
+    {
         return ProjectConfig::diff() !== '';
     }
 
-    protected function projectConfigApply() {
+    protected function projectConfigApply()
+    {
         $process = new Process(['./craft', 'project-config/apply', '--force']);
         $process->setTty(true);
+        $process->setTimeout(null);
         $process->start();
 
         foreach ($process as $type => $data) {
@@ -47,13 +77,19 @@ trait RefreshesDatabase {
                 echo $data;
             }
         }
+
+        if (!$process->isSuccessful()) {
+            throw new \Exception('Project config apply failed');
+        }
     }
 
-    protected function beginTransaction() {
+    protected function beginTransaction()
+    {
         $this->transaction = \Craft::$app->db->beginTransaction('READ UNCOMMITTED');
     }
 
-    protected function endTransaction() {
+    protected function tearDownRefreshesDatabase()
+    {
         $this->transaction->rollBack();
 
         $event = new RollbackTransactionEvent();

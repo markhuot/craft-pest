@@ -5,9 +5,16 @@ namespace markhuot\craftpest\factories;
 use craft\base\ElementInterface;
 use Faker\Factory as Faker;
 use Illuminate\Support\Collection;
-use function markhuot\craftpest\helpers\model\collectOrCollection;
+use function markhuot\craftpest\helpers\base\collectOrCollection;
 
 abstract class Element {
+
+    /**
+     * A null placeholder to signify that a field should not be set during the make flow
+     *
+     * @var string
+     */
+    const NULL = '__NULL__';
 
     /** @var \Faker\Generator */
     protected $faker;
@@ -192,7 +199,7 @@ abstract class Element {
         // add in any definition items that aren't already set
         if (!empty($definition)) {
             foreach ($definition as $key => $value) {
-                if (!isset($attributes[$key])) {
+                if (!isset($attributes[$key]) && $value !== self::NULL) {
                     $attributes[$key] = $value;
                 }
             }
