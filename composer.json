@@ -14,7 +14,10 @@
         "symfony/dom-crawler": "^6.0.3",
         "symfony/process": "^5.3",
         "illuminate/collections": "^8.61",
-        "pestphp/pest": "^1.21.1"
+        "pestphp/pest": "^1.21.1",
+        "craftcms/cms": "^3.7",
+        "vlucas/phpdotenv": "^5.4",
+        "phpstan/phpstan": "^1.6"
     },
     "autoload": {
         "psr-4": {
@@ -34,6 +37,18 @@
         "class": "markhuot\\craftpest\\Pest",
         "components": {
             "http": "markhuot\\craftpest\\services\\Http"
+        },
+        "pest": {
+            "plugins": [
+                "markhuot\\craftpest\\pest\\Coverage"
+            ]
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true,
+            "pestphp/pest-plugin": true,
+            "craftcms/plugin-installer": true
         }
     }
 }

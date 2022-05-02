@@ -20,27 +20,33 @@ class Http
     public function get(string $uri=null): \craft\web\Response
     {
         $uri = ltrim($uri, '/');
+        $parts = preg_split('/\?/', $uri);
+        $uri = $parts[0];
+        $queryString = $parts[1] ?? '';
+        parse_str($queryString, $queryParams);
 
         $config = App::webRequestConfig();
         $config['class'] = \markhuot\craftpest\web\Request::class;
-        $request = \Craft::createObject($config)->setRaw([
+
+        $opts = [
             '_isConsoleRequest' => false,
             '_fullPath' => $uri,
             '_path' => $uri,
-            '_fullUri' => $uri,
+            '_fullUri' => $uri.'?'.$queryString,
             '_ipAddress' => '::1',
             '_rawBody' => '',
             '_bodyParams' => [],
-            '_queryParams' => [],
+            '_queryParams' => $queryParams,
             '_hostInfo' => 'http://localhost:8080',
             '_hostName' => 'localhost',
             '_baseUrl' => '',
             '_scriptUrl' => '/index.php',
             '_scriptFile' => '',
             '_pathInfo' => $uri,
-            '_url' => "/{$uri}",
+            '_url' => "/{$uri}?{$queryString}",
             '_port' => 8080,
-        ]);
+        ];
+        $request = \Craft::createObject($config)->setRaw($opts);
 
         $craft = \Craft::$app;
 

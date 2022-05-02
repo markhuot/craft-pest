@@ -8,7 +8,7 @@ class TestCase extends \PHPUnit\Framework\TestCase {
 
     protected function setUp(): void
     {
-        $this->createApplication();
+        $craft = $this->createApplication();
 
         $this->callTraits('setUp');
     }
@@ -53,7 +53,7 @@ class TestCase extends \PHPUnit\Framework\TestCase {
         // Load dotenv?
         if (class_exists('Dotenv\Dotenv') && file_exists(CRAFT_BASE_PATH . '/.env')) {
             if (method_exists(\Dotenv\Dotenv::class, 'create')) {
-                \Dotenv\Dotenv::create(CRAFT_BASE_PATH)->load();
+                \Dotenv\Dotenv::createImmutable(CRAFT_BASE_PATH)->load();
             }
             else {
                 (new \Dotenv\Dotenv(CRAFT_BASE_PATH))->load();

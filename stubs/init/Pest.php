@@ -11,7 +11,9 @@
 |
 */
 
-uses(markhuot\craftpest\test\TestCase::class)->in(__DIR__);
+uses(
+    markhuot\craftpest\test\TestCase::class,
+)->in(__DIR__);
 
 /*
 |--------------------------------------------------------------------------

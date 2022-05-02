@@ -2,8 +2,6 @@
 
 namespace markhuot\craftpest\dom;
 
-use function Webmozart\Assert\Tests\StaticAnalysis\methodExists;
-
 /**
  * @property string $text
  * @property string $innerHTML

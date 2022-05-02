@@ -5,7 +5,7 @@ namespace markhuot\craftpest\factories;
 use Illuminate\Support\Collection;
 use markhuot\craftpest\test\RefreshesDatabase;
 use yii\base\Event;
-use function markhuot\craftpest\helpers\base\collectOrCollection;
+use function markhuot\craftpest\helpers\base\collection_wrap;
 
 class Asset extends Element {
 
@@ -66,7 +66,7 @@ class Asset extends Element {
         $assets = parent::create($definition);
 
         Event::on(RefreshesDatabase::class, 'EVENT_ROLLBACK_TRANSACTION', function () use ($assets) {
-            collectOrCollection($assets)->each(fn (\craft\elements\Asset $asset) => $asset->volume->deleteFile($asset->path));
+            collection_wrap($assets)->each(fn (\craft\elements\Asset $asset) => $asset->volume->deleteFile($asset->path));
         });
 
         return $assets;
