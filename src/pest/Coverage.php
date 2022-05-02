@@ -75,6 +75,12 @@ class Coverage implements AddsOutput, HandlesArguments
             $this->coverage      = true;
             $originals[]         = '--coverage-php';
             $originals[]         = __DIR__ . '/../../.temp/coverage.php';
+
+            // clear out the compiled templates folder so we have a fresh base
+            // $compiledTemplatesDir = getcwd() . '/storage/runtime/compiled_templates';
+            // if (is_dir($compiledTemplatesDir)) {
+            //     rmdir($compiledTemplatesDir);
+            // }
         }
 
         if ($input->getOption(self::MIN_OPTION) !== null) {
@@ -258,6 +264,14 @@ class Coverage implements AddsOutput, HandlesArguments
             }
 
             $lastKey = count($array) - 1;
+            
+            // Because Twig can map to multiple PHP lines then we flatten
+            // the lines down. This means we could get multiple "misses" on line
+            // four, for example. Because of that we'll skip over any report that
+            // repeats the same line number multiple times.
+            if ($array[$lastKey] == $line) {
+                return $array;
+            }
 
             if (array_key_exists($lastKey, $array) && strpos($array[$lastKey], '..') !== false) {
                 [$from]          = explode('..', $array[$lastKey]);
@@ -288,7 +302,7 @@ class Coverage implements AddsOutput, HandlesArguments
                 $logicalName = basename($source->getPath());
             }
             $ext = pathinfo($source->getPath(), PATHINFO_EXTENSION);
-            return rtrim($logicalName, '.' . $ext) . '.' . $ext;
+            return preg_replace('/'.preg_quote('.' . $ext, '/').'$/', '', $logicalName) . '.' . $ext;
         }
 
         return $file->id();
@@ -300,6 +314,12 @@ class Coverage implements AddsOutput, HandlesArguments
             $actualLine = $template->getDebugInfo()[$line] ?? null;
             if ($actualLine) {
                 return $actualLine;
+            }
+            while ($line-=1) {
+                $actualLine = $template->getDebugInfo()[$line] ?? null;
+                if ($actualLine) {
+                    return $actualLine;
+                }
             }
         }
 

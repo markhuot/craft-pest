@@ -8,3 +8,16 @@ beforeEach(function () {
 
 get('/')->assertOk();
 get('/?foo=1')->assertOk();
+
+it('covers loops', function () {
+    \markhuot\craftpest\factories\Section::factory()
+        ->name('News')
+        ->handle('news')
+        ->create();
+
+    \markhuot\craftpest\factories\Entry::factory()
+        ->section('news')
+        ->create();
+
+    get('/loop-test')->assertOk();
+})->only();
