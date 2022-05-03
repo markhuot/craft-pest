@@ -19,8 +19,14 @@ trait Fieldable
     {
         if (!empty($this->fields)) {
             $fields = collect($this->fields)
-                ->each(fn ($f) => $f->context($context ? 'matrixBlockType:' . $context->uid : 'global'))
-                ->map(fn ($f) => $f->create())
+                ->map(function ($f) use ($context) {
+                    if (is_a($f, Field::class)) {
+                        $f->context($context ? 'matrixBlockType:' . $context->uid : 'global');
+                        return $f->create();
+                    }
+
+                    return $f;
+                })
                 ->flatten(1)
                 ->toArray();
 
