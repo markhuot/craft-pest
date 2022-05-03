@@ -16,6 +16,13 @@ trait RefreshesDatabase {
     public static $projectConfigCheckedOnce = false;
 
     /**
+     * The config version before the test ran, so we can re-set it back after
+     * 
+     * @var string
+     */
+    public $oldConfigVersion = null;
+
+    /**
      * @var Transaction
      */
     protected $transaction;
@@ -85,7 +92,8 @@ trait RefreshesDatabase {
 
     protected function beginTransaction()
     {
-        $this->transaction = \Craft::$app->db->beginTransaction('READ UNCOMMITTED');
+        $this->oldConfigVersion = \Craft::$app->info->configVersion;
+        $this->transaction = \Craft::$app->db->beginTransaction();
     }
 
     protected function tearDownRefreshesDatabase()
@@ -95,6 +103,8 @@ trait RefreshesDatabase {
         $event = new RollbackTransactionEvent();
         $event->sender = $this;
         Event::trigger(RefreshesDatabase::class, 'EVENT_ROLLBACK_TRANSACTION', $event);
+
+        \Craft::$app->info->configVersion = $this->oldConfigVersion;
     }
 
 }

@@ -20,4 +20,4 @@ it('covers loops', function () {
         ->create();
 
     get('/loop-test')->assertOk();
-})->only();
+});
