@@ -8,7 +8,7 @@ class TestCase extends \PHPUnit\Framework\TestCase {
 
     protected function setUp(): void
     {
-        $craft = $this->createApplication();
+        $this->createApplication();
 
         $this->callTraits('setUp');
     }
@@ -49,6 +49,8 @@ class TestCase extends \PHPUnit\Framework\TestCase {
         // Define path constants
         define('CRAFT_BASE_PATH', getcwd());
         define('CRAFT_VENDOR_PATH', CRAFT_BASE_PATH . '/vendor');
+        define('YII_ENABLE_ERROR_HANDLER', false);
+        define('YII_DEBUG', true);
 
         // Load dotenv?
         if (class_exists('Dotenv\Dotenv') && file_exists(CRAFT_BASE_PATH . '/.env')) {
@@ -69,6 +71,7 @@ class TestCase extends \PHPUnit\Framework\TestCase {
         $app = require CRAFT_VENDOR_PATH . '/craftcms/cms/bootstrap/web.php';
 
         $app->setAliases(['@webroot' => CRAFT_BASE_PATH . '/web']);
+        $app->projectConfig->writeYamlAutomatically = false;
 
         return $app;
     }

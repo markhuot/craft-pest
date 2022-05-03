@@ -11,13 +11,14 @@ use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use craft\helpers\FileHelper;
 
 class Coverage implements AddsOutput, HandlesArguments
 {
     /**
      * @var string
      */
-    private const COVERAGE_OPTION = 'coverages';
+    private const COVERAGE_OPTION = 'coverage';
 
     /**
      * @var string
@@ -77,10 +78,8 @@ class Coverage implements AddsOutput, HandlesArguments
             $originals[]         = __DIR__ . '/../../.temp/coverage.php';
 
             // clear out the compiled templates folder so we have a fresh base
-            // $compiledTemplatesDir = getcwd() . '/storage/runtime/compiled_templates';
-            // if (is_dir($compiledTemplatesDir)) {
-            //     rmdir($compiledTemplatesDir);
-            // }
+            $compiledTemplatesDir = getcwd() . '/storage/runtime/compiled_templates';
+            FileHelper::removeDirectory($compiledTemplatesDir);
         }
 
         if ($input->getOption(self::MIN_OPTION) !== null) {
@@ -302,7 +301,11 @@ class Coverage implements AddsOutput, HandlesArguments
                 $logicalName = basename($source->getPath());
             }
             $ext = pathinfo($source->getPath(), PATHINFO_EXTENSION);
-            return preg_replace('/'.preg_quote('.' . $ext, '/').'$/', '', $logicalName) . '.' . $ext;
+            if ($ext) {
+                $ext = '.' . $ext;
+                $logicalName = preg_replace('/'.preg_quote('.' . $ext, '/').'$/', '', $logicalName);
+            }
+            return  $logicalName . $ext;
         }
 
         return $file->id();
