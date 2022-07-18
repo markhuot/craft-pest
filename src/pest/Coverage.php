@@ -153,7 +153,7 @@ class Coverage implements AddsOutput, HandlesArguments
 
         $reportPath = __DIR__ . '/../../.temp/coverage.php';
 
-        /** @var CodeCoverage $codeCoverage */
+        /** @var \SebastianBergmann\CodeCoverage\CodeCoverage $codeCoverage */
         $codeCoverage = require $reportPath;
 
         $totalWidth = (new Terminal())->getWidth();
@@ -171,7 +171,6 @@ class Coverage implements AddsOutput, HandlesArguments
 
         $this->output->writeln('');
 
-        /** @var Directory<File|Directory> $report */
         $report = $codeCoverage->getReport();
 
 

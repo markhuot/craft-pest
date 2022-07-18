@@ -52,6 +52,7 @@ class Http
 
         // Run the application
         try {
+            /** @var Response $response */
             $response = $craft->response;
             $response->attachBehavior('testableResponse', TestableResponseBehavior::class);
 

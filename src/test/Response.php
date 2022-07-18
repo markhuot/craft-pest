@@ -17,7 +17,7 @@ class Response extends \craft\web\Response
     }
 
     public function expect() {
-        return $this->expect($this);
+        return test()->expect($this);
     }
 
     public function querySelector($selector) {
@@ -203,10 +203,10 @@ class Response extends \craft\web\Response
     }
 
     function assertSeeText(string $text) {
-        return $this->assertSeeTextInOrder($text);
+        return $this->assertSee($text);
     }
 
-    function assertSeeTextInOrder() {
+    function assertSeeTextInOrder(string $text) {
         // TODO
         return $this;
     }

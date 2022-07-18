@@ -152,12 +152,12 @@ class TestableResponseBehavior extends Behavior {
      * Assert that the response has the given status code and no content.
      *
      * @param  int  $status
-     * @return $this
+     * @return $this|\craft\web\Response
      */
     function assertNoContent($status = 204) {
         $this->assertStatus($status);
 
-        test()->assertEmpty($this->data, 'Response content is not empty.');
+        test()->assertEmpty($this->owner->data, 'Response content is not empty.');
 
         return $this->owner;
     }
@@ -199,7 +199,7 @@ class TestableResponseBehavior extends Behavior {
         return $this->assertSeeTextInOrder($text);
     }
 
-    function assertSeeTextInOrder() {
+    function assertSeeTextInOrder(string $text) {
         // TODO
         return $this->owner;
     }

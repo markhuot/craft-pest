@@ -15,5 +15,5 @@ function get($uri='/') {
 }
 
 function expectGet($uri='/') {
-    return test()->expect(fn () => $this->get($uri));
+    return test()->expect(fn () => test()->get($uri));
 }

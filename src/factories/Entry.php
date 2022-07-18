@@ -22,11 +22,9 @@ class Entry extends Element {
     /**
      * Set the section
      *
-     * @param int $name The name of the section
-     *
      * @return self
      */
-    function section($handle) {
+    function section(string $handle) {
         $this->sectionHandle = $handle;
         return $this;
     }
@@ -63,10 +61,8 @@ class Entry extends Element {
 
     /**
      * Infer the type based on the class name
-     *
-     * @return $this
      */
-    function inferTypeId($sectionid) {
+    function inferTypeId($sectionid): int {
         $reflector = new \ReflectionClass($this);
         $className = $reflector->getShortName();
         $typeHandle = lcfirst($className);

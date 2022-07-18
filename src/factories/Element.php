@@ -25,8 +25,6 @@ abstract class Element extends Factory
 
     /**
      * Persist the entry to local
-     *
-     * @return \craft\base\Element
      */
     function store($element) {
         if (!\Craft::$app->elements->saveElement($element)) {

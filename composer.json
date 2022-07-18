@@ -16,8 +16,7 @@
         "illuminate/collections": "^8.61",
         "pestphp/pest": "^1.21.1",
         "craftcms/cms": "^3.7",
-        "vlucas/phpdotenv": "^5.4",
-        "phpstan/phpstan": "^1.6"
+        "vlucas/phpdotenv": "^5.4"
     },
     "autoload": {
         "psr-4": {
@@ -50,5 +49,10 @@
             "pestphp/pest-plugin": true,
             "craftcms/plugin-installer": true
         }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require-dev": {
+        "craftcms/phpstan": "dev-main"
     }
 }
