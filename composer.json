@@ -13,9 +13,9 @@
         "symfony/css-selector": "^6.0.3",
         "symfony/dom-crawler": "^6.0.3",
         "symfony/process": "^5.3",
-        "illuminate/collections": "^8.61",
+        "illuminate/collections": "^9.1",
         "pestphp/pest": "^1.21.1",
-        "craftcms/cms": "^3.7",
+        "craftcms/cms": "^4.0",
         "vlucas/phpdotenv": "^5.4"
     },
     "autoload": {
