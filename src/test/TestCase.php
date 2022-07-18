@@ -58,6 +58,7 @@ class TestCase extends \PHPUnit\Framework\TestCase {
                 \Dotenv\Dotenv::createImmutable(CRAFT_BASE_PATH)->load();
             }
             else {
+                /** @phpstan-ignore-next-line */
                 (new \Dotenv\Dotenv(CRAFT_BASE_PATH))->load();
             }
         }

@@ -91,7 +91,6 @@ class Coverage implements AddsOutput, HandlesArguments
     
             // make no-op calls to ensure they don't show up in coverage reports as uncovered
             $compiledTemplate->getTemplateName();
-            $compiledTemplate->isTraitable();
             $compiledTemplate->getDebugInfo();
         });
 

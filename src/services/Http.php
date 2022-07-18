@@ -2,8 +2,9 @@
 
 namespace markhuot\craftpest\services;
 
+use craft\console\Application;
 use craft\helpers\App;
-use craft\web\Application;
+use craft\web\Application as WebApplication;
 use craft\web\Response;
 use craft\web\UrlManager;
 use GuzzleHttp\Psr7\Message;
@@ -48,12 +49,12 @@ class Http
         ];
         $request = \Craft::createObject($config)->setRaw($opts);
 
+        /** @var WebApplication $craft */
         $craft = \Craft::$app;
 
         // Run the application
         try {
-            /** @var Response $response */
-            $response = $craft->response;
+            $response = $craft->getResponse();
             $response->attachBehavior('testableResponse', TestableResponseBehavior::class);
 
             // $response = (new \markhuot\craftpest\test\Response);
@@ -82,6 +83,7 @@ class Http
             $craft->view->setTemplateMode('site');
 
             $craft->trigger(Application::EVENT_BEFORE_REQUEST);
+            /** @var \craft\web\Response $response */
             $response = $craft->handleRequest($request, true);
             $craft->trigger(Application::EVENT_AFTER_REQUEST);
         }

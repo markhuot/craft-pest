@@ -12,9 +12,9 @@
         "mockery/mockery": "^1.5",
         "symfony/css-selector": "^6.0.3",
         "symfony/dom-crawler": "^6.0.3",
-        "symfony/process": "^5.3",
+        "symfony/process": "^5.3|^6.0",
         "illuminate/collections": "^9.1",
-        "pestphp/pest": "^1.21.1",
+        "pestphp/pest": "^1.21",
         "craftcms/cms": "^4.0",
         "vlucas/phpdotenv": "^5.4"
     },
