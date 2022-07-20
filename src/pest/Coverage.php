@@ -87,8 +87,9 @@ class Coverage implements AddsOutput, HandlesArguments
         }
 
         \yii\base\Event::on(\craft\web\View::class, \craft\web\View::EVENT_AFTER_RENDER_TEMPLATE, function ($event) {
-            $compiledTemplate = \Craft::$app->view->twig->loadTemplate($event->template);
-    
+            $twig = \Craft::$app->view->twig;
+            $compiledTemplate = $twig->loadTemplate($twig->getTemplateClass($event->template), $event->template);
+
             // make no-op calls to ensure they don't show up in coverage reports as uncovered
             $compiledTemplate->getTemplateName();
             $compiledTemplate->getDebugInfo();
@@ -101,6 +102,7 @@ class Coverage implements AddsOutput, HandlesArguments
                 if (!is_string($path)) {
                     return;
                 }
+
                 $directory = new \RecursiveDirectoryIterator($path);
                 $iterator = new \RecursiveIteratorIterator($directory);
                 $regex = new \RegexIterator($iterator, '/^.+\.(html|twig)$/i', \RecursiveRegexIterator::GET_MATCH);

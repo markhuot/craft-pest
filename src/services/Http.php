@@ -6,6 +6,8 @@ use craft\console\Application;
 use craft\helpers\App;
 use craft\web\Application as WebApplication;
 use craft\web\Response;
+use craft\web\TemplateResponseBehavior;
+use craft\web\TemplateResponseFormatter;
 use craft\web\UrlManager;
 use GuzzleHttp\Psr7\Message;
 use markhuot\craftpest\behaviors\TestableResponseBehavior;
@@ -24,6 +26,7 @@ class Http
         $parts = preg_split('/\?/', $uri);
         $uri = $parts[0];
         $queryString = $parts[1] ?? '';
+
         parse_str($queryString, $queryParams);
 
         $config = App::webRequestConfig();
@@ -49,12 +52,19 @@ class Http
         ];
         $request = \Craft::createObject($config)->setRaw($opts);
 
+
         /** @var WebApplication $craft */
         $craft = \Craft::$app;
 
         // Run the application
         try {
-            $response = $craft->getResponse();
+            $craft->set('request', $request);
+            $craft->set('response', \markhuot\craftpest\web\Response::class);
+
+            $craft->getView()->setTemplateMode('site');
+
+            $response = $craft->handleRequest($request, true);
+            $response->prepare();
             $response->attachBehavior('testableResponse', TestableResponseBehavior::class);
 
             // $response = (new \markhuot\craftpest\test\Response);
