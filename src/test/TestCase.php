@@ -52,12 +52,15 @@ class TestCase extends \PHPUnit\Framework\TestCase {
         define('YII_ENABLE_ERROR_HANDLER', false);
         define('YII_DEBUG', true);
 
-        // Load dotenv?
-        if (class_exists('Dotenv\Dotenv') && file_exists(CRAFT_BASE_PATH . '/.env')) {
-            if (method_exists(\Dotenv\Dotenv::class, 'create')) {
-                \Dotenv\Dotenv::createImmutable(CRAFT_BASE_PATH)->load();
-            }
-            else {
+        // Load dotenv? 5.x vs 3.x vs 2.x
+        if (file_exists(CRAFT_BASE_PATH . '/.env')) {
+            if (method_exists('\Dotenv\Dotenv', 'createUnsafeImmutable')) {
+                /** @phpstan-ignore-next-line */
+                \Dotenv\Dotenv::createUnsafeImmutable(CRAFT_BASE_PATH)->safeLoad();
+            } elseif (method_exists('\Dotenv\Dotenv', 'create')) {
+                /** @phpstan-ignore-next-line */
+                \Dotenv\Dotenv::create(CRAFT_BASE_PATH)->load();
+            } else {
                 /** @phpstan-ignore-next-line */
                 (new \Dotenv\Dotenv(CRAFT_BASE_PATH))->load();
             }

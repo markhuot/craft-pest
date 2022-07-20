@@ -16,7 +16,7 @@
         "illuminate/collections": "^9.1",
         "pestphp/pest": "^1.21",
         "craftcms/cms": "^4.0",
-        "vlucas/phpdotenv": "^5.4"
+        "vlucas/phpdotenv": "^3.4|^5.4"
     },
     "autoload": {
         "psr-4": {
@@ -30,7 +30,7 @@
         ]
     },
     "extra": {
-        "name": "craft-pest",
+        "name": "Pest",
         "handle": "pest",
         "changelogUrl": "#",
         "class": "markhuot\\craftpest\\Pest",

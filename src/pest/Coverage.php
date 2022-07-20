@@ -97,6 +97,10 @@ class Coverage implements AddsOutput, HandlesArguments
         // Lifted the logic to find all templates out of services/View::_resolveTemplateInternal
         \yii\base\Event::on(\craft\web\Application::class, \craft\web\Application::EVENT_INIT, function ($event) {
             $compileTemplates = function ($path, $base='') {
+
+                if (!is_string($path)) {
+                    return;
+                }
                 $directory = new \RecursiveDirectoryIterator($path);
                 $iterator = new \RecursiveIteratorIterator($directory);
                 $regex = new \RegexIterator($iterator, '/^.+\.(html|twig)$/i', \RecursiveRegexIterator::GET_MATCH);
@@ -104,7 +108,8 @@ class Coverage implements AddsOutput, HandlesArguments
                     $logicalName = substr($match[0], strlen($path));
                     $oldTemplateMode = \Craft::$app->view->getTemplateMode();
                     \Craft::$app->view->setTemplateMode('site');
-                    \Craft::$app->view->twig->loadTemplate($logicalName);
+                    $twig = \Craft::$app->view->twig;
+                    $twig->loadTemplate($twig->getTemplateClass($logicalName), $logicalName);
                     \Craft::$app->view->setTemplateMode($oldTemplateMode);
                 }
             };

@@ -39,11 +39,11 @@ class NodeList implements \Countable {
         return $result;
     }
 
-    function getText(): string {
+    function getText(): array {
         return $this->getNodeOrNodes(fn ($node) => $node->text());
     }
 
-    public function getInnerHTML(): string  {
+    public function getInnerHTML(): array  {
         return $this->getNodeOrNodes(fn ($node) => $node->html());
     }
 
