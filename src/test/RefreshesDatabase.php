@@ -96,6 +96,11 @@ trait RefreshesDatabase {
         $this->transaction = \Craft::$app->db->beginTransaction();
     }
 
+    protected function rollBackTransaction()
+    {
+        $this->tearDownRefreshesDatabase();
+    }
+
     protected function tearDownRefreshesDatabase()
     {
         $this->transaction->rollBack();

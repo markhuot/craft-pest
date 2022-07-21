@@ -87,17 +87,22 @@ class Coverage implements AddsOutput, HandlesArguments
         }
 
         \yii\base\Event::on(\craft\web\View::class, \craft\web\View::EVENT_AFTER_RENDER_TEMPLATE, function ($event) {
-            $compiledTemplate = \Craft::$app->view->twig->loadTemplate($event->template);
-    
+            $twig = \Craft::$app->view->twig;
+            $compiledTemplate = $twig->loadTemplate($twig->getTemplateClass($event->template), $event->template);
+
             // make no-op calls to ensure they don't show up in coverage reports as uncovered
             $compiledTemplate->getTemplateName();
-            $compiledTemplate->isTraitable();
             $compiledTemplate->getDebugInfo();
         });
 
         // Lifted the logic to find all templates out of services/View::_resolveTemplateInternal
         \yii\base\Event::on(\craft\web\Application::class, \craft\web\Application::EVENT_INIT, function ($event) {
             $compileTemplates = function ($path, $base='') {
+
+                if (!is_string($path)) {
+                    return;
+                }
+
                 $directory = new \RecursiveDirectoryIterator($path);
                 $iterator = new \RecursiveIteratorIterator($directory);
                 $regex = new \RegexIterator($iterator, '/^.+\.(html|twig)$/i', \RecursiveRegexIterator::GET_MATCH);
@@ -105,7 +110,8 @@ class Coverage implements AddsOutput, HandlesArguments
                     $logicalName = substr($match[0], strlen($path));
                     $oldTemplateMode = \Craft::$app->view->getTemplateMode();
                     \Craft::$app->view->setTemplateMode('site');
-                    \Craft::$app->view->twig->loadTemplate($logicalName);
+                    $twig = \Craft::$app->view->twig;
+                    $twig->loadTemplate($twig->getTemplateClass($logicalName), $logicalName);
                     \Craft::$app->view->setTemplateMode($oldTemplateMode);
                 }
             };
@@ -153,7 +159,7 @@ class Coverage implements AddsOutput, HandlesArguments
 
         $reportPath = __DIR__ . '/../../.temp/coverage.php';
 
-        /** @var CodeCoverage $codeCoverage */
+        /** @var \SebastianBergmann\CodeCoverage\CodeCoverage $codeCoverage */
         $codeCoverage = require $reportPath;
 
         $totalWidth = (new Terminal())->getWidth();
@@ -171,7 +177,6 @@ class Coverage implements AddsOutput, HandlesArguments
 
         $this->output->writeln('');
 
-        /** @var Directory<File|Directory> $report */
         $report = $codeCoverage->getReport();
 
 

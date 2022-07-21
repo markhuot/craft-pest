@@ -20,7 +20,7 @@ class BlockType extends Factory
 
     function newElement()
     {
-        return new MatrixBlockType;
+        return new MatrixBlockType();
     }
 
     function store($blockType)

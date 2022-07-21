@@ -66,7 +66,7 @@ class Asset extends Element {
         $assets = parent::create($definition);
 
         Event::on(RefreshesDatabase::class, 'EVENT_ROLLBACK_TRANSACTION', function () use ($assets) {
-            collection_wrap($assets)->each(fn (\craft\elements\Asset $asset) => $asset->volume->deleteFile($asset->path));
+            collection_wrap($assets)->each(fn (\craft\elements\Asset $asset) => $asset->volume->getFs()->deleteFile($asset->path));
         });
 
         return $assets;

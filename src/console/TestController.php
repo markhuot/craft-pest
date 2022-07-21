@@ -4,6 +4,7 @@ namespace markhuot\craftpest\console;
 
 use craft\console\Controller;
 use Symfony\Component\Process\Process;
+use yii\console\ExitCode;
 
 class TestController extends Controller {
 
@@ -13,6 +14,7 @@ class TestController extends Controller {
     function actionIndex() {
         $this->runInit();
         $this->runTests();
+        return ExitCode::OK;
     }
 
     /**
@@ -20,6 +22,7 @@ class TestController extends Controller {
      */
     function actionInit() {
         $this->runInit();
+        return ExitCode::OK;
     }
 
     /**
@@ -61,5 +64,4 @@ class TestController extends Controller {
             }
         }
     }
-
 }

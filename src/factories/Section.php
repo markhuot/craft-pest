@@ -7,7 +7,6 @@ use craft\helpers\StringHelper;
 use craft\models\Section_SiteSettings;
 use Faker\Factory as Faker;
 use Illuminate\Support\Collection;
-use function markhuot\craftpest\helpers\base\collectOrCollection;
 use function markhuot\craftpest\helpers\base\array_wrap;
 
 class Section extends Factory {
@@ -17,11 +16,11 @@ class Section extends Factory {
     /**
      * Get the element to be generated
      *
-     * @return ElementInterface
+     * @return \craft\models\Section
      */
     function newElement()
     {
-        return new \craft\models\Section;
+        return new \craft\models\Section();
     }
 
     /**

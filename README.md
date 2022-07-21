@@ -40,3 +40,28 @@ it('shows news on the homepage', function() {
         ->text->sequence(...$titles);
 });
 ```
+
+## Factories
+
+With Factories you create and persist fake data in your database.
+
+By using the `RefreshesDatabase` trait, all changes are reverted to the previous state.
+
+
+```php
+<?php
+
+uses(\markhuot\craftpest\test\RefreshesDatabase::class);
+
+it('creates 3 articles', function() {
+    $enties = \markhuot\craftpest\factories\Entry::factory()
+        ->count(3)
+        ->section('articles')
+        ->create();
+
+    expect($enties)->toHaveCount(3);
+});
+
+```
+
+

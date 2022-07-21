@@ -45,7 +45,7 @@ abstract class Factory {
     /**
      * Insert deps
      */
-    function __construct($faker=null) {
+    final public function __construct($faker=null) {
         $this->faker = $faker ?? Faker::create();
     }
 
@@ -166,7 +166,7 @@ abstract class Factory {
     /**
      * Instantiate an Entry
      *
-     * @return \craft\elements\Entry
+     * @return \craft\elements\Entry|Collection
      */
     function make($definition=[]) {
         $elements = collect([])

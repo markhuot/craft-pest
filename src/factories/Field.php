@@ -44,12 +44,10 @@ class Field extends Factory
 
     /**
      * Persist the entry to local
-     *
-     * @return \craft\records\Field
      */
-    function store($element)
+    function store($element): bool
     {
-        \Craft::$app->fields->saveField($element);
+        return \Craft::$app->fields->saveField($element);
     }
 
 }
