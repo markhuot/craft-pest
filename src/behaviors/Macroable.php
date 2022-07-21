@@ -3,11 +3,13 @@
 namespace markhuot\craftpest\behaviors;
 
 use yii\base\Behavior;
+use yii\base\InvalidCallException;
+use yii\base\UnknownMethodException;
 
 
 class Macroable extends Behavior
 {
-    static $macros = [];
+    static array $macros = [];
     
     public static function macro($class, $name, callable $callback)
     {
@@ -24,6 +26,12 @@ class Macroable extends Behavior
     }
     
     function __call($method, $args=[]) {
-        return static::$macros[get_class($this->owner)][$method]($this->owner, ...$args);
+        if (!$this->hasMethod($method)) {
+            throw new UnknownMethodException("Unknown method $method()");
+        }
+
+        $callback = static::$macros[get_class($this->owner)][$method];
+
+        return $callback($this->owner, ...$args);
     }
 }

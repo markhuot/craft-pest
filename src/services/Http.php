@@ -20,39 +20,14 @@ use yii\web\NotFoundHttpException;
 class Http
 {
     /**
-     * Example description.
+     * Preform get request and return a response
+     * with helper methods to allow assertions on it
+     *
+     * @see TestableResponseBehavior
      */
-    public function get(string $uri=null): \craft\web\Response
+    public function get(string $uri=null): \markhuot\craftpest\web\Response
     {
-        $uri = ltrim($uri, '/');
-        $parts = preg_split('/\?/', $uri);
-        $uri = $parts[0];
-        $queryString = $parts[1] ?? '';
-
-        parse_str($queryString, $queryParams);
-
-        $config = App::webRequestConfig();
-        $config['class'] = \markhuot\craftpest\web\Request::class;
-
-        $opts = [
-            '_isConsoleRequest' => false,
-            '_fullPath' => $uri,
-            '_path' => $uri,
-            '_fullUri' => $uri.'?'.$queryString,
-            '_ipAddress' => '::1',
-            '_rawBody' => '',
-            '_bodyParams' => [],
-            '_queryParams' => $queryParams,
-            '_hostInfo' => 'http://localhost:8080',
-            '_hostName' => 'localhost',
-            '_baseUrl' => '',
-            '_scriptUrl' => '/index.php',
-            '_scriptFile' => '',
-            '_pathInfo' => $uri,
-            '_url' => "/{$uri}?{$queryString}",
-            '_port' => 8080,
-        ];
-        $request = \Craft::createObject($config)->setRaw($opts);
+        $request = Request::createGetRequestFromUri($uri);
 
         /** @var WebApplication $craft */
         $craft = \Craft::$app;
@@ -60,12 +35,6 @@ class Http
         $craft->set('request', $request);
         $craft->set('response', \markhuot\craftpest\web\Response::class);
         $craft->getView()->setTemplateMode('site');
-
-        // $response = (new \markhuot\craftpest\test\Response);
-        // $response->attachBehavior('testableResponse', TestableResponseBehavior::class);
-        // foreach ($craft->response->getBehaviors() as $key => $value) {
-        //     $response->attachBehavior($key, $value);
-        // }
 
         $craft->setComponents([
             'request' => $request,
@@ -98,18 +67,13 @@ class Http
 
         // Catch any exceptions during handling
         catch (\Exception $e) {
-            // Native Craft error handling
-            // $craft->errorHandler->silentExitOnException = true;
-            // $craft->errorHandler->discardExistingOutput = false;
-            // $craft->errorHandler->handleException($e);
-            // $response = $craft->response;
 
-            // Add in ability to "expect" exceptions so this gets passed over
-            // Should be able to $this->expect(PageNotFoundException::class)->get('/foo') or something like that
+            // Support for status code checks
             if (is_a($e, HttpException::class)) {
                 $response = \Craft::createObject(\markhuot\craftpest\web\Response::class);
                 $response->setStatusCode($e->statusCode);
 
+                // Error response
                 return $response;
             }
 
@@ -119,6 +83,10 @@ class Http
             die;
         }
 
+        // Successful response
         return $response;
     }
+
+
+
 }

@@ -3,17 +3,29 @@
 namespace markhuot\craftpest\behaviors;
 
 use markhuot\craftpest\dom\NodeList;
-use markhuot\craftpest\test\Response;
 use Symfony\Component\DomCrawler\Crawler;
 use yii\base\Behavior;
+use yii\web\Response;
 
 /**
  * @property \craft\web\Response $owner
  */
 class TestableResponseBehavior extends Behavior {
 
+    public Response $response;
+    
+    public function attach($owner)
+    {
+        parent::attach($owner);
+
+        if (is_a($owner, Response::class)) {
+            $this->response = $owner;
+        }
+    }
+
+
     public function querySelector($selector) {
-        $html = $this->owner->content;
+        $html = $this->response->content;
         $crawler = new Crawler($html);
         return new NodeList($crawler->filter($selector));
     }
@@ -36,22 +48,22 @@ class TestableResponseBehavior extends Behavior {
 
     function assertCookie() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertCookieExpired() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertCookieNotExpired() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertCookieMissing() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertCreated() {
@@ -59,93 +71,93 @@ class TestableResponseBehavior extends Behavior {
     }
 
     function assertDontSee(string $text) {
-        test()->assertStringNotContainsString($text, $this->owner->content);
-        return $this->owner;
+        test()->assertStringNotContainsString($text, $this->response->content);
+        return $this->response;
     }
 
     function assertDontSeeText() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertDownload() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertExactJson(array $json) {
-        test()->assertExact($json, $this->owner->content);
-        return $this->owner;
+        test()->assertExact($json, $this->response->content);
+        return $this->response;
     }
 
     function assertForbidden() {
         return $this->assertStatus(403);
     }
 
-    function assertHeader($name, $expected=null) {
-        $value = $this->owner->headers->get($name);
+    function assertHeader($name, $expected = null) {
+        $value = $this->response->headers->get($name);
         if ($expected === null) {
             test()->assertNotNull($value);
         }
         else {
             test()->assertSame($expected, $value);
         }
-        return $this->owner;
+        return $this->response;
     }
 
     function assertHeaderMissing($name) {
-        test()->assertNull($this->owner->headers->get($name));
-        return $this->owner;
+        test()->assertNull($this->response->headers->get($name));
+        return $this->response;
     }
 
     function assertJson() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertJsonCount() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertJsonFragment() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertJsonMissing() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertJsonMissingExact() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertJsonMissingValidationErrors() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertJsonPath() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertJsonStructure() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertJsonValidationErrors() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
-    function assertLocation() {
-        // TODO
-        return $this->owner;
+    function assertLocation(string $location) {
+        test()->assertSame($location, $this->response->getHeaders()->get('Location'));
+        return $this->response;
     }
 
     /**
@@ -157,9 +169,9 @@ class TestableResponseBehavior extends Behavior {
     function assertNoContent($status = 204) {
         $this->assertStatus($status);
 
-        test()->assertEmpty($this->owner->content, 'Response content is not empty.');
+        test()->assertEmpty($this->response->content, 'Response content is not empty.');
 
-        return $this->owner;
+        return $this->response;
     }
 
     function assertNotFound() {
@@ -172,27 +184,37 @@ class TestableResponseBehavior extends Behavior {
 
     function assertPlainCookie() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertRedirect() {
-        test()->toBeGreaterThanOrEqual(300)
-            ->toBeLessThanOrEqual(399);
 
-        return $this->owner;
+        test()->assertGreaterThanOrEqual(300, $this->response->getStatusCode());
+        test()->assertLessThan(400, $this->response->getStatusCode());
+
+        return $this->response;
     }
+
+    function assertRedirectTo(string $location) {
+
+        $this->assertRedirect();
+        $this->assertLocation($location);;
+
+        return $this->response;
+    }
+
 
     // function assertRedirectToSignedRoute() {
     // }
 
     function assertSee($text) {
-        test()->assertStringContainsString($text, $this->owner->content);
-        return $this->owner;
+        test()->assertStringContainsString($text, $this->response->content);
+        return $this->response;
     }
 
     function assertSeeInOrder() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertSeeText(string $text) {
@@ -201,59 +223,59 @@ class TestableResponseBehavior extends Behavior {
 
     function assertSeeTextInOrder(string $text) {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertSessionHas() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertSessionHasInput() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertSessionHasAll() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertSessionHasErrors() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertSessionHasErrorsIn() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertSessionHasNoErrors() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertSessionDoesntHaveErrors() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertSessionMissing() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertStatus($code) {
-        test()->assertSame($code, $this->owner->getStatusCode());
-        return $this->owner;
+        test()->assertSame($code, $this->response->getStatusCode());
+        return $this->response;
     }
 
     function assertSuccessful() {
-        test()->assertGreaterThanOrEqual(200, $this->owner->getStatusCode());
-        test()->assertLessThan(300, $this->owner->getStatusCode());
+        test()->assertGreaterThanOrEqual(200, $this->response->getStatusCode());
+        test()->assertLessThan(300, $this->response->getStatusCode());
 
-        return $this->owner;
+        return $this->response;
     }
 
     function assertUnauthorized() {
@@ -262,32 +284,32 @@ class TestableResponseBehavior extends Behavior {
 
     function assertValid() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertInvalid() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertViewHas() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertViewHasAll() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertViewIs() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
     function assertViewMissing() {
         // TODO
-        return $this->owner;
+        return $this->response;
     }
 
 }
