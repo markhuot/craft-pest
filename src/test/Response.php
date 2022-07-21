@@ -4,6 +4,7 @@ namespace markhuot\craftpest\test;
 
 use markhuot\craftpest\dom\NodeList;
 use Symfony\Component\DomCrawler\Crawler;
+use yii\web\NotFoundHttpException;
 
 /**
  * @deprecated
@@ -21,7 +22,7 @@ class Response extends \craft\web\Response
     }
 
     public function querySelector($selector) {
-        $html = $this->data;
+        $html = $this->content;
         $crawler = new Crawler($html);
         return new NodeList($crawler->filter($selector));
     }
@@ -67,7 +68,7 @@ class Response extends \craft\web\Response
     }
 
     function assertDontSee(string $text) {
-        test()->assertStringNotContainsString($text, $this->data);
+        test()->assertStringNotContainsString($text, $this->content);
         return $this;
     }
 
@@ -82,7 +83,7 @@ class Response extends \craft\web\Response
     }
 
     function assertExactJson(array $json) {
-        test()->assertExact($json, $this->data);
+        test()->assertExact($json, $this->content);
         return $this;
     }
 
@@ -165,13 +166,14 @@ class Response extends \craft\web\Response
     function assertNoContent($status = 204) {
         $this->assertStatus($status);
 
-        test()->assertEmpty($this->data, 'Response content is not empty.');
+        test()->assertEmpty($this->content, 'Response content is not empty.');
 
         return $this;
     }
 
     function assertNotFound() {
-        return $this->assertStatus(404);
+        test()->throws(NotFoundHttpException::class);
+        return $this;
     }
 
     function assertOk() {
@@ -193,7 +195,7 @@ class Response extends \craft\web\Response
     // }
 
     function assertSee($text) {
-        test()->assertStringContainsString($text, $this->data);
+        test()->assertStringContainsString($text, $this->content);
         return $this;
     }
 

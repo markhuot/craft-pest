@@ -13,7 +13,7 @@ use yii\base\Behavior;
 class TestableResponseBehavior extends Behavior {
 
     public function querySelector($selector) {
-        $html = $this->owner->data;
+        $html = $this->owner->content;
         $crawler = new Crawler($html);
         return new NodeList($crawler->filter($selector));
     }
@@ -59,7 +59,7 @@ class TestableResponseBehavior extends Behavior {
     }
 
     function assertDontSee(string $text) {
-        test()->assertStringNotContainsString($text, $this->owner->data);
+        test()->assertStringNotContainsString($text, $this->owner->content);
         return $this->owner;
     }
 
@@ -74,7 +74,7 @@ class TestableResponseBehavior extends Behavior {
     }
 
     function assertExactJson(array $json) {
-        test()->assertExact($json, $this->owner->data);
+        test()->assertExact($json, $this->owner->content);
         return $this->owner;
     }
 
@@ -157,7 +157,7 @@ class TestableResponseBehavior extends Behavior {
     function assertNoContent($status = 204) {
         $this->assertStatus($status);
 
-        test()->assertEmpty($this->owner->data, 'Response content is not empty.');
+        test()->assertEmpty($this->owner->content, 'Response content is not empty.');
 
         return $this->owner;
     }
@@ -186,7 +186,7 @@ class TestableResponseBehavior extends Behavior {
     // }
 
     function assertSee($text) {
-        test()->assertStringContainsString($text, $this->owner->data);
+        test()->assertStringContainsString($text, $this->owner->content);
         return $this->owner;
     }
 

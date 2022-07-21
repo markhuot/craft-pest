@@ -11,6 +11,19 @@ use function markhuot\craftpest\helpers\http\get;
 // Before any of that, though, let's start with a simple test that the homepage loads and
 // returns an 200 Ok status code.
 get('/')->assertOk();
+// Same thing, different syntax
+it('renders home page without errors', function () {
+    $this->get('/')->assertOk();
+});
+
+// Or a 404
+get('/non-existing-page')->assertNotFound();
+// Same thing, different syntax
+it('returns a 404 on a non-existing page', function () {
+    $this->get('/non-existing-page')->assertNotFound();
+});
+
+
 
 // You can evaluate HTML for specific markup using a CSS selector to find your expected markup and then make assertions
 // on the content within. For example, to check that there is a sidebar of recent news that contains five news articles
