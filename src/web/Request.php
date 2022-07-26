@@ -37,9 +37,15 @@ class Request extends \craft\web\Request {
             '_pathInfo' => $uri,
             '_url' => "/{$uri}?{$queryString}",
             '_port' => 8080,
+            '_isCpRequest' => true,
         ];
 
-        return \Craft::createObject($config)->setRaw($opts);
+        /** @var $request \craft\web\Request */
+        $request = \Craft::createObject($config)->setRaw($opts);
+        $request->headers->set('User-Agent', 'Pest-Agent');
+        $request->headers->set('X-Forwarded-For', '127.0.0.1');
+
+        return $request;
     }
 
     public function resolve(): array

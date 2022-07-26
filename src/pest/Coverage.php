@@ -49,8 +49,16 @@ class Coverage implements AddsOutput, HandlesArguments
         $this->output = $output;
     }
 
+    /**
+     * This method is called every time pest is executed
+     * but we are only intested in the --coverage option
+     */
     function handleArguments(array $originals): array
     {
+        if (!in_array('--coverage', $originals)) {
+            return [];
+        }
+
         $arguments = array_merge([''], array_values(array_filter($originals, function ($original): bool {
             foreach ([self::COVERAGE_OPTION, self::MIN_OPTION] as $option) {
                 if ($original === sprintf('--%s', $option) || Str::startsWith($original, sprintf('--%s=', $option))) {
@@ -97,6 +105,7 @@ class Coverage implements AddsOutput, HandlesArguments
 
         // Lifted the logic to find all templates out of services/View::_resolveTemplateInternal
         \yii\base\Event::on(\craft\web\Application::class, \craft\web\Application::EVENT_INIT, function ($event) {
+            return;
             $compileTemplates = function ($path, $base='') {
 
                 if (!is_string($path)) {

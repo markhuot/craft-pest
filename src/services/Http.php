@@ -25,9 +25,10 @@ class Http
      *
      * @see TestableResponseBehavior
      */
-    public function get(string $uri=null): \markhuot\craftpest\web\Response
+    public function get(string $uri=null, $cookies = []): \markhuot\craftpest\web\Response
     {
         $request = Request::createGetRequestFromUri($uri);
+        $request->cookies->fromArray($cookies);
 
         /** @var WebApplication $craft */
         $craft = \Craft::$app;
@@ -35,6 +36,10 @@ class Http
         $craft->set('request', $request);
         $craft->set('response', \markhuot\craftpest\web\Response::class);
         $craft->getView()->setTemplateMode('site');
+
+        if ($cookies) {
+            $craft->getView()->setTemplateMode('cp');
+        }
 
         $craft->setComponents([
             'request' => $request,
@@ -62,6 +67,9 @@ class Http
             $response->prepare();
             $response->attachBehavior('testableResponse', TestableResponseBehavior::class);
 
+            if($cookies) {
+                dd($response);
+            }
             $craft->trigger(Application::EVENT_AFTER_REQUEST);
         }
 
@@ -70,6 +78,11 @@ class Http
 
             // Support for status code checks
             if (is_a($e, HttpException::class)) {
+
+                if($cookies) {
+                    dd($e);
+                }
+
                 $response = \Craft::createObject(\markhuot\craftpest\web\Response::class);
                 $response->setStatusCode($e->statusCode);
 
