@@ -4,6 +4,7 @@ namespace markhuot\craftpest\test;
 
 use craft\web\User;
 use markhuot\craftpest\Pest;
+use markhuot\craftpest\web\TestableResponse;
 
 class TestCase extends \PHPUnit\Framework\TestCase {
 
@@ -84,7 +85,7 @@ class TestCase extends \PHPUnit\Framework\TestCase {
     /**
      * Passthrough for the HTTP service
      */
-    function get(...$args): \markhuot\craftpest\web\Response
+    function get(...$args): TestableResponse
     {
         return Pest::getInstance()->http->get(...$args);
     }

@@ -3,7 +3,7 @@
 namespace markhuot\craftpest\behaviors;
 
 use markhuot\craftpest\dom\NodeList;
-use markhuot\craftpest\web\Response;
+use markhuot\craftpest\web\TestableResponse;
 use Symfony\Component\DomCrawler\Crawler;
 use yii\base\Behavior;
 
@@ -12,13 +12,13 @@ use yii\base\Behavior;
  */
 class TestableResponseBehavior extends Behavior {
 
-    public Response $response;
+    public TestableResponse $response;
     
     public function attach($owner)
     {
         parent::attach($owner);
 
-        if (is_a($owner, Response::class)) {
+        if (is_a($owner, TestableResponse::class)) {
             $this->response = $owner;
         }
     }
