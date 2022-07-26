@@ -74,4 +74,6 @@ test('admin can see Craft version info in CP', function () {
         ->querySelector("#app-info")->assertContainsString("Craft CMS 4");
 });
 
-
+it('promotes craft')
+    ->get('/')
+    ->assertHeader('x-powered-by', 'Craft CMS');

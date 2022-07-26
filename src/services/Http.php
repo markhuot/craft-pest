@@ -66,7 +66,7 @@ class Http
 
             $craft->trigger(Application::EVENT_BEFORE_REQUEST);
             /** @var \craft\web\Response $response */
-            $response = $craft->handleRequest($request, true);
+            $response = $craft->handleRequest($request, false);
             $response->prepare();
             $response->attachBehavior('testableResponse', TestableResponseBehavior::class);
             
