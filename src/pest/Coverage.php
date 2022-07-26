@@ -56,7 +56,7 @@ class Coverage implements AddsOutput, HandlesArguments
     function handleArguments(array $originals): array
     {
         if (!in_array('--coverage', $originals)) {
-            return [];
+            return $originals;
         }
 
         $arguments = array_merge([''], array_values(array_filter($originals, function ($original): bool {

@@ -3,9 +3,9 @@
 namespace markhuot\craftpest\behaviors;
 
 use markhuot\craftpest\dom\NodeList;
+use markhuot\craftpest\web\Response;
 use Symfony\Component\DomCrawler\Crawler;
 use yii\base\Behavior;
-use yii\web\Response;
 
 /**
  * @property \craft\web\Response $owner

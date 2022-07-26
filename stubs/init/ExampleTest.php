@@ -64,3 +64,14 @@ it('loads the news listing and displays the most recent news article', function 
         ->querySelector('.related li')
         ->text->not->toNotContain($entry->title);
 })->skip();
+
+// By using actingAs() the next requests emulate a logged-in user
+// You can pass a user email, user handle or an User object
+test('admin can see Craft version info in CP', function () {
+    $this->actingAs('admin')
+        ->get('/admin/settings')
+        ->assertOk()
+        ->querySelector("#app-info")->assertContainsString("Craft CMS 4");
+});
+
+

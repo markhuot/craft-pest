@@ -60,6 +60,13 @@ class NodeList implements \Countable {
         return $this;
     }
 
+
+    public function assertContainsString($expected) {
+        test()->assertStringContainsString($expected, $this->getText());
+        return $this;
+    }
+
+
     public function assertCount($expected) {
         test()->assertCount($expected, $this);
         return $this;

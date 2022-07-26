@@ -2,6 +2,7 @@
 
 namespace markhuot\craftpest\test;
 
+use craft\web\User;
 use markhuot\craftpest\Pest;
 
 class TestCase extends \PHPUnit\Framework\TestCase {
@@ -83,9 +84,20 @@ class TestCase extends \PHPUnit\Framework\TestCase {
     /**
      * Passthrough for the HTTP service
      */
-    function get(...$args): \craft\web\Response
+    function get(...$args): \markhuot\craftpest\web\Response
     {
         return Pest::getInstance()->http->get(...$args);
+    }
+
+    function actingAs(User|string $user = null): self
+    {
+        if (is_string($user)) {
+            $user = \Craft::$app->getUsers()->getUserByUsernameOrEmail($user);
+        }
+        
+        \Craft::$app->getUser()->setIdentity($user);
+
+        return $this;
     }
 
 }

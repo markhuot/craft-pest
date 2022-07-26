@@ -8,14 +8,16 @@ use yii\web\NotFoundHttpException;
 
 class Request extends \craft\web\Request {
 
-    public static function createGetRequestFromUri($uri): Request
+    public static function createGetRequestFromUri($uri, $isCpRequest = false): Request
     {
+        
         $uri = ltrim($uri, '/');
         $parts = preg_split('/\?/', $uri);
         $uri = $parts[0];
         $queryString = $parts[1] ?? '';
 
         parse_str($queryString, $queryParams);
+
 
         $config = App::webRequestConfig();
         $config['class'] = \markhuot\craftpest\web\Request::class;
@@ -37,7 +39,7 @@ class Request extends \craft\web\Request {
             '_pathInfo' => $uri,
             '_url' => "/{$uri}?{$queryString}",
             '_port' => 8080,
-            '_isCpRequest' => true,
+            '_isCpRequest' => $isCpRequest,
         ];
 
         /** @var $request \craft\web\Request */
@@ -55,6 +57,11 @@ class Request extends \craft\web\Request {
         }
 
         [$route, $params] = $result;
+
+        // This is stupid, but it works
+        if (isset($params['template'])) {
+            $params['template'] = str_replace('admin/', '', $params['template']);
+        }
 
         /** @noinspection AdditionOperationOnArraysInspection */
         return [$route, $params + $this->getQueryParams()];

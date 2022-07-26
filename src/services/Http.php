@@ -9,6 +9,7 @@ use craft\web\Response;
 use craft\web\TemplateResponseBehavior;
 use craft\web\TemplateResponseFormatter;
 use craft\web\UrlManager;
+use craft\web\User;
 use GuzzleHttp\Psr7\Message;
 use markhuot\craftpest\behaviors\TestableResponseBehavior;
 use markhuot\craftpest\web\Request;
@@ -27,19 +28,20 @@ class Http
      */
     public function get(string $uri=null, $cookies = []): \markhuot\craftpest\web\Response
     {
-        $request = Request::createGetRequestFromUri($uri);
+        $path = parse_url($uri, PHP_URL_PATH);
+        $isCpRequest = str_starts_with(ltrim($path,'/'), 'admin');
+        $request = Request::createGetRequestFromUri($uri, $isCpRequest);
         $request->cookies->fromArray($cookies);
 
         /** @var WebApplication $craft */
         $craft = \Craft::$app;
+        $craft->getConfig()->getGeneral()->runQueueAutomatically = false;
 
+        $craft->getView()->setTemplateMode($isCpRequest ? 'cp' : 'site');
         $craft->set('request', $request);
         $craft->set('response', \markhuot\craftpest\web\Response::class);
-        $craft->getView()->setTemplateMode('site');
 
-        if ($cookies) {
-            $craft->getView()->setTemplateMode('cp');
-        }
+
 
         $craft->setComponents([
             'request' => $request,
@@ -66,10 +68,7 @@ class Http
             $response = $craft->handleRequest($request, true);
             $response->prepare();
             $response->attachBehavior('testableResponse', TestableResponseBehavior::class);
-
-            if($cookies) {
-                dd($response);
-            }
+            
             $craft->trigger(Application::EVENT_AFTER_REQUEST);
         }
 
@@ -78,10 +77,6 @@ class Http
 
             // Support for status code checks
             if (is_a($e, HttpException::class)) {
-
-                if($cookies) {
-                    dd($e);
-                }
 
                 $response = \Craft::createObject(\markhuot\craftpest\web\Response::class);
                 $response->setStatusCode($e->statusCode);
@@ -95,6 +90,9 @@ class Http
             echo $e->getTraceAsString();
             die;
         }
+
+        // Reset user
+        //$craft->getUser()->setIdentity(null);
 
         // Successful response
         return $response;
