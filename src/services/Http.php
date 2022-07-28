@@ -19,6 +19,9 @@ use yii\base\Event;
 use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
 
+/**
+ * @deprecated
+ */
 class Http
 {
     /**

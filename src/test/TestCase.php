@@ -3,6 +3,7 @@
 namespace markhuot\craftpest\test;
 
 use craft\web\User;
+use markhuot\craftpest\http\RequestBuilder;
 use markhuot\craftpest\Pest;
 use markhuot\craftpest\web\TestableResponse;
 
@@ -82,12 +83,20 @@ class TestCase extends \PHPUnit\Framework\TestCase {
         return $app;
     }
 
-    /**
-     * Passthrough for the HTTP service
-     */
     function get(...$args): TestableResponse
     {
-        return Pest::getInstance()->http->get(...$args);
+        //return Pest::getInstance()->http->get(...$args);
+        return (new RequestBuilder('get', ...$args))->send();
+    }
+
+    function post(...$args): TestableResponse
+    {
+        return (new RequestBuilder('post', ...$args))->send();
+    }
+
+    function http(string $method, string $uri): RequestBuilder
+    {
+        return new RequestBuilder($method, $uri);
     }
 
     function actingAs(User|string $user = null): self
