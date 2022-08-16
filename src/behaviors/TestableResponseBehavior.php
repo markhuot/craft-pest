@@ -8,7 +8,7 @@ use Symfony\Component\DomCrawler\Crawler;
 use yii\base\Behavior;
 
 /**
- * @property \craft\web\Response $owner
+ * @property \craft\web\Response | TestableResponseBehavior $owner
  */
 class TestableResponseBehavior extends Behavior {
 
@@ -63,8 +63,8 @@ class TestableResponseBehavior extends Behavior {
         return $this->owner;
     }
 
-    function assertDontSeeText() {
-        // TODO
+    function assertDontSeeText(string $text) {
+        test()->assertStringNotContainsString($text, preg_replace('/\s+/', ' ', strip_tags($this->owner->data)));
         return $this->owner;
     }
 
@@ -199,8 +199,8 @@ class TestableResponseBehavior extends Behavior {
         return $this->assertSeeTextInOrder($text);
     }
 
-    function assertSeeTextInOrder() {
-        // TODO
+    function assertSeeTextInOrder(string $text) {
+        test()->assertStringContainsString($text, preg_replace('/\s+/', ' ', strip_tags($this->owner->data)));
         return $this->owner;
     }
 
