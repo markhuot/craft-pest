@@ -13,7 +13,7 @@ use yii\web\Cookie;
 class RequestBuilder
 {
     private WebRequest $request;
-    private Application $app;
+    private \craft\web\Application $app;
     private RequestHandler $handler;
 
     public function __construct(
@@ -73,8 +73,8 @@ class RequestBuilder
     private function prepareRequest(string $method, string $uri): WebRequest
     {
         $request = match (strtolower($method)) {
-            'get' => new GetRequest($uri),
-            'post' => new PostRequest($uri),
+            'get' => GetRequest::make($uri),
+            'post' => PostRequest::make($uri),
              default => throw new \InvalidArgumentException("Unable to build request. Unknown method '$method'"),
         };
 

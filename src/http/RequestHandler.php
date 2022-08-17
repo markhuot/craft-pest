@@ -8,9 +8,9 @@ use yii\web\HttpException;
 
 class RequestHandler
 {
-    private Application $app;
+    private \craft\web\Application $app;
 
-    public function __construct(?Application $app = null)
+    public function __construct(?\craft\web\Application $app = null)
     {
         $this->app = $app ?? \Craft::$app;
     }
@@ -54,7 +54,7 @@ class RequestHandler
     private function registerWithCraft($request): void
     {
         $this->app->getConfig()->getGeneral()->runQueueAutomatically = false;
-        $this->app->getView()->setTemplateMode($request->isCpRequest() ? 'cp' : 'site');
+        $this->app->getView()->setTemplateMode($request->isCpRequest ? 'cp' : 'site');
 
         // The next request
         $this->app->set('request', $request);
