@@ -2,6 +2,7 @@
 
 namespace markhuot\craftpest\factories;
 
+use craft\fieldlayoutelements\CustomField;
 use craft\models\FieldLayout;
 
 trait Fieldable
@@ -10,7 +11,7 @@ trait Fieldable
 
     function fields(array $fields)
     {
-        $this->fields = $fields;
+        $this->fields = array_merge($this->fields, $fields);
 
         return $this;
     }
@@ -27,10 +28,14 @@ trait Fieldable
 
                     return $f;
                 })
+                ->map(function (\craft\base\Field $f) {
+                    \Craft::$app->fields->saveField($f);
+                    return new CustomField($f);
+                })
                 ->flatten(1)
                 ->toArray();
 
-            $fieldLayout->setFields($fields);
+            $fieldLayout->getTabs()[0]->setElements($fields);
             \Craft::$app->fields->saveLayout($fieldLayout);
         }
     }

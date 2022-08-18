@@ -15,6 +15,21 @@ class Field extends Factory
         return $this;
     }
 
+    function group(string $groupName)
+    {
+        $this->attributes['groupId'] = function () use ($groupName) {
+            foreach (\Craft::$app->fields->getAllGroups() as $group) {
+                if ($group->name === $groupName) {
+                    return $group->id;
+                }
+            }
+
+            return self::NULL;
+        };
+
+        return $this;
+    }
+
     /**
      * Get the element to be generated
      *
@@ -35,10 +50,12 @@ class Field extends Factory
     function definition(int $index = 0) {
         $name = $this->faker->words(2, true);
         $handle = StringHelper::toCamelCase($name);
+        $firstFieldGroupId = \Craft::$app->fields->getAllGroups()[0]->id;
 
         return [
             'name' => $name,
             'handle' => $handle,
+            'groupId' => $firstFieldGroupId,
         ];
     }
 

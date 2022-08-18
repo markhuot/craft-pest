@@ -171,7 +171,7 @@ abstract class Factory {
     function make($definition=[]) {
         $elements = collect([])
             ->pad($this->count, null)
-            ->map(fn ($_, $index) => $this->internalMake($definition, $index));
+            ->map(fn () => $this->internalMake($definition));
 
         if ($this->count === 1) {
             return $elements->first();
@@ -235,13 +235,8 @@ abstract class Factory {
 
     /**
      * Generate the element
-     *
-     * @param array $definition
-     * @param int $index
-     *
-     * @return mixed
      */
-    protected function internalMake($definition=[], $index=0)
+    protected function internalMake(array $definition=[])
     {
         $element = $this->newElement();
 

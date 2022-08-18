@@ -9,9 +9,48 @@ use Faker\Factory as Faker;
 use Illuminate\Support\Collection;
 use function markhuot\craftpest\helpers\base\array_wrap;
 
+/**
+ * @method self type(string $type)
+ */
 class Section extends Factory {
 
     use Fieldable;
+
+    protected $hasUrls = true;
+
+    protected $uriFormat = '{slug}';
+
+    protected $enabledByDefault = true;
+
+    protected $template = '_{handle}/entry';
+
+    function hasUrls(bool $hasUrls)
+    {
+        $this->hasUrls = $hasUrls;
+
+        return $this;
+    }
+
+    function uriFormat(string $uriFormat)
+    {
+        $this->uriFormat = $uriFormat;
+
+        return $this;
+    }
+
+    function enabledByDefault(bool $enabledByDefault)
+    {
+        $this->enabledByDefault = $enabledByDefault;
+
+        return $this;
+    }
+
+    function template(string $template)
+    {
+        $this->template = $template;
+
+        return $this;
+    }
 
     /**
      * Get the element to be generated
@@ -36,13 +75,16 @@ class Section extends Factory {
             'name' => $name,
             'handle' => $handle,
             'type' => 'channel',
-            'siteSettings' => collect(\Craft::$app->sites->getAllSites())->mapWithkeys(function ($site) use ($handle) {
+            'siteSettings' => collect(\Craft::$app->sites->getAllSites())->mapWithkeys(function ($site) use ($name, $handle) {
                 $settings = new Section_SiteSettings();
                 $settings->siteId = $site->id;
-                $settings->hasUrls = true;
-                $settings->uriFormat = '{slug}';
-                $settings->enabledByDefault = true;
-                $settings->template = '_' . $handle . '/entry';
+                $settings->hasUrls = $this->hasUrls;
+                $settings->uriFormat = $this->uriFormat;
+                $settings->enabledByDefault = $this->enabledByDefault;
+                $settings->template = \Craft::$app->view->renderObjectTemplate($this->template, [
+                    'name' => $name,
+                    'handle' => $handle
+                ]);
 
                 return [$site->id => $settings];
             })->toArray(),
@@ -53,7 +95,6 @@ class Section extends Factory {
      * Persist the entry to local
      *
      * @param \craft\models\Section $element
-     * @return Collection|\craft\elements\Entry
      */
     function store($element) {
         \Craft::$app->sections->saveSection($element);
