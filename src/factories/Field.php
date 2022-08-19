@@ -4,6 +4,9 @@ namespace markhuot\craftpest\factories;
 
 use craft\helpers\StringHelper;
 
+/**
+ * @method void context(string $context)
+ */
 class Field extends Factory
 {
     protected $type;
@@ -33,7 +36,7 @@ class Field extends Factory
     /**
      * Get the element to be generated
      *
-     * @return \craft\records\Field
+     * @return \craft\base\Field
      */
     function newElement()
     {

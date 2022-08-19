@@ -24,8 +24,6 @@ class MatrixField extends Field
 
     /**
      * Get the element to be generated
-     *
-     * @return \craft\fields\Matrix
      */
     function newElement()
     {

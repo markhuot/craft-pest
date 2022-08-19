@@ -106,46 +106,48 @@ class Coverage implements AddsOutput, HandlesArguments
         // Lifted the logic to find all templates out of services/View::_resolveTemplateInternal
         \yii\base\Event::on(\craft\web\Application::class, \craft\web\Application::EVENT_INIT, function ($event) {
             return;
-            $compileTemplates = function ($path, $base='') {
-
-                if (!is_string($path)) {
-                    return;
-                }
-
-                $directory = new \RecursiveDirectoryIterator($path);
-                $iterator = new \RecursiveIteratorIterator($directory);
-                $regex = new \RegexIterator($iterator, '/^.+\.(html|twig)$/i', \RecursiveRegexIterator::GET_MATCH);
-                foreach ($regex as $match) {
-                    $logicalName = substr($match[0], strlen($path));
-                    $oldTemplateMode = \Craft::$app->view->getTemplateMode();
-                    \Craft::$app->view->setTemplateMode('site');
-                    $twig = \Craft::$app->view->twig;
-                    $twig->loadTemplate($twig->getTemplateClass($logicalName), $logicalName);
-                    \Craft::$app->view->setTemplateMode($oldTemplateMode);
-                }
-            };
-
-            // Site specific templates
-            foreach (\Craft::$app->sites->getAllSites() as $site) {
-                $sitePath = implode(DIRECTORY_SEPARATOR, [CRAFT_BASE_PATH, 'templates', $site->handle]);
-                if (is_dir($sitePath)) {
-                    $compileTemplates($sitePath);
-                }
-            }
-
-            // Native templates
-            $sitePath = CRAFT_BASE_PATH . '/templates/';
-            if (is_dir($sitePath)) {
-                $compileTemplates($sitePath);
-            }
-
-            // Template roots
-            foreach (array_filter(array_merge([
-                \Craft::$app->view->getSiteTemplateRoots(),
-                \Craft::$app->view->getCpTemplateRoots(),
-            ])) as $templateRoot => $basePath) {
-                $compileTemplates($basePath, $templateRoot);
-            }
+            // TODO
+            // commented out because it errors out in a number of errors.
+            // $compileTemplates = function ($path, $base='') {
+            //
+            //     if (!is_string($path)) {
+            //         return;
+            //     }
+            //
+            //     $directory = new \RecursiveDirectoryIterator($path);
+            //     $iterator = new \RecursiveIteratorIterator($directory);
+            //     $regex = new \RegexIterator($iterator, '/^.+\.(html|twig)$/i', \RecursiveRegexIterator::GET_MATCH);
+            //     foreach ($regex as $match) {
+            //         $logicalName = substr($match[0], strlen($path));
+            //         $oldTemplateMode = \Craft::$app->view->getTemplateMode();
+            //         \Craft::$app->view->setTemplateMode('site');
+            //         $twig = \Craft::$app->view->twig;
+            //         $twig->loadTemplate($twig->getTemplateClass($logicalName), $logicalName);
+            //         \Craft::$app->view->setTemplateMode($oldTemplateMode);
+            //     }
+            // };
+            //
+            // // Site specific templates
+            // foreach (\Craft::$app->sites->getAllSites() as $site) {
+            //     $sitePath = implode(DIRECTORY_SEPARATOR, [CRAFT_BASE_PATH, 'templates', $site->handle]);
+            //     if (is_dir($sitePath)) {
+            //         $compileTemplates($sitePath);
+            //     }
+            // }
+            //
+            // // Native templates
+            // $sitePath = CRAFT_BASE_PATH . '/templates/';
+            // if (is_dir($sitePath)) {
+            //     $compileTemplates($sitePath);
+            // }
+            //
+            // // Template roots
+            // foreach (array_filter(array_merge([
+            //     \Craft::$app->view->getSiteTemplateRoots(),
+            //     \Craft::$app->view->getCpTemplateRoots(),
+            // ])) as $templateRoot => $basePath) {
+            //     $compileTemplates($basePath, $templateRoot);
+            // }
         });
 
         return $originals;
@@ -242,7 +244,7 @@ class Coverage implements AddsOutput, HandlesArguments
             ));
         }
 
-        return $totalCoverage->asFloat();
+        return (int)$totalCoverage->asFloat();
     }
 
     /**

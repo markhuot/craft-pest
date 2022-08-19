@@ -3,6 +3,7 @@
 namespace markhuot\craftpest\factories;
 
 use craft\base\ElementInterface;
+use craft\base\ModelInterface;
 use Faker\Factory as Faker;
 use Illuminate\Support\Collection;
 use function markhuot\craftpest\helpers\base\collection_wrap;
@@ -71,7 +72,7 @@ abstract class Factory {
     /**
      * Get the element to be generated
      *
-     * @return ElementInterface
+     * @return ModelInterface
      */
     abstract function newElement();
 

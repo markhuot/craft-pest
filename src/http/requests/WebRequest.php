@@ -17,7 +17,7 @@ abstract class WebRequest extends \craft\web\Request
 
         $opts = self::defaultProperties($uri);
 
-        /** @var $request static */
+        /** @var self $request */
         $request = \Craft::createObject($config);
         $request->setRaw($opts);
         $request->headers->set('User-Agent', self::HEADER_USER_AGENT);
