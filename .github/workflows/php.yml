@@ -32,6 +32,9 @@ jobs:
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
 
+    - name: Run PHPStan
+      run: ./vendor/bin/phpstan analyse src
+
     - name: Install Craft
       run: ./src/bin/craft install --username=michael@bluth.com --email=michael@bluth.com --password=secret --siteName=Pest --siteUrl=http://localhost:8080 --language=en-US
 
