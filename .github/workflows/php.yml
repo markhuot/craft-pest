@@ -14,6 +14,32 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    env:
+      CRAFT_APP_ID: pest
+      CRAFT_ENVIRONMENT: dev
+      CRAFT_SECURITY_KEY: asdy8f7tgaysdfas987gduyvfas87dfghui
+      CRAFT_DB_DRIVER: mysql
+      CRAFT_DB_SERVER: 127.0.0.1
+      CRAFT_DB_PORT: 3306
+      CRAFT_DB_DATABASE: pest
+      CRAFT_DB_USER: root
+      CRAFT_DB_PASSWORD: root
+      CRAFT_DB_TABLE_PREFIX: craft_
+
+    services:
+      mysql:
+        image: mysql
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: pest
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping --silent"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - uses: actions/checkout@v3
 
