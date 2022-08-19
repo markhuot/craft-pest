@@ -1,6 +1,8 @@
 {
     "name": "markhuot/craft-pest",
     "type": "craft-plugin",
+    "description": "A Pest runner",
+    "license": "proprietary",
     "authors": [
         {
             "name": "Mark Huot",

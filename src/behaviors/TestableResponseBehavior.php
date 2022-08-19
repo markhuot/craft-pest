@@ -13,7 +13,7 @@ use yii\base\Behavior;
 class TestableResponseBehavior extends Behavior {
 
     public TestableResponse $response;
-    
+
     public function attach($owner)
     {
         parent::attach($owner);
@@ -75,8 +75,8 @@ class TestableResponseBehavior extends Behavior {
         return $this->response;
     }
 
-    function assertDontSeeText() {
-        // TODO
+    function assertDontSeeText(string $text) {
+        test()->assertStringNotContainsString($text, preg_replace('/\s+/', ' ', strip_tags($this->response->data)));
         return $this->response;
     }
 
@@ -203,7 +203,6 @@ class TestableResponseBehavior extends Behavior {
         return $this->response;
     }
 
-
     // function assertRedirectToSignedRoute() {
     // }
 
@@ -222,7 +221,8 @@ class TestableResponseBehavior extends Behavior {
     }
 
     function assertSeeTextInOrder(string $text) {
-        // TODO
+        test()->assertStringContainsString($text, preg_replace('/\s+/', ' ', strip_tags($this->response->data)));
+
         return $this->response;
     }
 
