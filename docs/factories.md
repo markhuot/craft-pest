@@ -32,10 +32,10 @@ This magic `->type()` method works with all factories. So, to set an Entry's `ti
 
 ## Creating your own factories
 
-Factories also provide a convenient place to stash boilerplate data. And since the default factories are meant to be overridden you could take the existing `Entry` factory and create your own site-specific `Post` factory. The goal is to make testing as easy and repeatable as possible. Creating new data in the site to test against should be as easy as
+Factories also provide a convenient place to stash boilerplate data. And since the default factories are meant to be overridden you could take the existing `Entry` factory and create your own site-specific `Post` factory. The goal of site-specific factories is to make testing as easy and repeatable as possible. Creating new data in the site to test against should be as easy as
 
 ```php
 Post::factory()->create()
 ```
 
-Notice, as a tester, I didn't have to worry about creating the post's category—it was created automatically for me via my `Post` factory. This pattern shouldn't be abused, it's important for tests to read as a story. So if your test is all about 
+Notice, as a tester, I don't have to worry about any implementation details of the Post entry type. If Post's have a required "Category" field the factory could automatically handle adding that. Or, if posts will always have a `body` field you could pre fill it with something like `'body' => $this->faker->paragraphs(3),`. This way your tests are more concerned with the "what" of what is being tested and not the "how" of how it's being created.
