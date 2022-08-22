@@ -1,4 +1,14 @@
+includes:
+    - vendor/craftcms/phpstan/phpstan.neon
+
 parameters:
     paths:
         - src
-    level: 9
+    level: 4
+    ignoreErrors:
+      - '#Constant CRAFT_BASE_PATH not found.#'
+    scanFiles:
+      - %currentWorkingDirectory%/vendor/yiisoft/yii2/Yii.php
+      - %currentWorkingDirectory%/vendor/craftcms/cms/src/Craft.php
+      - %currentWorkingDirectory%/vendor/craftcms/cms/src/behaviors/CustomFieldBehavior.php.template
+    reportUnmatchedIgnoredErrors: false

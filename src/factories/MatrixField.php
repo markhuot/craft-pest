@@ -24,15 +24,13 @@ class MatrixField extends Field
 
     /**
      * Get the element to be generated
-     *
-     * @return \craft\records\Field
      */
     function newElement()
     {
         return new \craft\fields\Matrix;
     }
 
-    function store($element)
+    function store($element): bool
     {
         // Push the block types in to the field
         $element->blockTypes = collect($this->blockTypes)
@@ -45,7 +43,7 @@ class MatrixField extends Field
             });
             
         // Store the field, which also saves the block types
-        parent::store($element);
+        $result = parent::store($element);
         
         // Add the fields in to the block types
         collect($this->blockTypes)
@@ -54,5 +52,7 @@ class MatrixField extends Field
                 [$factory, $blockType] = $props;
                 $factory->storeFields($blockType->fieldLayout, $blockType);
             });
+
+        return $result;
     }
 }

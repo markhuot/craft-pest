@@ -2,18 +2,12 @@
 
 namespace markhuot\craftpest\helpers\http;
 
-use \craft\web\Response;
-use markhuot\craftpest\behaviors\TestableResponseBehavior;
+use Pest\Expectation;
 
-/**
- * @param string $uri
- *
- * @return Response | TestableResponseBehavior
- */
-function get($uri='/') {
+function get(string $uri='/') {
     return test()->get($uri);
 }
 
 function expectGet($uri='/') {
-    return test()->expect(fn () => $this->get($uri));
+    return test()->expect(fn () => test()->get($uri));
 }

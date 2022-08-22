@@ -18,6 +18,5 @@ it('covers loops', function () {
     \markhuot\craftpest\factories\Entry::factory()
         ->section('news')
         ->create();
-
     get('/loop-test')->assertOk();
 });

@@ -14,12 +14,11 @@
         "mockery/mockery": "^1.5",
         "symfony/css-selector": "^6.0.3",
         "symfony/dom-crawler": "^6.0.3",
-        "symfony/process": "^5.3",
-        "illuminate/collections": "^8.61",
-        "pestphp/pest": "^1.21.1",
-        "craftcms/cms": "^3.7",
-        "vlucas/phpdotenv": "^5.4",
-        "phpstan/phpstan": "^1.6"
+        "symfony/process": "^5.3|^6.0",
+        "illuminate/collections": "^9.1",
+        "pestphp/pest": "^1.21",
+        "craftcms/cms": "^4.0",
+        "vlucas/phpdotenv": "^3.4|^5.4"
     },
     "autoload": {
         "psr-4": {
@@ -33,7 +32,7 @@
         ]
     },
     "extra": {
-        "name": "craft-pest",
+        "name": "Pest",
         "handle": "pest",
         "changelogUrl": "#",
         "class": "markhuot\\craftpest\\Pest",
@@ -52,5 +51,10 @@
             "pestphp/pest-plugin": true,
             "craftcms/plugin-installer": true
         }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require-dev": {
+        "craftcms/phpstan": "dev-main"
     }
 }

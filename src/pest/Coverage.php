@@ -49,8 +49,16 @@ class Coverage implements AddsOutput, HandlesArguments
         $this->output = $output;
     }
 
+    /**
+     * This method is called every time pest is executed
+     * but we are only intested in the --coverage option
+     */
     function handleArguments(array $originals): array
     {
+        if (!in_array('--coverage', $originals)) {
+            return $originals;
+        }
+
         $arguments = array_merge([''], array_values(array_filter($originals, function ($original): bool {
             foreach ([self::COVERAGE_OPTION, self::MIN_OPTION] as $option) {
                 if ($original === sprintf('--%s', $option) || Str::startsWith($original, sprintf('--%s=', $option))) {
@@ -87,50 +95,59 @@ class Coverage implements AddsOutput, HandlesArguments
         }
 
         \yii\base\Event::on(\craft\web\View::class, \craft\web\View::EVENT_AFTER_RENDER_TEMPLATE, function ($event) {
-            $compiledTemplate = \Craft::$app->view->twig->loadTemplate($event->template);
-    
+            $twig = \Craft::$app->view->twig;
+            $compiledTemplate = $twig->loadTemplate($twig->getTemplateClass($event->template), $event->template);
+
             // make no-op calls to ensure they don't show up in coverage reports as uncovered
             $compiledTemplate->getTemplateName();
-            $compiledTemplate->isTraitable();
             $compiledTemplate->getDebugInfo();
         });
 
         // Lifted the logic to find all templates out of services/View::_resolveTemplateInternal
         \yii\base\Event::on(\craft\web\Application::class, \craft\web\Application::EVENT_INIT, function ($event) {
-            $compileTemplates = function ($path, $base='') {
-                $directory = new \RecursiveDirectoryIterator($path);
-                $iterator = new \RecursiveIteratorIterator($directory);
-                $regex = new \RegexIterator($iterator, '/^.+\.(html|twig)$/i', \RecursiveRegexIterator::GET_MATCH);
-                foreach ($regex as $match) {
-                    $logicalName = substr($match[0], strlen($path));
-                    $oldTemplateMode = \Craft::$app->view->getTemplateMode();
-                    \Craft::$app->view->setTemplateMode('site');
-                    \Craft::$app->view->twig->loadTemplate($logicalName);
-                    \Craft::$app->view->setTemplateMode($oldTemplateMode);
-                }
-            };
-
-            // Site specific templates
-            foreach (\Craft::$app->sites->getAllSites() as $site) {
-                $sitePath = implode(DIRECTORY_SEPARATOR, [CRAFT_BASE_PATH, 'templates', $site->handle]);
-                if (is_dir($sitePath)) {
-                    $compileTemplates($sitePath);
-                }
-            }
-
-            // Native templates
-            $sitePath = CRAFT_BASE_PATH . '/templates/';
-            if (is_dir($sitePath)) {
-                $compileTemplates($sitePath);
-            }
-
-            // Template roots
-            foreach (array_filter(array_merge([
-                \Craft::$app->view->getSiteTemplateRoots(),
-                \Craft::$app->view->getCpTemplateRoots(),
-            ])) as $templateRoot => $basePath) {
-                $compileTemplates($basePath, $templateRoot);
-            }
+            return;
+            // TODO
+            // commented out because it errors out in a number of errors.
+            // $compileTemplates = function ($path, $base='') {
+            //
+            //     if (!is_string($path)) {
+            //         return;
+            //     }
+            //
+            //     $directory = new \RecursiveDirectoryIterator($path);
+            //     $iterator = new \RecursiveIteratorIterator($directory);
+            //     $regex = new \RegexIterator($iterator, '/^.+\.(html|twig)$/i', \RecursiveRegexIterator::GET_MATCH);
+            //     foreach ($regex as $match) {
+            //         $logicalName = substr($match[0], strlen($path));
+            //         $oldTemplateMode = \Craft::$app->view->getTemplateMode();
+            //         \Craft::$app->view->setTemplateMode('site');
+            //         $twig = \Craft::$app->view->twig;
+            //         $twig->loadTemplate($twig->getTemplateClass($logicalName), $logicalName);
+            //         \Craft::$app->view->setTemplateMode($oldTemplateMode);
+            //     }
+            // };
+            //
+            // // Site specific templates
+            // foreach (\Craft::$app->sites->getAllSites() as $site) {
+            //     $sitePath = implode(DIRECTORY_SEPARATOR, [CRAFT_BASE_PATH, 'templates', $site->handle]);
+            //     if (is_dir($sitePath)) {
+            //         $compileTemplates($sitePath);
+            //     }
+            // }
+            //
+            // // Native templates
+            // $sitePath = CRAFT_BASE_PATH . '/templates/';
+            // if (is_dir($sitePath)) {
+            //     $compileTemplates($sitePath);
+            // }
+            //
+            // // Template roots
+            // foreach (array_filter(array_merge([
+            //     \Craft::$app->view->getSiteTemplateRoots(),
+            //     \Craft::$app->view->getCpTemplateRoots(),
+            // ])) as $templateRoot => $basePath) {
+            //     $compileTemplates($basePath, $templateRoot);
+            // }
         });
 
         return $originals;
@@ -153,7 +170,7 @@ class Coverage implements AddsOutput, HandlesArguments
 
         $reportPath = __DIR__ . '/../../.temp/coverage.php';
 
-        /** @var CodeCoverage $codeCoverage */
+        /** @var \SebastianBergmann\CodeCoverage\CodeCoverage $codeCoverage */
         $codeCoverage = require $reportPath;
 
         $totalWidth = (new Terminal())->getWidth();
@@ -171,7 +188,6 @@ class Coverage implements AddsOutput, HandlesArguments
 
         $this->output->writeln('');
 
-        /** @var Directory<File|Directory> $report */
         $report = $codeCoverage->getReport();
 
 
@@ -228,7 +244,7 @@ class Coverage implements AddsOutput, HandlesArguments
             ));
         }
 
-        return $totalCoverage->asFloat();
+        return (int)$totalCoverage->asFloat();
     }
 
     /**

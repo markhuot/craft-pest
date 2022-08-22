@@ -39,19 +39,19 @@ class NodeList implements \Countable {
         return $result;
     }
 
-    function getText() {
+    function getText(): array|string {
         return $this->getNodeOrNodes(fn ($node) => $node->text());
     }
 
-    public function getInnerHTML() {
+    public function getInnerHTML(): array|string  {
         return $this->getNodeOrNodes(fn ($node) => $node->html());
     }
 
-    public function count() {
+    public function count(): int {
         return $this->crawler->count();
     }
 
-    public function getCount() {
+    public function getCount(): int {
         return $this->count();
     }
 
@@ -59,6 +59,13 @@ class NodeList implements \Countable {
         test()->assertSame($expected, $this->getText());
         return $this;
     }
+
+
+    public function assertContainsString($expected) {
+        test()->assertStringContainsString($expected, $this->getText());
+        return $this;
+    }
+
 
     public function assertCount($expected) {
         test()->assertCount($expected, $this);

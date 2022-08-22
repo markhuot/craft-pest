@@ -2,11 +2,12 @@
 .DS_Store
 .idea
 composer.lock
-storage
 src/bootstrap/cpresources
 .phpunit.result.cache
 config
-storage
 .env
 bootstrap.php
 craft
+!src/bin/craft
+storage/*
+!storage/.gitkeep

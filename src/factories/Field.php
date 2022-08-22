@@ -4,6 +4,9 @@ namespace markhuot\craftpest\factories;
 
 use craft\helpers\StringHelper;
 
+/**
+ * @method void context(string $context)
+ */
 class Field extends Factory
 {
     protected $type;
@@ -15,10 +18,25 @@ class Field extends Factory
         return $this;
     }
 
+    function group(string $groupName)
+    {
+        $this->attributes['groupId'] = function () use ($groupName) {
+            foreach (\Craft::$app->fields->getAllGroups() as $group) {
+                if ($group->name === $groupName) {
+                    return $group->id;
+                }
+            }
+
+            return self::NULL;
+        };
+
+        return $this;
+    }
+
     /**
      * Get the element to be generated
      *
-     * @return \craft\records\Field
+     * @return \craft\base\Field
      */
     function newElement()
     {
@@ -35,21 +53,21 @@ class Field extends Factory
     function definition(int $index = 0) {
         $name = $this->faker->words(2, true);
         $handle = StringHelper::toCamelCase($name);
+        $firstFieldGroupId = \Craft::$app->fields->getAllGroups()[0]->id;
 
         return [
             'name' => $name,
             'handle' => $handle,
+            'groupId' => $firstFieldGroupId,
         ];
     }
 
     /**
      * Persist the entry to local
-     *
-     * @return \craft\records\Field
      */
-    function store($element)
+    function store($element): bool
     {
-        \Craft::$app->fields->saveField($element);
+        return \Craft::$app->fields->saveField($element);
     }
 
 }

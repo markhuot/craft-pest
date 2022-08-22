@@ -3,6 +3,7 @@
 namespace markhuot\craftpest\factories;
 
 use craft\base\ElementInterface;
+use craft\base\ModelInterface;
 use Faker\Factory as Faker;
 use Illuminate\Support\Collection;
 use function markhuot\craftpest\helpers\base\collection_wrap;
@@ -45,7 +46,7 @@ abstract class Factory {
     /**
      * Insert deps
      */
-    function __construct($faker=null) {
+    final public function __construct($faker=null) {
         $this->faker = $faker ?? Faker::create();
     }
 
@@ -71,7 +72,7 @@ abstract class Factory {
     /**
      * Get the element to be generated
      *
-     * @return ElementInterface
+     * @return ModelInterface
      */
     abstract function newElement();
 
@@ -166,12 +167,12 @@ abstract class Factory {
     /**
      * Instantiate an Entry
      *
-     * @return \craft\elements\Entry
+     * @return \craft\elements\Entry|Collection
      */
     function make($definition=[]) {
         $elements = collect([])
             ->pad($this->count, null)
-            ->map(fn ($_, $index) => $this->internalMake($definition, $index));
+            ->map(fn () => $this->internalMake($definition));
 
         if ($this->count === 1) {
             return $elements->first();
@@ -235,13 +236,8 @@ abstract class Factory {
 
     /**
      * Generate the element
-     *
-     * @param array $definition
-     * @param int $index
-     *
-     * @return mixed
      */
-    protected function internalMake($definition=[], $index=0)
+    protected function internalMake(array $definition=[])
     {
         $element = $this->newElement();
 
