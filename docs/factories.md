@@ -32,12 +32,10 @@ This magic `->type()` method works with all factories. So, to set an Entry's `ti
 
 ## Creating your own factories
 
-Factories also provide a convienent place to stash boilerplate data. And since the default factories are meant to be overridden you could take the existing `Entry` factory and create your own `Post` factory. The goal here is to make testing as easy and repeatable as possible. Creating new data in the site to test against should be as easy as,
+Factories also provide a convenient place to stash boilerplate data. And since the default factories are meant to be overridden you could take the existing `Entry` factory and create your own site-specific `Post` factory. The goal is to make testing as easy and repeatable as possible. Creating new data in the site to test against should be as easy as
 
 ```php
-test('posts have authors', function () {
-  $post = Post::factory()->create();
-  
-  expect($post->author)->toBe();
-});
+Post::factory()->create()
 ```
+
+Notice, as a tester, I didn't have to worry about creating the post's category—it was created automatically for me via my `Post` factory. This pattern shouldn't be abused, it's important for tests to read as a story. So if your test is all about 
