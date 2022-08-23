@@ -62,7 +62,13 @@ class RequestHandler
 
         // A response object with methods for assertions
         // Yii will fill it with data once the response is successful
-        $this->app->set('response', \markhuot\craftpest\web\TestableResponse::class);
+        $response = \Craft::createObject(\markhuot\craftpest\web\TestableResponse::class);
+
+        // Copy over any behaviors from the original response
+        $response->attachBehaviors($this->app->response->behaviors);
+
+        // Set the new response in the container
+        $this->app->set('response', $response);
 
         $this->app->setComponents([
             'request' => $request,
