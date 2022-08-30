@@ -42,7 +42,7 @@ jobs:
 
     strategy:
       matrix:
-        craftVersion: [3, 4]
+        craftVersion: [3.7, 4.1]
 
     steps:
     - uses: actions/checkout@v3
