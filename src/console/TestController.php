@@ -43,8 +43,8 @@ class TestController extends Controller {
                 }
             }
 
-            copy(__DIR__ . DIRECTORY_SEPARATOR . '../../stubs/ExampleTest.php', './tests/ExampleTest.php');
-            copy(__DIR__ . DIRECTORY_SEPARATOR . '../../stubs/Pest.php', './tests/Pest.php');
+            copy(__DIR__ . DIRECTORY_SEPARATOR . '../../stubs/init/ExampleTest.php', './tests/ExampleTest.php');
+            copy(__DIR__ . DIRECTORY_SEPARATOR . '../../stubs/init/Pest.php', './tests/Pest.php');
         }
     }
 

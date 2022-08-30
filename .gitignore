@@ -4,7 +4,7 @@
 composer.lock
 src/bootstrap/cpresources
 .phpunit.result.cache
-config
+/config
 .env
 bootstrap.php
 craft
