@@ -1,7 +1,11 @@
 This is executed
 
-{% for entry in craft.entries.section('news') %}
+{% for index, entry in 1..2 %}
     {{ entry.title }}
+    {% if index > 5 %}
+        foo?
+        bar
+    {% endif %}
 {% endfor %}
 
 This is executed

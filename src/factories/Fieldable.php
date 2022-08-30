@@ -29,13 +29,23 @@ trait Fieldable
                     return $f;
                 })
                 ->map(function (\craft\base\Field $f) {
-                    \Craft::$app->fields->saveField($f);
-                    return new CustomField($f);
+                    if (\Craft::$app->version >= '4') {
+                        \Craft::$app->fields->saveField($f);
+                        return new CustomField($f);
+                    }
+
+                    return $f;
                 })
                 ->flatten(1)
                 ->toArray();
 
-            $fieldLayout->getTabs()[0]->setElements($fields);
+            if (\Craft::$app->version >= '3') {
+                $fieldLayout->setFields($fields);
+            }
+            else if (\Craft::$app->version >= '4') {
+                $fieldLayout->getTabs()[0]->setElements($fields);
+            }
+
             \Craft::$app->fields->saveLayout($fieldLayout);
         }
     }

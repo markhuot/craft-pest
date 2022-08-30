@@ -21,16 +21,5 @@ class Pest extends Plugin {
         $this->controllerNamespace = 'markhuot\\craftpest\\console';
 
         parent::init();
-
-        $macroableClasses = [
-            Entry::class,
-            GlobalSet::class,
-        ];
-
-        foreach ($macroableClasses as $class) {
-            Event::on($class, $class::EVENT_DEFINE_BEHAVIORS, function (DefineBehaviorsEvent $event) {
-                $event->behaviors[] = Macroable::class;
-            });
-        }
     }
 }

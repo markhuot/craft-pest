@@ -12,13 +12,16 @@ use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use craft\helpers\FileHelper;
+use Symfony\Component\Process\Process;
+use Twig\Environment;
+use Twig\Loader\ArrayLoader;
 
 class Coverage implements AddsOutput, HandlesArguments
 {
     /**
      * @var string
      */
-    private const COVERAGE_OPTION = 'coverage';
+    private const COVERAGE_OPTION = 'twig-coverage';
 
     /**
      * @var string
@@ -51,11 +54,11 @@ class Coverage implements AddsOutput, HandlesArguments
 
     /**
      * This method is called every time pest is executed
-     * but we are only intested in the --coverage option
+     * but we are only interested in the --twig-coverage option
      */
     function handleArguments(array $originals): array
     {
-        if (!in_array('--coverage', $originals)) {
+        if (!in_array('--' . self::COVERAGE_OPTION, $originals)) {
             return $originals;
         }
 
@@ -83,72 +86,22 @@ class Coverage implements AddsOutput, HandlesArguments
         if ((bool) $input->getOption(self::COVERAGE_OPTION)) {
             $this->coverage      = true;
             $originals[]         = '--coverage-php';
-            $originals[]         = __DIR__ . '/../../.temp/coverage.php';
-
-            // clear out the compiled templates folder so we have a fresh base
-            $compiledTemplatesDir = getcwd() . '/storage/runtime/compiled_templates';
-            FileHelper::removeDirectory($compiledTemplatesDir);
+            $originals[]         = getcwd() . '/storage/coverage.php';
         }
 
         if ($input->getOption(self::MIN_OPTION) !== null) {
             $this->coverageMin = (float) $input->getOption(self::MIN_OPTION);
         }
 
-        \yii\base\Event::on(\craft\web\View::class, \craft\web\View::EVENT_AFTER_RENDER_TEMPLATE, function ($event) {
-            $twig = \Craft::$app->view->twig;
-            $compiledTemplate = $twig->loadTemplate($twig->getTemplateClass($event->template), $event->template);
+        $this->output->writeln('  i Pre-compiling templates so they may be analysed by PHPUnit\'s code coverage.');
 
-            // make no-op calls to ensure they don't show up in coverage reports as uncovered
-            $compiledTemplate->getTemplateName();
-            $compiledTemplate->getDebugInfo();
-        });
-
-        // Lifted the logic to find all templates out of services/View::_resolveTemplateInternal
-        \yii\base\Event::on(\craft\web\Application::class, \craft\web\Application::EVENT_INIT, function ($event) {
-            return;
-            // TODO
-            // commented out because it errors out in a number of errors.
-            // $compileTemplates = function ($path, $base='') {
-            //
-            //     if (!is_string($path)) {
-            //         return;
-            //     }
-            //
-            //     $directory = new \RecursiveDirectoryIterator($path);
-            //     $iterator = new \RecursiveIteratorIterator($directory);
-            //     $regex = new \RegexIterator($iterator, '/^.+\.(html|twig)$/i', \RecursiveRegexIterator::GET_MATCH);
-            //     foreach ($regex as $match) {
-            //         $logicalName = substr($match[0], strlen($path));
-            //         $oldTemplateMode = \Craft::$app->view->getTemplateMode();
-            //         \Craft::$app->view->setTemplateMode('site');
-            //         $twig = \Craft::$app->view->twig;
-            //         $twig->loadTemplate($twig->getTemplateClass($logicalName), $logicalName);
-            //         \Craft::$app->view->setTemplateMode($oldTemplateMode);
-            //     }
-            // };
-            //
-            // // Site specific templates
-            // foreach (\Craft::$app->sites->getAllSites() as $site) {
-            //     $sitePath = implode(DIRECTORY_SEPARATOR, [CRAFT_BASE_PATH, 'templates', $site->handle]);
-            //     if (is_dir($sitePath)) {
-            //         $compileTemplates($sitePath);
-            //     }
-            // }
-            //
-            // // Native templates
-            // $sitePath = CRAFT_BASE_PATH . '/templates/';
-            // if (is_dir($sitePath)) {
-            //     $compileTemplates($sitePath);
-            // }
-            //
-            // // Template roots
-            // foreach (array_filter(array_merge([
-            //     \Craft::$app->view->getSiteTemplateRoots(),
-            //     \Craft::$app->view->getCpTemplateRoots(),
-            // ])) as $templateRoot => $basePath) {
-            //     $compileTemplates($basePath, $templateRoot);
-            // }
-        });
+        $process = new Process(['./src/bin/craft', 'pest/test/compile-templates']);
+        $process->setTty(true);
+        $process->setTimeout(null);
+        $process->start();
+        foreach ($process as $data) {
+            $this->output->writeln($data);
+        }
 
         return $originals;
     }
@@ -168,194 +121,77 @@ class Coverage implements AddsOutput, HandlesArguments
             }
         }
 
-        $reportPath = __DIR__ . '/../../.temp/coverage.php';
+        $reportPath = getcwd() . '/storage/coverage.php';
 
         /** @var \SebastianBergmann\CodeCoverage\CodeCoverage $codeCoverage */
         $codeCoverage = require $reportPath;
 
-        $totalWidth = (new Terminal())->getWidth();
-
-        $dottedLineLength = $totalWidth <= 70 ? $totalWidth : 70;
-
-        $totalCoverage = $codeCoverage->getReport()->percentageOfExecutedLines();
-
-        $this->output->writeln(
-            sprintf(
-                '  <fg=white;options=bold>Cov:    </><fg=default>%s</>',
-                $totalCoverage->asString()
-            )
-        );
-
-        $this->output->writeln('');
-
         $report = $codeCoverage->getReport();
 
+        $totalPart = 0;
+        $totalWhole = 0;
 
         foreach ($report->getIterator() as $file) {
             if (!$file instanceof File) {
                 continue;
             }
-            $fileId = static::remapName($file);
 
-            $dirname  = dirname($fileId);
-            $basename = basename($fileId, '.php');
+            $reporters = [
+                new TwigReporter($file),
+                new PhpReporter($file),
+            ];
+            foreach ($reporters as $reporter) {
+                $result = $reporter->canReportOn();
 
-            $name = $dirname === '.' ? $basename : implode(DIRECTORY_SEPARATOR, [
-                $dirname,
-                $basename,
-            ]);
-            $rawName = $dirname === '.' ? $basename : implode(DIRECTORY_SEPARATOR, [
-                $dirname,
-                $basename,
-            ]);
+                if ($result === Reporter::IGNORE) {
+                    break;
+                }
 
-            $linesExecutedTakenSize = 0;
+                if ($result === true) {
+                    $name = $reporter->getName();
+                    //$lines = $reporter->getUncoveredLines();
+                    $lines = $reporter->getUncoveredLineRanges();
+                    $part = $reporter->getNumberOfExecutedLines();
+                    $whole = $reporter->getNumberOfExecutableLines();
+                    $percent = $whole <= 0 ? 0 : $part / $whole * 100;
 
-            if ($file->percentageOfExecutedLines()->asString() != '0.00%') {
-                $linesExecutedTakenSize = strlen($uncoveredLines = trim(implode(', ', self::getMissingCoverage($file)))) + 1;
-                $name .= sprintf(' <fg=red>%s</>', $uncoveredLines);
-            }
+                    if ($percent === 100) {
+                        $percent = '<fg=green>✓</>';
+                        $lines = '';
+                    }
+                    else if ($percent === 0) {
+                        $percent = '';
+                        $lines = '';
+                    }
+                    else {
+                        $percent = '<fg='.($percent>90?'green':($percent>75?'yellow':'red')).'>'.number_format($percent, 2) . ' %</>';
+                        $lines = implode(', ', $lines->toArray());
+                    }
 
-            $percentage = $file->numberOfExecutableLines() === 0
-                ? '100.0'
-                : number_format($file->percentageOfExecutedLines()->asFloat(), 1, '.', '');
+                    $left = wordwrap(implode(' ', array_filter([
+                        $name,
+                        $lines ? '<fg=yellow>'.$lines.'</>' : null,
+                    ])), 60).' ';
+                    $leftLines = preg_split('/[\r\n]+/', $left);
+                    $lastLineOfLeft = $leftLines[count($leftLines)-1];
 
-            $takenSize = strlen($rawName . $percentage) + 4 + $linesExecutedTakenSize; // adding 3 space and percent sign
+                    $right = ($percent ? ' ' : '').$percent;
+                    $hang = 0;
+                    if (preg_match('/%$/', strip_tags($right))) {
+                        $hang = -2;
+                    }
 
-            $percentage = sprintf(
-                '<fg=%s>%s</>',
-                $percentage === '100.0' ? 'green' : ($percentage === '0.0' ? 'red' : 'yellow'),
-                $percentage
-            );
+                    $dots = str_repeat('.', 70 - $hang - mb_strlen(strip_tags($lastLineOfLeft)) - mb_strlen(strip_tags($right)));
 
-            $this->output->writeln(sprintf(
-                '  %s %s %s %%',
-                $name,
-                str_repeat('.', max($dottedLineLength - $takenSize, 1)),
-                $percentage
-            ));
-        }
+                    $this->output->writeln($left . $dots . $right);
 
-        if ($totalCoverage->asFloat() < $this->coverageMin) {
-            $this->output->writeln(sprintf(
-                "\n  <fg=white;bg=red;options=bold> FAIL </> Code coverage below expected:<fg=red;options=bold> %s %%</>. Minimum:<fg=white;options=bold> %s %%</>.",
-                number_format($totalCoverage->asFloat(), 1),
-                number_format($this->coverageMin, 1)
-            ));
-        }
-
-        return (int)$totalCoverage->asFloat();
-    }
-
-    /**
-     * Generates an array of missing coverage on the following format:.
-     *
-     * ```
-     * ['11', '20..25', '50', '60..80'];
-     * ```
-     *
-     * @param File $file
-     *
-     * @return array<int, string>
-     */
-    public static function getMissingCoverage($file): array
-    {
-        $shouldBeNewLine = true;
-
-        $eachLine = function (array $array, array $tests, int $line) use (&$shouldBeNewLine, $file): array {
-            if (count($tests) > 0) {
-                $shouldBeNewLine = true;
-
-                return $array;
-            }
-
-            $line = static::remapLine($file, $line);
-
-            if ($shouldBeNewLine) {
-                $array[]         = (string) $line;
-                $shouldBeNewLine = false;
-
-                return $array;
-            }
-
-            $lastKey = count($array) - 1;
-            
-            // Because Twig can map to multiple PHP lines then we flatten
-            // the lines down. This means we could get multiple "misses" on line
-            // four, for example. Because of that we'll skip over any report that
-            // repeats the same line number multiple times.
-            if ($array[$lastKey] == $line) {
-                return $array;
-            }
-
-            if (array_key_exists($lastKey, $array) && strpos($array[$lastKey], '..') !== false) {
-                [$from]          = explode('..', $array[$lastKey]);
-                $array[$lastKey] = $line > $from ? sprintf('%s..%s', $from, $line) : sprintf('%s..%s', $line, $from);
-
-                return $array;
-            }
-
-            $array[$lastKey] = sprintf('%s..%s', $array[$lastKey], $line);
-
-            return $array;
-        };
-
-        $array = [];
-        foreach (array_filter($file->lineCoverageData(), 'is_array') as $line => $tests) {
-            $array = $eachLine($array, $tests, $line);
-        }
-
-        return $array;
-    }
-
-    public static function remapName($file)
-    {
-        if ($template = static::loadTemplate($file)) {
-            $source = $template->getSourceContext();
-            $logicalName = $source->getName();
-            if (empty($logicalName)) {
-                $logicalName = basename($source->getPath());
-            }
-            $ext = pathinfo($source->getPath(), PATHINFO_EXTENSION);
-            if ($ext) {
-                $ext = '.' . $ext;
-                $logicalName = preg_replace('/'.preg_quote('.' . $ext, '/').'$/', '', $logicalName);
-            }
-            return  $logicalName . $ext;
-        }
-
-        return $file->id();
-    }
-
-    public static function remapLine($file, $line)
-    {
-        if ($template = static::loadTemplate($file)) {
-            $actualLine = $template->getDebugInfo()[$line] ?? null;
-            if ($actualLine) {
-                return $actualLine;
-            }
-            while ($line-=1) {
-                $actualLine = $template->getDebugInfo()[$line] ?? null;
-                if ($actualLine) {
-                    return $actualLine;
+                    $totalPart += $part;
+                    $totalWhole += $whole;
+                    break;
                 }
             }
         }
 
-        return $line;
-    }
-
-    protected static function loadTemplate($file)
-    {
-        if (strpos($file->pathAsString(), 'storage/runtime/compiled_templates') !== false) {
-            $contents = file_get_contents($file->pathAsString());
-            preg_match('/(__TwigTemplate_[a-z0-9]+)/', $contents, $matches);
-            if ($matches[1]) {
-                $compiledClass = $matches[1];
-                return new $compiledClass(\Craft::$app->view->twig);
-            }
-        }
-
-        return false;
+        return 0;
     }
 }

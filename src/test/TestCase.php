@@ -53,7 +53,6 @@ class TestCase extends \PHPUnit\Framework\TestCase {
         define('CRAFT_BASE_PATH', getcwd());
         define('CRAFT_VENDOR_PATH', CRAFT_BASE_PATH . '/vendor');
         define('YII_ENABLE_ERROR_HANDLER', false);
-        define('YII_DEBUG', true);
 
         // Load dotenv? 5.x vs 3.x vs 2.x
         if (file_exists(CRAFT_BASE_PATH . '/.env')) {

@@ -11,6 +11,7 @@ use function markhuot\craftpest\helpers\http\get;
 // Before any of that, though, let's start with a simple test that the homepage loads and
 // returns an 200 Ok status code.
 get('/')->assertOk();
+
 // Same thing, different syntax
 it('renders home page without errors', function () {
     $this->get('/')->assertOk();
@@ -18,11 +19,11 @@ it('renders home page without errors', function () {
 
 // Or a 404
 get('/non-existing-page')->assertNotFound();
+
 // Same thing, different syntax
 it('returns a 404 on a non-existing page', function () {
     $this->get('/non-existing-page')->assertNotFound();
 });
-
 
 
 // You can evaluate HTML for specific markup using a CSS selector to find your expected markup and then make assertions
@@ -58,7 +59,7 @@ it('loads the news listing and displays the most recent news article', function 
     //
     // Instead, you usually want to test _logic_ from your template such as whether a list of related
     // news correctly filters out the news page you're currently looking at. That's not a native feature
-    // of Craft and something that a developer wrote in to the template intentionaly. That's a good bit
+    // of Craft and something that a developer wrote in to the template intentionally. That's a good bit
     // of logic to test against.
     expect($this->get($entry->uri))
         ->querySelector('.related li')
@@ -74,6 +75,7 @@ test('admin can see Craft version info in CP', function () {
         ->querySelector("#app-info")->assertContainsString("Craft CMS 4");
 });
 
+// You can check for headers
 it('promotes craft')
     ->get('/')
     ->assertHeader('x-powered-by', 'Craft CMS');
