@@ -44,8 +44,16 @@ class TestController extends Controller {
                 }
             }
 
-            copy(__DIR__ . DIRECTORY_SEPARATOR . '../../stubs/init/ExampleTest.php', './tests/ExampleTest.php');
-            copy(__DIR__ . DIRECTORY_SEPARATOR . '../../stubs/init/Pest.php', './tests/Pest.php');
+            if (!is_dir(CRAFT_BASE_PATH . '/tests')) {
+                mkdir(CRAFT_BASE_PATH . '/tests');
+            }
+            if (!file_exists(CRAFT_BASE_PATH . '/tests/Pest.php')) {
+                copy(__DIR__ . '/../stubs/init/ExampleTest.php', CRAFT_BASE_PATH . '/tests/ExampleTest.php');
+                copy(__DIR__ . '/../stubs/init/Pest.php', CRAFT_BASE_PATH . '/tests/Pest.php');
+            }
+            if (!file_exists(CRAFT_BASE_PATH . '/phpunit.xml')) {
+                copy(__DIR__ . '/../stubs/init/phpunit.xml', CRAFT_BASE_PATH . '/phpunit.xml');
+            }
         }
     }
 

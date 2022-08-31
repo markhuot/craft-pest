@@ -98,10 +98,17 @@ class TestCase extends \PHPUnit\Framework\TestCase {
         return new RequestBuilder($method, $uri);
     }
 
-    function actingAs(User|string $user = null): self
+    function actingAs(User|string $userOrName = null): self
     {
-        if (is_string($user)) {
-            $user = \Craft::$app->getUsers()->getUserByUsernameOrEmail($user);
+        if (is_string($userOrName)) {
+            $user = \Craft::$app->getUsers()->getUserByUsernameOrEmail($userOrName);
+        }
+        else if (is_a($userOrName, User::class)) {
+            $user = $userOrName;
+        }
+
+        if (empty($user)) {
+            throw new \Exception('Unknown user `' . $userOrName . '`');
         }
         
         \Craft::$app->getUser()->setIdentity($user);
