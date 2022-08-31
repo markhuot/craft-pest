@@ -6,6 +6,7 @@ use craft\base\ElementInterface;
 use craft\base\ModelInterface;
 use Faker\Factory as Faker;
 use Illuminate\Support\Collection;
+use yii\base\BaseObject;
 use function markhuot\craftpest\helpers\base\collection_wrap;
 use function markhuot\craftpest\helpers\base\array_wrap;
 
@@ -70,9 +71,9 @@ abstract class Factory {
     }
 
     /**
-     * Get the element to be generated
+     * Get the element to be generated.
      *
-     * @return ModelInterface
+     * @return BaseObject
      */
     abstract function newElement();
 

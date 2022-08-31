@@ -66,8 +66,8 @@ jobs:
     - name: Copy config files
       run: mkdir -p ./config && cp ./stubs/config/db.php ./config/db.php && cp ./stubs/config/general.php ./config/general.php
 
-    #- name: Run PHPStan
-    #  run: ./vendor/bin/phpstan analyse src
+    - name: Run PHPStan
+      run: ./vendor/bin/phpstan analyse src
 
     - name: Install Craft
       run: ./src/bin/craft install --username=michael@bluth.com --email=michael@bluth.com --password=secret --siteName=Pest --siteUrl=http://localhost:8080 --language=en-US

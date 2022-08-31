@@ -41,9 +41,11 @@ trait Fieldable
                 ->toArray();
 
             if (version_greater_than_or_equal_to(\Craft::$app->version, '4')) {
+                // @phpstan-ignore-next-line Ignored because one of these will fail based on the installed version of Craft
                 $fieldLayout->getTabs()[0]->setElements($fields);
             }
             else if (version_greater_than_or_equal_to(\Craft::$app->version, '3')) {
+                // @phpstan-ignore-next-line Ignored because one of these will fail based on the installed version of Craft
                 $fieldLayout->setFields($fields);
             }
 

@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use markhuot\craftpest\test\RefreshesDatabase;
 use yii\base\Event;
 use function markhuot\craftpest\helpers\base\collection_wrap;
+use function markhuot\craftpest\helpers\base\version_greater_than_or_equal_to;
 
 class Asset extends Element {
 
@@ -43,6 +44,7 @@ class Asset extends Element {
     function definition(int $index = 0)
     {
         $volume = \Craft::$app->volumes->getVolumeByHandle($this->volumeHandle);
+        // @phpstan-ignore-next-line Craft 3 doesn't have `VolumeInterface->id` exposed so PHPStan fails this line.
         $folder = \Craft::$app->assets->getRootFolderByVolumeId($volume->id);
 
         $tempPath = \Craft::$app->path->getTempPath();
@@ -66,7 +68,17 @@ class Asset extends Element {
         $assets = parent::create($definition);
 
         Event::on(RefreshesDatabase::class, 'EVENT_ROLLBACK_TRANSACTION', function () use ($assets) {
-            collection_wrap($assets)->each(fn (\craft\elements\Asset $asset) => $asset->volume->getFs()->deleteFile($asset->path));
+            collection_wrap($assets)->each(function (\craft\elements\Asset $asset) {
+                if (version_greater_than_or_equal_to(\Craft::$app->version, '4')) {
+                    // @phpstan-ignore-next-line Ignored because one of these will fail based on the installed version of Craft
+                    $asset->volume->getFs()->deleteFile($asset->path);
+                }
+                else if (version_greater_than_or_equal_to(\Craft::$app->version, '3')) {
+                    // @phpstan-ignore-next-line Ignored because one of these will fail based on the installed version of Craft
+                    $asset->volume->deleteFile($asset->path);
+                }
+
+            });
         });
 
         return $assets;
