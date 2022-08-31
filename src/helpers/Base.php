@@ -23,3 +23,9 @@ if (!function_exists('array_wrap')) {
         return [$value];
     }
 }
+
+if (!function_exists('version_greater_than_or_equal_to')) {
+    function version_greater_than_or_equal_to(string $version1, string $version2) {
+        return version_compare($version1, $version2) >= 0;
+    }
+}

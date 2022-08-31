@@ -6,6 +6,7 @@ use craft\console\Controller;
 use craft\helpers\FileHelper;
 use Symfony\Component\Process\Process;
 use yii\console\ExitCode;
+use function markhuot\craftpest\helpers\base\version_greater_than_or_equal_to;
 
 class TestController extends Controller {
 
@@ -88,10 +89,10 @@ class TestController extends Controller {
                 $oldTemplateMode = \Craft::$app->view->getTemplateMode();
                 \Craft::$app->view->setTemplateMode('site');
                 $twig = \Craft::$app->view->twig;
-                if (\Craft::$app->version >= '3') {
+                if (version_greater_than_or_equal_to(\Craft::$app->version, '3')) {
                     $twig->loadTemplate($logicalName);
                 }
-                else if (\Craft::$app->version >= '4') {
+                else if (version_greater_than_or_equal_to(\Craft::$app->version, '4')) {
                     $twig->loadTemplate($twig->getTemplateClass($logicalName), $logicalName);
                 }
                 \Craft::$app->view->setTemplateMode($oldTemplateMode);

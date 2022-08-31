@@ -4,6 +4,7 @@ namespace markhuot\craftpest\factories;
 
 use craft\fieldlayoutelements\CustomField;
 use craft\models\FieldLayout;
+use function markhuot\craftpest\helpers\base\version_greater_than_or_equal_to;
 
 trait Fieldable
 {
@@ -29,7 +30,7 @@ trait Fieldable
                     return $f;
                 })
                 ->map(function (\craft\base\Field $f) {
-                    if (\Craft::$app->version >= '4') {
+                    if (version_greater_than_or_equal_to(\Craft::$app->version, '4')) {
                         \Craft::$app->fields->saveField($f);
                         return new CustomField($f);
                     }
@@ -39,10 +40,10 @@ trait Fieldable
                 ->flatten(1)
                 ->toArray();
 
-            if (\Craft::$app->version >= '3') {
+            if (version_greater_than_or_equal_to(\Craft::$app->version, '3')) {
                 $fieldLayout->setFields($fields);
             }
-            else if (\Craft::$app->version >= '4') {
+            else if (version_greater_than_or_equal_to(\Craft::$app->version, '4')) {
                 $fieldLayout->getTabs()[0]->setElements($fields);
             }
 
