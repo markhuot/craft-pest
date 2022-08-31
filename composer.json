@@ -18,8 +18,7 @@
         "illuminate/collections": "^9.1",
         "pestphp/pest": "^1.21",
         "craftcms/cms": "^3.7",
-        "vlucas/phpdotenv": "^2.4|^3.4|^5.4",
-        "yiisoft/yii2-shell": "^2.0"
+        "vlucas/phpdotenv": "^2.4|^3.4|^5.4"
     },
     "autoload": {
         "psr-4": {
