@@ -89,11 +89,11 @@ class TestController extends Controller {
                 $oldTemplateMode = \Craft::$app->view->getTemplateMode();
                 \Craft::$app->view->setTemplateMode('site');
                 $twig = \Craft::$app->view->twig;
-                if (version_greater_than_or_equal_to(\Craft::$app->version, '3')) {
-                    $twig->loadTemplate($logicalName);
-                }
-                else if (version_greater_than_or_equal_to(\Craft::$app->version, '4')) {
+                if (version_greater_than_or_equal_to(\Craft::$app->version, '4')) {
                     $twig->loadTemplate($twig->getTemplateClass($logicalName), $logicalName);
+                }
+                else if (version_greater_than_or_equal_to(\Craft::$app->version, '3')) {
+                    $twig->loadTemplate($logicalName);
                 }
                 \Craft::$app->view->setTemplateMode($oldTemplateMode);
             }

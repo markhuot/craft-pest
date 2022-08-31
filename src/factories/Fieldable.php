@@ -40,11 +40,11 @@ trait Fieldable
                 ->flatten(1)
                 ->toArray();
 
-            if (version_greater_than_or_equal_to(\Craft::$app->version, '3')) {
-                $fieldLayout->setFields($fields);
-            }
-            else if (version_greater_than_or_equal_to(\Craft::$app->version, '4')) {
+            if (version_greater_than_or_equal_to(\Craft::$app->version, '4')) {
                 $fieldLayout->getTabs()[0]->setElements($fields);
+            }
+            else if (version_greater_than_or_equal_to(\Craft::$app->version, '3')) {
+                $fieldLayout->setFields($fields);
             }
 
             \Craft::$app->fields->saveLayout($fieldLayout);
