@@ -98,9 +98,11 @@ class TestController extends Controller {
                 \Craft::$app->view->setTemplateMode('site');
                 $twig = \Craft::$app->view->twig;
                 if (version_greater_than_or_equal_to(\Craft::$app->version, '4')) {
+                    // @phpstan-ignore-next-line Ignored because one of these will fail based on the installed version of Craft
                     $twig->loadTemplate($twig->getTemplateClass($logicalName), $logicalName);
                 }
                 else if (version_greater_than_or_equal_to(\Craft::$app->version, '3')) {
+                    // @phpstan-ignore-next-line Ignored because one of these will fail based on the installed version of Craft
                     $twig->loadTemplate($logicalName);
                 }
                 \Craft::$app->view->setTemplateMode($oldTemplateMode);
