@@ -22,7 +22,7 @@ jobs:
       CRAFT_DB_USER: root
       CRAFT_DB_PASSWORD: root
       CRAFT_DB_TABLE_PREFIX: craft_
-      CRAFT_TEMPLATES_PATH: ./test/templates
+      CRAFT_TEMPLATES_PATH: ./tests/templates
 
     services:
       mysql:
