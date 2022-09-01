@@ -26,13 +26,13 @@ class TestableResponse extends \craft\web\Response
         return test()->expect($this);
     }
 
-    public function __isset($key) {
-        if (parent::__isset($key)) {
-            return true;
-        }
-
-        return $this->querySelector($key)->count() > 0;
-    }
+    // public function __isset($key) {
+    //     if (parent::__isset($key)) {
+    //         return true;
+    //     }
+    //
+    //     return $this->querySelector($key)->count() > 0;
+    // }
 
 
     /**

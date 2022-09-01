@@ -2,19 +2,20 @@
 
 namespace markhuot\craftpest\factories;
 
+use craft\models\VolumeFolder;
 use Illuminate\Support\Collection;
 use markhuot\craftpest\test\RefreshesDatabase;
 use yii\base\Event;
 use function markhuot\craftpest\helpers\base\collection_wrap;
-use function markhuot\craftpest\helpers\base\version_greater_than_or_equal_to;
+use function markhuot\craftpest\helpers\craft\volumeDeleteFileAtPath;
 
 class Asset extends Element {
 
     /** @var string */
     protected $volumeHandle;
 
-    /** @var string */
-    protected $folderHandle;
+    /** @var VolumeFolder */
+    protected $folder;
 
     /** @var string */
     protected $source;
@@ -25,8 +26,8 @@ class Asset extends Element {
         return $this;
     }
 
-    function folder($handle) {
-        $this->folderHandle = $handle;
+    function folder(VolumeFolder $folder) {
+        $this->folder = $folder;
 
         return $this;
     }
@@ -44,41 +45,40 @@ class Asset extends Element {
     function definition(int $index = 0)
     {
         $volume = \Craft::$app->volumes->getVolumeByHandle($this->volumeHandle);
+
         // @phpstan-ignore-next-line Craft 3 doesn't have `VolumeInterface->id` exposed so PHPStan fails this line.
-        $folder = \Craft::$app->assets->getRootFolderByVolumeId($volume->id);
+        $folder = $this->folder ?: \Craft::$app->assets->getRootFolderByVolumeId($volume->id);
 
         $tempPath = \Craft::$app->path->getTempPath();
         $tempFile = tempnam($tempPath, 'pest');
-        file_put_contents($tempFile, file_get_contents($this->source));
+
+        if ($this->source) {
+            $filename = basename($this->source);
+            file_put_contents($tempFile, file_get_contents($this->source));
+        }
+        else {
+            $filename = 'asset' . mt_rand(1000, 9999) . '.jpg';
+            file_put_contents($tempFile, file_get_contents(__DIR__ . '/../../stubs/images/gray.jpg'));
+        }
 
         return array_merge(parent::definition($index), [
             'folderId' => $folder->id,
             'tempFilePath' => $tempFile,
-            'filename' => basename($this->source),
+            'filename' => $filename,
         ]);
     }
 
-
     /**
-     * @param array $definition
-     *
      * @return \craft\elements\Asset|Collection
      */
-    function create($definition=[]) {
+    function create(array $definition=[])
+    {
         $assets = parent::create($definition);
 
         Event::on(RefreshesDatabase::class, 'EVENT_ROLLBACK_TRANSACTION', function () use ($assets) {
-            collection_wrap($assets)->each(function (\craft\elements\Asset $asset) {
-                if (version_greater_than_or_equal_to(\Craft::$app->version, '4')) {
-                    // @phpstan-ignore-next-line Ignored because one of these will fail based on the installed version of Craft
-                    $asset->volume->getFs()->deleteFile($asset->path);
-                }
-                else if (version_greater_than_or_equal_to(\Craft::$app->version, '3')) {
-                    // @phpstan-ignore-next-line Ignored because one of these will fail based on the installed version of Craft
-                    $asset->volume->deleteFile($asset->path);
-                }
-
-            });
+            foreach (collection_wrap($assets) as $asset) {
+                // volumeDeleteFileAtPath($asset->volume, $asset->path);
+            }
         });
 
         return $assets;

@@ -55,13 +55,26 @@ class TwigReporter extends Reporter
             return $debugInfo[$line];
         }
 
-        while ($line > 0 && empty($debugInfo[$line])) {
-            $line--;
-        }
-
-        if ($line > 0) {
-            return $debugInfo[$line];
-        }
+        // Removed because Twig inserts additional PHP processing after a
+        // foreach loop. This was causing the new PHP code to backtrack the
+        // bogus additional processing back to actual lines that may not
+        // have been covered. For example, the following loop will always
+        // report as covered with this backtracking in place because the
+        // additional processing code added after the loop will backtrack
+        // to the conditional inside the loop, incorrectly.
+        //
+        //     {% for index in 1..2 %}
+        //        {% if index > 5 %}...{% endif %}
+        //     {% endfor %}
+        //
+        // Do not add this code back in.
+        // while ($line > 0 && empty($debugInfo[$line])) {
+        //     $line--;
+        // }
+        //
+        // if ($line > 0) {
+        //     return $debugInfo[$line];
+        // }
 
         return null;
     }

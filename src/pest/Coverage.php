@@ -149,8 +149,11 @@ class Coverage implements AddsOutput, HandlesArguments
 
                 if ($result === true) {
                     $name = $reporter->getName();
-                    //$lines = $reporter->getUncoveredLines();
                     $lines = $reporter->getUncoveredLineRanges();
+                    // if ($name === 'tests/templates/loop-test.twig') {
+                    //     var_dump($file->lineCoverageData());
+                    //     die;
+                    // }
                     $part = $reporter->getNumberOfExecutedLines();
                     $whole = $reporter->getNumberOfExecutableLines();
                     $percent = $whole <= 0 ? 0 : $part / $whole * 100;
