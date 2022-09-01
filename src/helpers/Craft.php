@@ -31,13 +31,13 @@ if (!function_exists('volumeDeleteRootDirectory')) {
     {
         if (version_greater_than_or_equal_to(\Craft::$app->version, '4')) {
             /** @var \craft\models\Volume $volume */
-            if (is_a($volume->fs, \craft\fs\Local::class)) {
-                FileHelper::removeDirectory($volume->fs->getRootPath());
+            if (is_a($volume->fs, \craft\fs\Local::class)) {                              // @phpstan-ignore-line
+                FileHelper::removeDirectory($volume->fs->getRootPath());                        // @phpstan-ignore-line
             }
         } else if (version_greater_than_or_equal_to(\Craft::$app->version, '3')) {
             /** @var \craft\base\VolumeInterface $volume */
-            if (is_a($volume, \craft\volumes\Local::class)) {
-                FileHelper::removeDirectory($volume->getRootPath());
+            if (is_a($volume, \craft\volumes\Local::class)) {                             // @phpstan-ignore-line
+                FileHelper::removeDirectory($volume->getRootPath());                            // @phpstan-ignore-line
             }
         }
     }
@@ -67,15 +67,15 @@ if (!function_exists('volumeDefinition')) {
     function volumeDefinition(array $definition=[])
     {
         if (version_greater_than_or_equal_to(\Craft::$app->version, '4')) {
-            $fileSystem = new \craft\fs\Local();
-            $fileSystem->name = $definition['name'] . ' FS';
-            $fileSystem->handle = $definition['handle'] . 'Fs';
-            $fileSystem->path = \Craft::getAlias('@storage') . '/volumes/' . $definition['handle'] . '/';
-            \Craft::$app->fs->saveFilesystem($fileSystem);
+            $fileSystem = new \craft\fs\Local();                                                                  // @phpstan-ignore-line
+            $fileSystem->name = $definition['name'] . ' FS';                                                      // @phpstan-ignore-line
+            $fileSystem->handle = $definition['handle'] . 'Fs';                                                   // @phpstan-ignore-line
+            $fileSystem->path = \Craft::getAlias('@storage') . '/volumes/' . $definition['handle'] . '/';    // @phpstan-ignore-line
+            \Craft::$app->fs->saveFilesystem($fileSystem);                                                        // @phpstan-ignore-line
 
-            $definition['fsHandle'] = $fileSystem->handle;
+            $definition['fsHandle'] = $fileSystem->handle;                                                        // @phpstan-ignore-line
         } else if (version_greater_than_or_equal_to(\Craft::$app->version, '3')) {
-            $definition['path'] = \Craft::getAlias('@storage') . '/volumes/' . $definition['handle'] . '/';
+            $definition['path'] = \Craft::getAlias('@storage') . '/volumes/' . $definition['handle'] . '/'; // @phpstan-ignore-line
         }
 
         return $definition;
