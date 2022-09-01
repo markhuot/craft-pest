@@ -1,11 +1,9 @@
 This is executed
 
 {% for index, entry in 1..2 %}
-    {{ entry.title }}
     {% if index > 5 %}
         foo?
         bar
-        {{ entry.title }}
     {% endif %}
 {% endfor %}
 
