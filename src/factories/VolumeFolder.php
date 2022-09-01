@@ -11,10 +11,10 @@ use Illuminate\Support\Collection;
  */
 class VolumeFolder extends Factory {
 
-    /** @var VolumeInterface */
+    /** @var VolumeInterface|null */
     public $volume;
 
-    /** @var \craft\models\VolumeFolder */
+    /** @var \craft\models\VolumeFolder|null */
     public $parent;
 
     function volume(VolumeInterface $volume)
@@ -44,12 +44,14 @@ class VolumeFolder extends Factory {
     function definition(int $index = 0) {
         $name = $this->faker->words(2, true);
         $path = '/'.StringHelper::toCamelCase($name).'/';
-        $parentId = $this->parent?->id ?: \Craft::$app->assets->getRootFolderByVolumeId($this->volume->id)->id;
+        // @phpstan-ignore-next-line ignored because Craft 3.7 does not expose ->id in it's types
+        $volumeId = $this->volume->id;
+        $parentId = $this->parent?->id ?: \Craft::$app->assets->getRootFolderByVolumeId($volumeId)->id;
 
         return [
             'name' => $name,
             'path' => $path,
-            'volumeId' => $this->volume->id,
+            'volumeId' => $volumeId,
             'parentId' => $parentId,
         ];
     }
