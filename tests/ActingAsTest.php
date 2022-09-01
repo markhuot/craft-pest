@@ -20,3 +20,7 @@ it('throws on missing users', function () {
     $this->expectException(\Exception::class);
     $this->actingAs('foobar');
 });
+
+it('should not be logged in on subsequent tests', function () {
+    expect(\Craft::$app->user->id)->toBeEmpty();
+});
