@@ -2,29 +2,28 @@
 
 namespace markhuot\craftpest\factories;
 
-use craft\base\ElementInterface;
-use craft\base\VolumeInterface;
+use craft\fs\Local;
 use craft\helpers\FileHelper;
 use craft\helpers\StringHelper;
-use craft\models\Section_SiteSettings;
-use craft\volumes\Local;
-use Faker\Factory as Faker;
 use Illuminate\Support\Collection;
 use markhuot\craftpest\test\RefreshesDatabase;
 use yii\base\Event;
-use function markhuot\craftpest\helpers\base\array_wrap;
 use function markhuot\craftpest\helpers\base\collection_wrap;
+use function markhuot\craftpest\helpers\craft\createVolume;
+use function markhuot\craftpest\helpers\craft\volumeDefinition;
+use function markhuot\craftpest\helpers\craft\volumeDeleteRootDirectory;
 
 class Volume extends Factory {
 
     /**
      * Get the element to be generated
      *
-     * @return VolumeInterface
+     * I can't type this because Craft 3 returns a craft\base\VolumeInterface but
+     * Craft 4 returns a \craft\models\Volume
      */
     function newElement()
     {
-        return new \craft\volumes\Local;
+        return createVolume();
     }
 
     /**
@@ -36,24 +35,27 @@ class Volume extends Factory {
         $name = $this->faker->words(2, true);
         $handle = StringHelper::toCamelCase($name);
 
-        return [
+
+
+        return volumeDefinition([
             'name' => $name,
             'handle' => $handle,
-            'path' => \Craft::getAlias('@storage') . '/volumes/' . $handle . '/',
-        ];
+        ]);
     }
 
     /**
      * Persist the entry to local
      *
-     * @param VolumeInterface $element
+     * I can't type this because Craft 3 expects a craft\base\VolumeInterface but
+     * Craft 4 expects a \craft\models\Volume
      */
     function store($element) {
         \Craft::$app->getVolumes()->saveVolume($element);
     }
 
     /**
-     * @return VolumeInterface|Collection
+     * I can't type this because Craft 3 returns a craft\base\VolumeInterface but
+     * Craft 4 returns a \craft\models\Volume
      */
     function create(array $definition=[])
     {
@@ -61,9 +63,7 @@ class Volume extends Factory {
 
         Event::on(RefreshesDatabase::class, 'EVENT_ROLLBACK_TRANSACTION', function () use ($volumes) {
             foreach (collection_wrap($volumes) as $volume) {
-                if (is_a($volume, Local::class)) {
-                    // FileHelper::removeDirectory($volume->getRootPath());
-                }
+                volumeDeleteRootDirectory($volume);
             }
         });
 

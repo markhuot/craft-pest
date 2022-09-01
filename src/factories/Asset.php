@@ -77,7 +77,7 @@ class Asset extends Element {
 
         Event::on(RefreshesDatabase::class, 'EVENT_ROLLBACK_TRANSACTION', function () use ($assets) {
             foreach (collection_wrap($assets) as $asset) {
-                // volumeDeleteFileAtPath($asset->volume, $asset->path);
+                volumeDeleteFileAtPath($asset->volume, $asset->path);
             }
         });
 

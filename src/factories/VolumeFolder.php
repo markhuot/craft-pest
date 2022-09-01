@@ -11,13 +11,20 @@ use Illuminate\Support\Collection;
  */
 class VolumeFolder extends Factory {
 
-    /** @var VolumeInterface|null */
+    /**
+     * I can't type this because Craft 3 expects a craft\base\VolumeInterface but
+     * Craft 4 expects a \craft\models\Volume
+     */
     public $volume;
 
     /** @var \craft\models\VolumeFolder|null */
     public $parent;
 
-    function volume(VolumeInterface $volume)
+    /**
+     * I can't type this because Craft 3 expects a craft\base\VolumeInterface but
+     * Craft 4 expects a \craft\models\Volume
+     */
+    function volume($volume)
     {
         $this->volume = $volume;
 
