@@ -4,6 +4,7 @@
 
 ```shell
 composer require markhuot/craft-pest --dev
+./craft plugin/install pest
 ./craft pest/test
 ```
 
