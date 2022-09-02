@@ -1,12 +1,26 @@
 <?php
 
-it('logs in users', function () {
-    $this->actingAs('michael@bluth.com');
+it('logs in users by email address', function () {
+    $user = \markhuot\craftpest\factories\User::factory()->create();
 
-    expect(\Craft::$app->user->identity->email)->toBe('michael@bluth.com');
+    $this->actingAs($user->email);
+
+    expect(\Craft::$app->user->identity->email)->toBe($user->email);
+});
+
+it('logs in user objects', function () {
+    $user = \markhuot\craftpest\factories\User::factory()->create();
+
+    $this->actingAs($user);
+
+    expect(\Craft::$app->user->identity->email)->toBe($user->email);
 });
 
 it('throws on missing users', function () {
     $this->expectException(\Exception::class);
     $this->actingAs('foobar');
+});
+
+it('should not be logged in on subsequent tests', function () {
+    expect(\Craft::$app->user->id)->toBeEmpty();
 });

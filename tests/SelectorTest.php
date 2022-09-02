@@ -4,14 +4,39 @@ use function markhuot\craftpest\helpers\http\get;
 
 it('finds selectors', function () {
     get('/selectors')
-        ->expect()
-        ->querySelector('h1')
+        ->querySelector('h1')->expect()
         ->text->toBe('heading text');
 });
 
 it('gets inner html by class name', function () {
     get('/selectors')
-        ->expect()
-        ->querySelector('.class-name')
+        ->querySelector('.paragraph-element')->expect()
         ->innerHTML->toBe('inner html');
+});
+
+it('throws on unexpected property', function () {
+    $this->expectException(\Exception::class);
+    get('/selectors')
+        ->querySelector('.paragraph-element')->expect()
+        ->foo;
+});
+
+it('selects multiple matching nodes via expectation API', function () {
+    get('/selectors')
+        ->querySelector('ul li')->expect()
+        ->count->toBe(3)
+        ->text->toBe(['one', 'two', 'three']);
+});
+
+it ('selects multiple matching nodes via assertion API', function () {
+    get('/selectors')
+        ->querySelector('ul li')
+        ->assertCount(3)
+        ->assertText(['one', 'two', 'three']);
+});
+
+it('asserts containing string', function () {
+    get('/selectors')
+        ->querySelector('h1')
+        ->assertContainsString('heading text');
 });

@@ -187,7 +187,7 @@ abstract class Factory {
      *
      * @return Collection|\craft\elements\Entry
      */
-    function create($definition=[]) {
+    function create(array $definition=[]) {
         $elements = collection_wrap($this->make($definition));
 
         $elements = $elements->map(function ($element) {

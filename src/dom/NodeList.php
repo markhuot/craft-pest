@@ -15,6 +15,11 @@ class NodeList implements \Countable {
         $this->crawler = $crawler;
     }
 
+    function expect()
+    {
+        return test()->expect($this);
+    }
+
     function __get($property) {
         $getter = 'get' . ucfirst($property);
 
@@ -57,18 +62,19 @@ class NodeList implements \Countable {
 
     public function assertText($expected) {
         test()->assertSame($expected, $this->getText());
+
         return $this;
     }
-
 
     public function assertContainsString($expected) {
         test()->assertStringContainsString($expected, $this->getText());
+
         return $this;
     }
 
-
     public function assertCount($expected) {
         test()->assertCount($expected, $this);
+
         return $this;
     }
 }

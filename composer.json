@@ -26,6 +26,7 @@
         },
         "files": [
             "src/helpers/Base.php",
+            "src/helpers/Craft.php",
             "src/helpers/Http.php",
             "src/helpers/Model.php",
             "src/helpers/Test.php"

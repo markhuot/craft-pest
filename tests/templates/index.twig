@@ -1,7 +1,7 @@
 Hello World!
 
 {% if craft.app.request.getParam('foo') %}
-    this doesn't ever execute
+    this only executes when getParam('foo') is set
 {% endif %}
 
 This does execute!

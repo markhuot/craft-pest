@@ -2,9 +2,6 @@ name: PHP Composer
 
 on:
   push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
 
 permissions:
   contents: read
@@ -25,6 +22,7 @@ jobs:
       CRAFT_DB_USER: root
       CRAFT_DB_PASSWORD: root
       CRAFT_DB_TABLE_PREFIX: craft_
+      CRAFT_TEMPLATES_PATH: ./tests/templates
 
     services:
       mysql:

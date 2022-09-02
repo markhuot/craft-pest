@@ -2,12 +2,12 @@
 
 namespace markhuot\craftpest\test;
 
-use craft\web\User;
 use markhuot\craftpest\http\RequestBuilder;
-use markhuot\craftpest\Pest;
 use markhuot\craftpest\web\TestableResponse;
 
 class TestCase extends \PHPUnit\Framework\TestCase {
+
+    use ActingAs;
 
     protected function setUp(): void
     {
@@ -23,8 +23,13 @@ class TestCase extends \PHPUnit\Framework\TestCase {
 
     protected function callTraits($prefix)
     {
+        // Get traits added to the base TestCase, this actual file
         $reflect = new \ReflectionClass($this);
-        $traits = $reflect->getTraits();
+        $traits = $reflect->getParentClass()->getTraits();
+
+        // Get traits added via Pest's `uses()` logic
+        $traits = array_merge($traits, $reflect->getTraits());
+
         foreach ($traits as $trait) {
             $method = $prefix . $trait->getShortName();
             if ($trait->hasMethod($method)) {
@@ -96,24 +101,6 @@ class TestCase extends \PHPUnit\Framework\TestCase {
     function http(string $method, string $uri): RequestBuilder
     {
         return new RequestBuilder($method, $uri);
-    }
-
-    function actingAs(User|string $userOrName = null): self
-    {
-        if (is_string($userOrName)) {
-            $user = \Craft::$app->getUsers()->getUserByUsernameOrEmail($userOrName);
-        }
-        else if (is_a($userOrName, User::class)) {
-            $user = $userOrName;
-        }
-
-        if (empty($user)) {
-            throw new \Exception('Unknown user `' . $userOrName . '`');
-        }
-        
-        \Craft::$app->getUser()->setIdentity($user);
-
-        return $this;
     }
 
 }
