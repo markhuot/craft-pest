@@ -5,7 +5,10 @@ namespace markhuot\craftpest\helpers\http;
 use markhuot\craftpest\web\TestableResponse;
 use Pest\Expectation;
 
-function get(string $uri='/'): TestableResponse {
+/**
+ * @return TestableResponse
+ */
+function get(string $uri='/') {
     return test()->get($uri);
 }
 
