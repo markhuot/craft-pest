@@ -19,8 +19,10 @@ it('loads the homepage')
     ->assertOk();
 
 it('has a welcoming h1 element')
-    ->expect(get('/')->querySelector('h1')->text)
-        ->toBe('Welcome');
+    ->get('/')
+    ->querySelector('h1')
+    ->expect()
+    ->text->toBe('Welcome');
         
 it('asserts nine list items')
     ->get('/')
@@ -28,8 +30,10 @@ it('asserts nine list items')
     ->assertCount(9);
 
 it('expects nine list items')
-    ->expect(get('/')->querySelector('li')->count)
-        ->toBe(9);
+    ->get('/')
+    ->querySelector('li')
+    ->expect()
+    ->count->toBe(9);
 
 it('promotes craft')
     ->get('/')
@@ -38,8 +42,10 @@ it('promotes craft')
 it('shows news on the homepage', function() {
     $titles = News::factory()->count(3)->create()->title;
 
-    expect(get('/')->querySelector('.news__title')->text)
-        ->sequence(...$titles);
+    $this->get('/')
+        ->querySelector('.news__title')
+        ->expect()
+        ->text->sequence(...$titles);
 });
 ```
 
