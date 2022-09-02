@@ -2,12 +2,8 @@
 
 namespace markhuot\craftpest\factories;
 
-use craft\fields\Matrix;
-
 class MatrixField extends Field
 {
-    //use Fieldable;
-
     protected $blockTypes = [];
 
     function blockTypes(...$blockTypes)
@@ -18,6 +14,13 @@ class MatrixField extends Field
         else {
             $this->blockTypes = array_merge($this->blockTypes, $blockTypes);
         }
+
+        return $this;
+    }
+
+    function addBlockType($blockType)
+    {
+        $this->blockTypes[] = $blockType;
 
         return $this;
     }

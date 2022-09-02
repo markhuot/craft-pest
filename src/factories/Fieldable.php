@@ -10,6 +10,13 @@ trait Fieldable
 {
     protected $fields = [];
 
+    function addField($field)
+    {
+        $this->fields[] = $field;
+
+        return $this;
+    }
+
     function fields(array $fields)
     {
         $this->fields = array_merge($this->fields, $fields);

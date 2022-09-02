@@ -161,8 +161,8 @@ abstract class Factory {
         return $definition;
     }
 
-    function inferences() {
-        return [];
+    function inferences(array $definition=[]) {
+        return $definition;
     }
 
     /**
@@ -192,6 +192,9 @@ abstract class Factory {
 
         $elements = $elements->map(function ($element) {
             $this->store($element);
+            if ($element->errors) {
+                throw new \Exception(json_encode($element->errors));
+            }
 
             return $element;
         });
@@ -211,8 +214,13 @@ abstract class Factory {
             $this->resolveDefinition($this->definition()),
             $this->resolveDefinition($this->attributes),
             $this->resolveDefinition($definition),
-            $this->inferences(),
         );
+
+        // Once we have all the attributes from the definition give consumers
+        // one final chance to update the attributes. This is where we'll usually
+        // take defined names and turn them in to handles or take handles and
+        // turn them in to IDs
+        $attributes = array_merge($attributes, $this->inferences($attributes));
 
         // final pass to clean up resolved fields
         foreach ($attributes as $key => $value) {

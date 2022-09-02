@@ -5,6 +5,8 @@ namespace markhuot\craftpest\factories;
 use craft\helpers\StringHelper;
 
 /**
+ * @method self name(string $name)
+ * @method self handle(string $name)
  * @method void context(string $context)
  */
 class Field extends Factory
@@ -52,14 +54,21 @@ class Field extends Factory
      */
     function definition(int $index = 0) {
         $name = $this->faker->words(2, true);
-        $handle = StringHelper::toCamelCase($name);
         $firstFieldGroupId = \Craft::$app->fields->getAllGroups()[0]->id;
 
         return [
             'name' => $name,
-            'handle' => $handle,
             'groupId' => $firstFieldGroupId,
         ];
+    }
+
+    function inferences(array $definition = [])
+    {
+        if (empty($definition['handle']) && !empty($definition['name'])) {
+            $definition['handle'] = StringHelper::toCamelCase($definition['name']);
+        }
+
+        return $definition;
     }
 
     /**

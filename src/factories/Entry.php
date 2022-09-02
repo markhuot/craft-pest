@@ -83,21 +83,14 @@ class Entry extends Element {
         return new \craft\elements\Entry();
     }
 
-    /**
-     * Get the attribute definition for the factory
-     *
-     * @param int $index
-     *
-     * @return array
-     */
-    function inferences(int $index = 0) {
+    function inferences(array $definition = []) {
         $sectionId = $this->inferSectionId();
         $typeId = $this->inferTypeId($sectionId);
 
-        return [
+        return array_merge($definition, [
             'sectionId' => $sectionId,
             'typeId' => $typeId,
-        ];
+        ]);
     }
 
 }
