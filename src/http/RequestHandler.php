@@ -17,10 +17,10 @@ class RequestHandler
 
     public function handle($request, $skipSpecialHandling = false): TestableResponse
     {
+        $obLevel = ob_get_level();
         $this->registerWithCraft($request);
 
         try {
-
             $this->app->trigger(Application::EVENT_BEFORE_REQUEST);
 
             // The actual call
@@ -29,27 +29,29 @@ class RequestHandler
             $response->prepare();
 
             $this->app->trigger(Application::EVENT_AFTER_REQUEST);
+
+            return $response;
         }
 
-        // Catch any exceptions during handling
-        catch (\Exception $e) {
+        // If it's a response that normally returns HTML, then suppress the error and return
+        // HTML with the appropriate status code
+        catch (HttpException $e) {
+            // Fake a response and set the HTTP status code
+            $response = \Craft::createObject(\markhuot\craftpest\web\TestableResponse::class);
+            $response->setStatusCode($e->statusCode);
 
-            if (is_a($e, HttpException::class)) {
-                // Fake a response and set the HTTP status code
-                $response = \Craft::createObject(\markhuot\craftpest\web\TestableResponse::class);
-                $response->setStatusCode($e->statusCode);
+            // Error response
+            return $response;
+        }
 
-                // Error response
-                return $response;
+        // Clear out output buffering that may still be left open because of an exception. Ideally
+        // we wouldn't need this but Yii/Craft leaves something open somewhere that we're not
+        // handling correctly here.
+        finally {
+            while (ob_get_level() > $obLevel) {
+                ob_end_clean();
             }
-
-            // Something unexpected
-            echo $e->getMessage();
-            echo $e->getTraceAsString();
-            die;
         }
-
-        return $response;
     }
 
     private function registerWithCraft($request): void

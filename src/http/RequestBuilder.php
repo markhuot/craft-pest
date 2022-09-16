@@ -56,6 +56,10 @@ class RequestBuilder
     {
         $skipSpecialHandling = false;
 
+        // if (\Craft::alias('@webroot') === '@webroot') {
+        //     throw new \Exception('The `@webroot` alias is not set. This could cause requests in Pest to fail.');
+        // }
+
         return $this->handler->handle($this->request, $skipSpecialHandling);
     }
 

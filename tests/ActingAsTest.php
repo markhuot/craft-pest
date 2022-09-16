@@ -28,11 +28,12 @@ it('should not be logged in on subsequent tests', function () {
 it('acts as a user on get requests', function () {
     $user = \markhuot\craftpest\factories\User::factory()->create();
 
-    $this->actingAs($user)->get('admin/dashboard')->assertStatus(403);
+    $this->expectException(\Twig\Error\RuntimeError::class);
+    $this->actingAs($user)->get('admin/settings');
 });
 
 it('creates admin users', function () {
     $user = \markhuot\craftpest\factories\User::factory()->admin(true)->create();
 
-    $this->actingAs($user)->get('admin/dashboard')->assertOk();
+    $this->actingAs($user)->get('admin/settings')->assertOk();
 });
