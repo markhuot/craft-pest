@@ -81,7 +81,6 @@ class TestCase extends \PHPUnit\Framework\TestCase {
         /** @var \craft\web\Application $app */
         $app = require CRAFT_VENDOR_PATH . '/craftcms/cms/bootstrap/web.php';
 
-        $app->setAliases(['@webroot' => CRAFT_BASE_PATH . '/web']);
         $app->projectConfig->writeYamlAutomatically = false;
 
         return $app;

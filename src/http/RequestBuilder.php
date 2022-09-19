@@ -56,6 +56,10 @@ class RequestBuilder
     {
         $skipSpecialHandling = false;
 
+        // if (\Craft::alias('@webroot') === '@webroot') {
+        //     throw new \Exception('The `@webroot` alias is not set. This could cause requests in Pest to fail.');
+        // }
+
         return $this->handler->handle($this->request, $skipSpecialHandling);
     }
 
@@ -72,13 +76,18 @@ class RequestBuilder
      */
     private function prepareRequest(string $method, string $uri): WebRequest
     {
+        $isCpRequest = $this->uriContainsAdminSlug($uri);
+        if ($isCpRequest) {
+            $uri = preg_replace('#^'.preg_quote($this->app->getConfig()->getGeneral()->cpTrigger).'/?#', '', $uri);
+        }
+
         $request = match (strtolower($method)) {
             'get' => GetRequest::make($uri),
             'post' => PostRequest::make($uri),
-             default => throw new \InvalidArgumentException("Unable to build request. Unknown method '$method'"),
+            default => throw new \InvalidArgumentException("Unable to build request. Unknown method '$method'"),
         };
 
-        $request->setIsCpRequest($this->uriContainsAdminSlug($uri));
+        $request->setIsCpRequest($isCpRequest);
 
         return $request;
     }
