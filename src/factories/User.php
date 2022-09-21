@@ -8,6 +8,9 @@ use craft\models\Section;
 use Faker\Factory as Faker;
 use Illuminate\Support\Collection;
 
+/**
+ * @method self admin(bool $isAdmin)
+ */
 class User extends Element {
 
     function newElement() {

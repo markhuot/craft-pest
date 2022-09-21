@@ -62,7 +62,7 @@ jobs:
       run: composer require craftcms/cms:${{ matrix.craftVersion }} --prefer-dist --no-progress
 
     - name: Copy config files
-      run: mkdir -p ./config && cp ./stubs/config/db.php ./config/db.php && cp ./stubs/config/general.php ./config/general.php
+      run: mkdir -p ./storage && mkdir -p ./config && cp ./stubs/config/db.php ./config/db.php && cp ./stubs/config/general.php ./config/general.php
 
     - name: Run PHPStan
       run: ./vendor/bin/phpstan analyse src

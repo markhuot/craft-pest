@@ -9,6 +9,7 @@ cpresources
 .env
 bootstrap.php
 craft
+src/bin/cpresources
 !src/bin/craft
 storage/*
 !storage/.gitkeep
