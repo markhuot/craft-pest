@@ -59,7 +59,7 @@ jobs:
           ${{ runner.os }}-php-
 
     - name: Install dependencies
-      run: composer require craftcms/cms:3.7 --prefer-dist --no-progress
+      run: composer require "craftcms/cms:^3.7" --prefer-dist --no-progress
 
     - name: Copy config files
       run: mkdir -p ./storage && cp -r ./stubs/config ./config
@@ -68,8 +68,8 @@ jobs:
       run: ./src/bin/craft install --username=michael@bluth.com --email=michael@bluth.com --password=secret --siteName=Pest --siteUrl=http://localhost:8080 --language=en-US
 
     - name: Update to Craft ${{ matrix.craftVersion }}
-      run: composer update "craftcms/cms:${{ matrix.craftVersion }}" -W && ./src/bin/craft migrate/all --no-backup=1 --interactive=0
-      if: ${{ matrix.craftVersion != '3.7' }}
+      run: composer require "craftcms/cms:${{ matrix.craftVersion }}" -W && ./src/bin/craft migrate/all --no-backup=1 --interactive=0
+      if: ${{ matrix.craftVersion != '^3.7' }}
 
     - name: Run PHPStan
       run: ./vendor/bin/phpstan analyse src
