@@ -8,6 +8,7 @@ use craft\helpers\StringHelper;
  * @method self name(string $name)
  * @method self handle(string $name)
  * @method void context(string $context)
+ * @deprecated
  */
 class Field extends Factory
 {

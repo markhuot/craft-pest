@@ -2,6 +2,9 @@
 
 namespace markhuot\craftpest\factories;
 
+/**
+ * @deprecated
+ */
 class MatrixField extends Field
 {
     protected $blockTypes = [];
@@ -43,7 +46,8 @@ class MatrixField extends Field
             ->each(function ($blockType, $index) use ($element) {
                 $blockType->fieldId = $element->id;
                 $blockType->sortOrder = $index;
-            });
+            })
+            ->toArray();
             
         // Store the field, which also saves the block types
         $result = parent::store($element);

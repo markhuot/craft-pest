@@ -2,13 +2,10 @@
 
 namespace markhuot\craftpest\factories;
 
-use craft\base\ElementInterface;
-use craft\base\ModelInterface;
 use Faker\Factory as Faker;
 use Illuminate\Support\Collection;
 use yii\base\BaseObject;
 use function markhuot\craftpest\helpers\base\collection_wrap;
-use function markhuot\craftpest\helpers\base\array_wrap;
 
 abstract class Factory {
 
@@ -25,19 +22,6 @@ abstract class Factory {
     /** @var array */
     protected $attributes = [];
 
-    /**
-     * When a custom field is set, most of the time, we only care about
-     * a single argument, e.g. ->title('foo'). Because of this the __call
-     * magic method automatically sets the ->attributes to the first
-     * passed argument. _But_, for Element references we want to support
-     * those extra arga, e.g. ->related($entry1, $entry2...). So, this
-     * extraAttributes prop gives us a place to drop those extra args
-     * until we know what to do with them.
-     * 
-     * @var array
-     */
-    protected $extraAttributes = [];
-
     /** @var array|null */
     protected $definition = null;
 
@@ -47,35 +31,28 @@ abstract class Factory {
     /**
      * Insert deps
      */
-    final public function __construct($faker=null) {
+    public function __construct($faker=null) {
         $this->faker = $faker ?? Faker::create();
     }
 
     /**
      * Set custom fields
-     *
-     * @param string $method The method name
-     * @param array $args Any args passed to the method
      */
-    function __call($method, $args) {
+    function __call(string $method, array $args) {
         $setter = 'set' . ucfirst($method);
         if (method_exists($this, $setter)) {
             return $this->{$setter}(...$args);
         }
 
-        $value = $args[0] ?? null;
-        $this->attributes[$method] = $value;
-        $this->extraAttributes[$method] = array_slice($args, 1);
+        if (count($args) > 1) {
+            $this->attributes[$method] = array_merge($this->attributes[$method] ?? [], $args);
+        }
+        else {
+            $this->attributes[$method] = $args[0] ?? null;;
+        }
 
         return $this;
     }
-
-    /**
-     * Get the element to be generated.
-     *
-     * @return BaseObject
-     */
-    abstract function newElement();
 
     /**
      * Whether an attribute has been set
@@ -96,13 +73,16 @@ abstract class Factory {
     }
 
     /**
-     * Set the number of entries to be created
+     * Get the element to be generated.
      *
-     * @param int $count
-     *
-     * @return $this
+     * @return BaseObject
      */
-    function count($count=1) {
+    abstract function newElement();
+
+    /**
+     * Set the number of entries to be created
+     */
+    function count(int $count=1) {
         $this->count = $count;
 
         return $this;
@@ -110,8 +90,6 @@ abstract class Factory {
 
     /**
      * The faker definition
-     *
-     * @return array
      */
     function definition(int $index = 0) {
         return [];
@@ -192,7 +170,7 @@ abstract class Factory {
 
         $elements = $elements->map(function ($element) {
             $this->store($element);
-            if ($element->errors) {
+            if (!empty($element->errors)) {
                 throw new \Exception(json_encode($element->errors));
             }
 
@@ -252,7 +230,7 @@ abstract class Factory {
 
         $attributes = $this->getAttributes($definition);
 
-        $this->setAttributes($attributes, $element);
+        $element = $this->setAttributes($attributes, $element);
 
         return $element;
     }
