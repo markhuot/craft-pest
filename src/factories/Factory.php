@@ -31,7 +31,7 @@ abstract class Factory {
     /**
      * Insert deps
      */
-    public function __construct($faker=null) {
+    final function __construct($faker=null) {
         $this->faker = $faker ?? Faker::create();
     }
 
@@ -75,7 +75,7 @@ abstract class Factory {
     /**
      * Get the element to be generated.
      *
-     * @return BaseObject
+     * @return mixed
      */
     abstract function newElement();
 
