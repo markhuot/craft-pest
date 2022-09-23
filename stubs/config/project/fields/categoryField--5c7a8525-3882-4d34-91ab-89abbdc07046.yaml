@@ -11,8 +11,6 @@ settings:
   allowSelfRelations: false
   branchLimit: null
   localizeRelations: false
-  maxRelations: null
-  minRelations: null
   selectionLabel: null
   showSiteMenu: false
   source: null
