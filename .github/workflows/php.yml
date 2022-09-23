@@ -6,6 +6,9 @@ on:
 permissions:
   contents: read
 
+env:
+  project_config_version: 3.7
+
 jobs:
   build:
 
@@ -41,7 +44,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        craftVersion: ["^3.7", "^4.2"]
+        craftVersion: ["^${{ env.project_config_version }}", "^4.2"]
 
     steps:
     - uses: actions/checkout@v3
@@ -59,7 +62,7 @@ jobs:
           ${{ runner.os }}-php-
 
     - name: Install dependencies
-      run: composer require craftcms/cms:${{ matrix.craftVersion }} --prefer-dist --no-progress
+      run: composer require craftcms/cms:${{ env.project_config_version }} --prefer-dist --no-progress
 
     - name: Copy config files
       run: mkdir -p ./storage && cp -r ./stubs/config ./config
@@ -72,7 +75,7 @@ jobs:
 
     - name: Update to Craft ${{ matrix.craftVersion }}
       run: composer update "craftcms/cms:${{ matrix.craftVersion }}" -W && ./src/bin/craft migrate/all --no-backup=1 --interactive=0
-      if: ${{ matrix.craftVersion != '3.7' }}
+      if: ${{ matrix.craftVersion != env.project_config_version }}
 
     - name: Run test suite
       run: ./vendor/bin/pest
