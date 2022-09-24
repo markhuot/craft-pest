@@ -1,4 +1,4 @@
-dateModified: 1663954273
+dateModified: 1663957097
 email:
   fromEmail: michael@bluth.com
   fromName: Pest
@@ -24,6 +24,11 @@ meta:
     ccc0d7c5-9563-4aa5-a5ac-7e9bfe333647: 'Dropdown Field' # Dropdown Field
     eabe62dd-b801-42c9-955a-8ee090206b50: 'Color Field' # Color Field
     f3d94bb4-a854-46a1-bd78-0a28ac91ec60: Common # Common
+plugins:
+  pest:
+    edition: standard
+    enabled: true
+    schemaVersion: 1.0.0
 system:
   edition: solo
   live: true

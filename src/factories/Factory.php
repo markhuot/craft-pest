@@ -31,24 +31,21 @@ abstract class Factory {
     /**
      * Insert deps
      */
-    final function __construct($faker=null) {
+    final function __construct($faker=null)
+    {
         $this->faker = $faker ?? Faker::create();
     }
 
     /**
      * Set custom fields
      */
-    function __call(string $method, array $args) {
-        $setter = 'set' . ucfirst($method);
-        if (method_exists($this, $setter)) {
-            return $this->{$setter}(...$args);
-        }
-
+    function __call(string $method, array $args)
+    {
         if (count($args) > 1) {
             $this->attributes[$method] = array_merge($this->attributes[$method] ?? [], $args);
         }
         else {
-            $this->attributes[$method] = $args[0] ?? null;;
+            $this->attributes[$method] = $args[0] ?? null;
         }
 
         return $this;
@@ -61,7 +58,8 @@ abstract class Factory {
      *
      * @return bool
      */
-    function __isset($key) {
+    function __isset($key)
+    {
         return isset($this->attributes[$key]);
     }
 
@@ -110,19 +108,6 @@ abstract class Factory {
 
         if (!is_array($definition)) {
             $definition = [];
-        }
-
-        // run two passes so all the "static"/non-callable definitions
-        // are reesolved first and then do the callables
-        foreach ($definition as $key => &$value) {
-            if (is_callable($value)) {
-                continue;
-            }
-
-            if  (method_exists($this, $key)) {
-                $this->{$key}($value);
-                unset($definition[$key]);
-            }
         }
 
         // now that all the "static"/non-callables have been resolved

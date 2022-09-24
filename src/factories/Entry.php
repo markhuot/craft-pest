@@ -8,11 +8,13 @@ use craft\models\Section;
 use Faker\Factory as Faker;
 use Illuminate\Support\Collection;
 
-class Entry extends Element {
-
-    /** @var Section */
-    protected $section;
-
+/**
+ * @method title(string $title)
+ * @method slug(string $slug)
+ * @method enabled(bool $enabled)
+ */
+class Entry extends Element
+{
     /** @var EntryType */
     protected $type;
 
@@ -36,6 +38,47 @@ class Entry extends Element {
      */
     function type($handle) {
 
+    }
+
+    function postDate(\DateTime|string|int $value)
+    {
+        $this->setDateField('postDate', $value);
+
+        return $this;
+    }
+
+    function expiryDate(\DateTime|string|int $value)
+    {
+        $this->setDateField('expiryDate', $value);
+
+        return $this;
+    }
+
+    function setDateField($key, $value)
+    {
+        if (is_string($value)) {
+            $value = new \DateTime($value);
+        }
+
+        $this->attributes[$key] = $value;
+    }
+
+    function author(\craft\web\User|string|int $user)
+    {
+        if (is_numeric($user)) {
+            $user = \Craft::$app->users->getUserById($user);
+        }
+        else if (is_string($user)) {
+            $user = \Craft::$app->users->getUserByUsernameOrEmail($user);
+        }
+
+        if (!is_a($user, \craft\elements\User::class)) {
+            throw new \Exception('You must pass a User object or a valid user ID or username to the `author()` method.');
+        }
+
+        $this->attributes['authorId'] = !empty($user) ? $user->id : null;
+
+        return $this;
     }
 
     /**

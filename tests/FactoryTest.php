@@ -34,7 +34,8 @@ it('can set hasUrls of the section', function () {
         ->hasUrls(false)
         ->create();
 
-    expect(Craft::$app->sections->getSectionByHandle($section->handle)->siteSettings[1]->hasUrls)->toBe(false);
+    $siteId = \Craft::$app->sites->getCurrentSite()->id;
+    expect(Craft::$app->sections->getSectionByHandle($section->handle)->siteSettings[$siteId]->hasUrls)->toBe(false);
 });
 
 it('can set uriFormat of the section', function () {
@@ -42,7 +43,8 @@ it('can set uriFormat of the section', function () {
         ->uriFormat('{sluggy}')
         ->create();
 
-    expect(Craft::$app->sections->getSectionByHandle($section->handle)->siteSettings[1]->uriFormat)->toBe('{sluggy}');
+    $siteId = \Craft::$app->sites->getCurrentSite()->id;
+    expect(Craft::$app->sections->getSectionByHandle($section->handle)->siteSettings[$siteId]->uriFormat)->toBe('{sluggy}');
 });
 
 it('can set enabledByDefault of the section', function () {
@@ -50,7 +52,8 @@ it('can set enabledByDefault of the section', function () {
         ->enabledByDefault(false)
         ->create();
 
-    expect(Craft::$app->sections->getSectionByHandle($section->handle)->siteSettings[1]->enabledByDefault)->toBe(false);
+    $siteId = \Craft::$app->sites->getCurrentSite()->id;
+    expect(Craft::$app->sections->getSectionByHandle($section->handle)->siteSettings[$siteId]->enabledByDefault)->toBe(false);
 });
 
 it('can set template of the section', function () {
@@ -58,7 +61,8 @@ it('can set template of the section', function () {
         ->template('_foo/{handle}/bar')
         ->create();
 
-    expect(Craft::$app->sections->getSectionByHandle($section->handle)->siteSettings[1]->template)->toBe(implode('/', ['_foo', $section->handle, 'bar']));
+    $siteId = \Craft::$app->sites->getCurrentSite()->id;
+    expect(Craft::$app->sections->getSectionByHandle($section->handle)->siteSettings[$siteId]->template)->toBe(implode('/', ['_foo', $section->handle, 'bar']));
 });
 
 it('can fill an entries field', function () {
