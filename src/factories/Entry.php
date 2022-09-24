@@ -78,7 +78,7 @@ class Entry extends Element
             throw new \Exception('You must pass a User object or a valid user ID or username to the `author()` method.');
         }
 
-        $this->attributes['authorId'] = !empty($user) ? $user->id : null;
+        $this->attributes['authorId'] = $user->id;
 
         return $this;
     }
