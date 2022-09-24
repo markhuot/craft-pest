@@ -56,3 +56,11 @@ it('sets author by username', function () {
     entry('posts')->author($user->username)->create()->expect()
         ->author->id->toBe($user->id);
 });
+
+it('sets entry parent')
+    ->skip()
+    ->expect(fn () => entry('posts')
+        ->parentId(entry('posts'))
+        ->create()
+    )
+    ->errors->toBeEmpty();

@@ -11,7 +11,9 @@ use Illuminate\Support\Collection;
 /**
  * @method title(string $title)
  * @method slug(string $slug)
+ * @method uri(string $uri)
  * @method enabled(bool $enabled)
+ * @method parent(\craft\elements\Entry|Entry $parent)
  */
 class Entry extends Element
 {
