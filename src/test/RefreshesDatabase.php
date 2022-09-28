@@ -96,13 +96,20 @@ trait RefreshesDatabase {
         $this->transaction = \Craft::$app->db->beginTransaction();
     }
 
-    protected function rollBackTransaction()
+    public function rollbackNow()
     {
-        $this->tearDownRefreshesDatabase();
+        if ($this->transaction && $this->transaction->db->pdo->inTransaction()) {
+           $this->transaction->rollBack();
+           $this->transaction = null;
+       }
     }
 
     protected function tearDownRefreshesDatabase()
     {
+        if (is_null($this->transaction) || $this->transaction->db->pdo->inTransaction() === false) {
+           throw new \Exception('UUUrrgg. Implicit commit???');
+        }
+
         $this->transaction->rollBack();
 
         $event = new RollbackTransactionEvent();

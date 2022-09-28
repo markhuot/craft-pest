@@ -17,7 +17,7 @@ it('can create an asset from a source', function () {
     $volume = Volume::factory()->create();
     $asset = Asset::factory()
         ->volume($volume->handle)
-        ->source(__DIR__ . '/../stubs/images/gray.jpg')
+        ->source(__DIR__ . '/../../stubs/images/gray.jpg')
         ->create();
 
     $assets = \craft\elements\Asset::find()->volume($volume)->filename($asset->filename)->all();

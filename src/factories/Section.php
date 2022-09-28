@@ -7,6 +7,7 @@ use craft\helpers\StringHelper;
 use craft\models\Section_SiteSettings;
 use Faker\Factory as Faker;
 use Illuminate\Support\Collection;
+use yii\base\InvalidArgumentException;
 use function markhuot\craftpest\helpers\base\array_wrap;
 
 /**
@@ -97,7 +98,15 @@ class Section extends Factory {
      * @param \craft\models\Section $element
      */
     function store($element) {
-        \Craft::$app->sections->saveSection($element);
+
+        if ($existing = \Craft::$app->sections->getSectionByHandle($element->handle)) {
+            $element->id = $existing->id;
+        }
+
+        if (\Craft::$app->sections->saveSection($element) === false) {
+          throw new InvalidArgumentException("Unable to store new section: " . print_r($element->toArray(), true));
+        }
+
         $this->storeFields($element->entryTypes[0]->fieldLayout);
     }
 

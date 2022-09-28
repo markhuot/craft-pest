@@ -3,6 +3,7 @@
 namespace markhuot\craftpest\factories;
 
 use craft\helpers\StringHelper;
+use yii\db\Connection;
 
 /**
  * @method void context(string $context)
@@ -67,7 +68,27 @@ class Field extends Factory
      */
     function store($element): bool
     {
-        return \Craft::$app->fields->saveField($element);
+        // Remember old db connection
+        //$mainConnection = \Craft::$app->getDb();
+
+        // New connection
+        //$newConnection = \Craft::createObject(\craft\helpers\App::dbConfig());
+        //$newConnection = clone $mainConnection;
+
+        //\Craft::$app->set('db', $newConnection);
+
+        // Actual save
+        $result = \Craft::$app->fields->saveField($element);
+
+        // Revert connection
+        //$newConnection = null;
+        //\Craft::$app->set('db', $mainConnection);
+
+        return $result;
     }
+
+
+    // $config = craft\helpers\App::dbConfig();
+    //            return Craft::createObject($config);
 
 }
