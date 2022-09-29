@@ -7,6 +7,7 @@ use craft\fields\Matrix;
 use craft\fields\Assets;
 use craft\fields\Categories;
 use craft\fields\Entries;
+use markhuot\craftpest\test\QueryRecorder;
 use function markhuot\craftpest\helpers\base\collection_wrap;
 use function markhuot\craftpest\helpers\base\array_wrap;
 
@@ -30,6 +31,7 @@ abstract class Element extends Factory
         if (!\Craft::$app->elements->saveElement($element)) {
             throw new \Exception(implode(" ", $element->getErrorSummary(false)));
         }
+        QueryRecorder::record($element);
     }
 
     function resolveFactories($values)

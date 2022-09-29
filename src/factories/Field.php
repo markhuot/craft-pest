@@ -3,7 +3,9 @@
 namespace markhuot\craftpest\factories;
 
 use craft\helpers\StringHelper;
+use markhuot\craftpest\test\QueryRecorder;
 use yii\db\Connection;
+use yii\db\Query;
 
 /**
  * @method void context(string $context)
@@ -66,23 +68,10 @@ class Field extends Factory
     /**
      * Persist the entry to local
      */
-    function store($element): bool
+    function store($field): bool
     {
-        // Remember old db connection
-        //$mainConnection = \Craft::$app->getDb();
-
-        // New connection
-        //$newConnection = \Craft::createObject(\craft\helpers\App::dbConfig());
-        //$newConnection = clone $mainConnection;
-
-        //\Craft::$app->set('db', $newConnection);
-
-        // Actual save
-        $result = \Craft::$app->fields->saveField($element);
-
-        // Revert connection
-        //$newConnection = null;
-        //\Craft::$app->set('db', $mainConnection);
+        $result = \Craft::$app->fields->saveField($field);
+        QueryRecorder::record($field);
 
         return $result;
     }

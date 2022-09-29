@@ -27,6 +27,8 @@ trait RefreshesDatabase {
      */
     protected $transaction;
 
+    protected QueryRecorder $recorder;
+
     function setUpRefreshesDatabase()
     {
         $this->refreshDatabase();
@@ -92,6 +94,12 @@ trait RefreshesDatabase {
 
     protected function beginTransaction()
     {
+        $this->recorder = new QueryRecorder(
+            \Craft::$app->getFields(),
+            \Craft::$app->getElements(),
+            \Craft::$app->getSections()
+        );
+
         $this->oldConfigVersion = \Craft::$app->info->configVersion;
         $this->transaction = \Craft::$app->db->beginTransaction();
     }
@@ -117,6 +125,8 @@ trait RefreshesDatabase {
         Event::trigger(RefreshesDatabase::class, 'EVENT_ROLLBACK_TRANSACTION', $event);
 
         \Craft::$app->info->configVersion = $this->oldConfigVersion;
+
+        $this->recorder->rollback();
     }
 
 }
