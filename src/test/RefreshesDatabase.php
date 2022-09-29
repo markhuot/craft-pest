@@ -115,7 +115,7 @@ trait RefreshesDatabase {
     protected function tearDownRefreshesDatabase()
     {
         if (is_null($this->transaction) || $this->transaction->db->pdo->inTransaction() === false) {
-           throw new \Exception('UUUrrgg. Implicit commit???');
+            $this->recorder->rollback();
         }
 
         $this->transaction->rollBack();
@@ -126,7 +126,6 @@ trait RefreshesDatabase {
 
         \Craft::$app->info->configVersion = $this->oldConfigVersion;
 
-        $this->recorder->rollback();
     }
 
 }

@@ -3,6 +3,7 @@
 namespace markhuot\craftpest\factories;
 
 use craft\fields\Matrix;
+use function Arrayy\array_first;
 
 class MatrixField extends Field
 {
