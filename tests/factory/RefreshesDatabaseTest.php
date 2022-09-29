@@ -52,3 +52,11 @@ it('rolls back even if a field factory triggered a transaction commit', function
 
 });
 
+
+
+test('cleanup happend', function () {
+    $countInitial = \craft\elements\Entry::find()->count();
+    expect($countInitial)->toEqual(0);
+});
+
+
