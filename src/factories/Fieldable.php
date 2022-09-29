@@ -45,13 +45,13 @@ trait Fieldable
 
                 if (!isset($fieldLayout->getTabs()[0])) {
                     // better but still broken
-                    $fieldLayoutTab = new FieldLayoutTab();
-                    $fieldLayoutTab->name = 'Content';
-                    $fieldLayoutTab->sortOrder = 1;
-                    $fieldLayoutTab->setElements($fields);
-                    $fieldLayoutTab->layoutId = $fieldLayout->id;
+                    //$fieldLayoutTab = new FieldLayoutTab();
+                    //$fieldLayoutTab->name = 'Content';
+                    //$fieldLayoutTab->sortOrder = 1;
+                    //$fieldLayoutTab->setElements($fields);
+                    //$fieldLayoutTab->layoutId = $fieldLayout->id;
                     // @phpstan-ignore-next-line Ignored because one of these will fail based on the installed version of Craft
-                    $fieldLayout->setTabs([$fieldLayoutTab]);
+                    //$fieldLayout->setTabs([$fieldLayoutTab]);
                 } else {
                     // @phpstan-ignore-next-line Ignored because one of these will fail based on the installed version of Craft
                     $fieldLayout->getTabs()[0]->setElements($fields);

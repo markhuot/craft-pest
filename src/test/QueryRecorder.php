@@ -54,12 +54,12 @@ class QueryRecorder
         foreach (QueryRecorder::$records as $model) {
             if (is_a($model, FieldInterface::class)) {
                 $this->fieldService->deleteField($model);
-                echo 'deleting: ' . get_class($model) . ':'. $model->id . PHP_EOL;
+                echo 'deleting: ' . get_class($model) . ':'. $model->handle . PHP_EOL;
                 continue;
             }
             if (is_a($model, Section::class)) {
                 $this->sectionsService->deleteSectionById($model->id);
-                echo 'deleting: ' . get_class($model) . ':'. $model->id . PHP_EOL;
+                echo 'deleting: ' . get_class($model) . ':'. $model->handle . PHP_EOL;
             }
         }
 
