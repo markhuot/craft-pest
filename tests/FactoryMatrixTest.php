@@ -53,4 +53,4 @@ it('can create matrix fields', function () {
         ->create();
 
     expect((int)$entry->{$matrix->handle}->count())->toBe(5);
-})->only();
+});
