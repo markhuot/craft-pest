@@ -4,6 +4,7 @@ namespace markhuot\craftpest\test;
 
 use craft\helpers\ProjectConfig;
 use markhuot\craftpest\events\FactoryStoreEvent;
+use markhuot\craftpest\events\RollbackTransactionEvent;
 use markhuot\craftpest\exceptions\AutoCommittingFieldsException;
 use markhuot\craftpest\factories\Factory;
 use markhuot\craftpest\factories\Field;
