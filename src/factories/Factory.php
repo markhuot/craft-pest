@@ -4,7 +4,9 @@ namespace markhuot\craftpest\factories;
 
 use Faker\Factory as Faker;
 use Illuminate\Support\Collection;
+use markhuot\craftpest\events\FactoryStoreEvent;
 use yii\base\BaseObject;
+use yii\base\Event;
 use function markhuot\craftpest\helpers\base\collection_wrap;
 
 abstract class Factory {
@@ -15,6 +17,16 @@ abstract class Factory {
      * @var string
      */
     const NULL = '__NULL__';
+
+    /**
+     * An event fired before a model is stored to the persistent storage
+     */
+    const EVENT_BEFORE_STORE = 'beforeStore';
+
+    /**
+     * An event fired after a model is stored to the persistent storage
+     */
+    const EVENT_AFTER_STORE = 'afterStore';
 
     /** @var \Faker\Generator */
     protected $faker;
@@ -146,7 +158,7 @@ abstract class Factory {
     }
 
     /**
-     * Persist the entry to local
+     * Write the model to persistent storage
      *
      * @return Collection|\craft\elements\Entry
      */
@@ -154,10 +166,27 @@ abstract class Factory {
         $elements = collection_wrap($this->make($definition));
 
         $elements = $elements->map(function ($element) {
+            $beforeStoreEvent = new FactoryStoreEvent;
+            $beforeStoreEvent->sender = $this;
+            $beforeStoreEvent->model = $element;
+            Event::trigger(static::class, static::EVENT_BEFORE_STORE, $beforeStoreEvent);
+
+            // If our event has been canceled and is no longer valid do not perform the
+            // native storage routine. Instead we'll just return the element as-is assuming
+            // the event has already handled persisting it.
+            if (!$beforeStoreEvent->isValid) {
+                return $element;
+            }
+
             $this->store($element);
             if (!empty($element->errors)) {
                 throw new \Exception(json_encode($element->errors));
             }
+
+            $afterStoreEvent = new FactoryStoreEvent;
+            $afterStoreEvent->sender = $this;
+            $afterStoreEvent->model = $element;
+            Event::trigger(static::class, static::EVENT_AFTER_STORE, $afterStoreEvent);
 
             return $element;
         });
