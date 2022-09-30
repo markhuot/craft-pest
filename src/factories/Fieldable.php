@@ -4,6 +4,7 @@ namespace markhuot\craftpest\factories;
 
 use craft\fieldlayoutelements\CustomField;
 use craft\models\FieldLayout;
+use craft\models\FieldLayoutTab;
 use function markhuot\craftpest\helpers\base\version_greater_than_or_equal_to;
 
 trait Fieldable
@@ -49,6 +50,13 @@ trait Fieldable
 
             if (version_greater_than_or_equal_to(\Craft::$app->version, '4')) {
                 // @phpstan-ignore-next-line Ignored because one of these will fail based on the installed version of Craft
+                if (empty($fieldLayout->getTabs()[0])) {
+                    $fieldLayoutTab = new FieldLayoutTab();
+                    $fieldLayoutTab->name = 'Content';
+                    $fieldLayoutTab->sortOrder = 1;
+                    $fieldLayout->setTabs([$fieldLayoutTab]);
+                }
+
                 $fieldLayout->getTabs()[0]->setElements($fields);
             }
             else if (version_greater_than_or_equal_to(\Craft::$app->version, '3')) {
