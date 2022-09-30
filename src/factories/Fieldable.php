@@ -5,6 +5,7 @@ namespace markhuot\craftpest\factories;
 use craft\fieldlayoutelements\CustomField;
 use craft\models\FieldLayout;
 use craft\models\FieldLayoutTab;
+use function markhuot\craftpest\helpers\base\array_wrap;
 use function markhuot\craftpest\helpers\base\version_greater_than_or_equal_to;
 
 trait Fieldable
@@ -18,9 +19,16 @@ trait Fieldable
         return $this;
     }
 
-    function fields(array $fields)
+    /**
+     * @param array|\craft\base\Field $fields
+     */
+    function fields(...$fields)
     {
-        $this->fields = array_merge($this->fields, $fields);
+        if (is_array($fields[0])) {
+            $fields = $fields[0];
+        }
+
+        $this->fields = array_merge($this->fields, array_wrap($fields));
 
         return $this;
     }

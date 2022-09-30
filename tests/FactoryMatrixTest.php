@@ -32,25 +32,41 @@ it('can fill matrix fields with multiple blocks', function () {
 });
 
 it('can create matrix fields', function () {
-    $plainText = FieldFactory::factory()
+    $plainTextOne = FieldFactory::factory()
         ->type(PlainTextField::class);
 
+    $plainTextTwo = FieldFactory::factory()
+        ->type(PlainTextField::class);
+
+    $blockType = BlockTypeFactory::factory()
+        ->fields($plainTextOne, $plainTextTwo);
+
     $matrix = MatrixFieldFactory::factory()
-        ->blockTypes($blockType = BlockTypeFactory::factory()->fields([$plainText]))
+        ->blockTypes($blockType)
         ->create();
 
     $section = SectionFactory::factory()
-        ->fields([$matrix])
+        ->fields($matrix)
         ->create();
+
+    $plainTextOneHandle = $plainTextOne->getMadeModels()->first()->handle;
+    $plainTextTwoHandle = $plainTextTwo->getMadeModels()->first()->handle;
 
     $entry = EntryFactory::factory()
         ->section($section->handle)
         ->{$matrix->handle}(
             BlockFactory::factory()
                 ->type($blockType->getMadeModels()->first()->handle)
+                ->{$plainTextOneHandle}('foo')
+                ->{$plainTextTwoHandle}('bar')
                 ->count(5)
         )
         ->create();
 
-    expect((int)$entry->{$matrix->handle}->count())->toBe(5);
+    $blocks = $entry->{$matrix->handle}->all();
+    expect($blocks)->toHaveCount(5);
+
+    $firstBlock = $blocks[0];
+    expect($firstBlock->{$plainTextOneHandle})->toBe('foo');
+    expect($firstBlock->{$plainTextTwoHandle})->toBe('bar');
 });
