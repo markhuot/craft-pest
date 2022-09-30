@@ -57,19 +57,17 @@ trait Fieldable
                 ->toArray();
 
             if (version_greater_than_or_equal_to(\Craft::$app->version, '4')) {
-                // @phpstan-ignore-next-line Ignored because one of these will fail based on the installed version of Craft
-                if (empty($fieldLayout->getTabs()[0])) {
-                    $fieldLayoutTab = new FieldLayoutTab();
-                    $fieldLayoutTab->name = 'Content';
-                    $fieldLayoutTab->sortOrder = 1;
-                    $fieldLayout->setTabs([$fieldLayoutTab]);
+                if (empty($fieldLayout->getTabs()[0])) {       // @phpstan-ignore-line
+                    $fieldLayoutTab = new FieldLayoutTab();    // @phpstan-ignore-line
+                    $fieldLayoutTab->name = 'Content';         // @phpstan-ignore-line
+                    $fieldLayoutTab->sortOrder = 1;            // @phpstan-ignore-line
+                    $fieldLayout->setTabs([$fieldLayoutTab]);  // @phpstan-ignore-line
                 }
 
                 $fieldLayout->getTabs()[0]->setElements($fields);
             }
             else if (version_greater_than_or_equal_to(\Craft::$app->version, '3')) {
-                // @phpstan-ignore-next-line Ignored because one of these will fail based on the installed version of Craft
-                $fieldLayout->setFields($fields);
+                $fieldLayout->setFields($fields);              // @phpstan-ignore-line
             }
 
             \Craft::$app->fields->saveLayout($fieldLayout);
