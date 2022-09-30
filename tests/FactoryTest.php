@@ -83,7 +83,7 @@ it('can place fields in groups', function () {
         ->create();
 
     expect($field->getGroup()->name)->toBe('Common');
-})->skip();
+});
 
 it('can create fields', function () {
     $field = \markhuot\craftpest\factories\Field::factory()
@@ -130,7 +130,7 @@ it('can create fields', function () {
             )
             ->toEqualCanonicalizing([$first->id, $second->id]);
     }
-})->skip();
+});
 
 dataset('entries field', function () {
     yield function () {
@@ -158,7 +158,7 @@ it('automatically resolves factories via method', function ($props) {
     )->create();
 
     expect(\craft\elements\Entry::find()->id($entry->id)->one()->{$field->handle}->count())->toEqual(2);
-})->with('entries field')->skip();
+})->with('entries field');
 
 it('automatically resolves factories with ->count()', function ($props) {
     [$factory, $section, $field] = $props;
@@ -168,7 +168,7 @@ it('automatically resolves factories with ->count()', function ($props) {
     )->create();
 
     expect(\craft\elements\Entry::find()->id($entry->id)->one()->{$field->handle}->count())->toEqual(5);
-})->with('entries field')->skip();
+})->with('entries field');
 
 it('automatically resolves factories via ->create() definition', function ($props) {
     [$factory, $section, $field] = $props;
@@ -178,7 +178,7 @@ it('automatically resolves factories via ->create() definition', function ($prop
     ]);
 
     expect(\craft\elements\Entry::find()->id($entry->id)->one()->{$field->handle}->count())->toEqual(5);
-})->with('entries field')->skip();
+})->with('entries field');
 
 it('takes an array of entries', function ($props) {
     [$factory, $section, $field] = $props;
@@ -194,7 +194,7 @@ it('takes an array of entries', function ($props) {
     ]);
 
     expect(\craft\elements\Entry::find()->id($entry->id)->one()->{$field->handle}->ids())->toEqualCanonicalizing($children->pluck('id')->toArray());
-})->with('entries field')->skip();
+})->with('entries field');
 
 it('can create matrix blocks', function () {
     $textField = \markhuot\craftpest\factories\Field::factory()

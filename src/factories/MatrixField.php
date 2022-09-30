@@ -2,9 +2,6 @@
 
 namespace markhuot\craftpest\factories;
 
-/**
- * @deprecated
- */
 class MatrixField extends Field
 {
     protected $blockTypes = [];

@@ -7,6 +7,7 @@ use craft\fields\Matrix;
 use craft\fields\Assets;
 use craft\fields\Categories;
 use craft\fields\Entries;
+use Illuminate\Support\Collection;
 use function markhuot\craftpest\helpers\base\collection_wrap;
 use function markhuot\craftpest\helpers\base\array_wrap;
 
@@ -35,10 +36,16 @@ abstract class Element extends Factory
     /**
      * Recursively resolve nested factories
      */
-    function resolveFactories(\craft\base\Field $field, array $values)
+    function resolveFactories(array $values)
     {
+        // for legacy reasons ->create can either return a model or a collection of models.
+        // Because of this, when we resolve factories we could end up with nested arrays of
+        // models. We'll keep track of our factory indexes here and, if they returned a
+        // collection we'll go back after the fact and flatten them down.
+        $flattenIndexes = [];
+
         // Resolve out any factories
-        foreach ($values as &$value) {
+        foreach ($values as $index => $value) {
             if (is_subclass_of($value, Factory::class)) {
                 // This is unfortunately an artifact of the current Craft model structure. We can't
                 // ->make() sub models because Craft doesn't know what to do with them on save and
@@ -47,25 +54,24 @@ abstract class Element extends Factory
                 // will go in to the model okay, but when you try to pull them back out to save them
                 // you get an EntryQuery with no access to the raw array of unsaved entries.
                 // Because of that we call ->create() here on all nested factories.
-                $result = $value->create();
-
-                if (in_array(get_class($field), [Entries::class, Categories::class, Assets::class])) {
-                    $value = $result->id;
-                }
-                else {
-                    $value = $result;
-                }
+                $values[$index] = $value->create();
+                $flattenIndexes[] = $index;
             }
         }
 
-        // @TODO this definitely doesn't belong here in the generic element factory
-        if (is_a($field, Matrix::class)) {
-            $values = collect($values)->mapWithKeys(function ($item, $index) {
-                return ['new' . ($index + 1) => $item];
-            })->toArray();
+        // Now that the factories have been resolved we can flatten any factories that generated
+        // multiple models via `->count(5)`, for example.
+        $return = collect([]);
+        foreach ($values as $index => $value) {
+            if (in_array($index, $flattenIndexes) && is_a($value, Collection::class)) {
+                $return = $return->concat($value);
+            }
+            else {
+                $return->push($value);
+            }
         }
 
-        return $values;
+        return $return;
     }
 
     protected function setAttributes($attributes, $element)
@@ -83,8 +89,28 @@ abstract class Element extends Factory
         foreach ($attributes as $key => &$value) {
             $field = $element->fieldLayout->getFieldByHandle($key);
 
-            if ($this->isElementReference($field)) {
-                $value = $this->resolveFactories($field, array_wrap($value));
+            if (in_array(get_class($field), [
+                Entries::class,
+                Assets::class,
+                Categories::class,
+            ])) {
+                $value = $this->resolveFactories(array_wrap($value))->map(function ($element) {
+                    if (is_numeric($element)) {
+                        return $element;
+                    }
+                    if (is_object($element) && !empty($element->id)) {
+                        return $element->id;
+                    }
+
+                    throw new \Exception('Could not determine the ID of the reference.');
+                })->toArray();
+            }
+
+            if (is_a($field, Matrix::class)) {
+                $value = $this->resolveFactories(array_wrap($value))
+                    ->mapWithKeys(function ($item, $index) {
+                        return ['new' . ($index + 1) => $item];
+                    })->toArray();
             }
 
             // Set any custom fields
@@ -92,16 +118,6 @@ abstract class Element extends Factory
         }
 
         return $element;
-    }
-
-    protected function isElementReference($field)
-    {
-        return in_array(get_class($field), [
-            Entries::class,
-            Assets::class,
-            Categories::class,
-            Matrix::class,
-        ]);
     }
 
 }

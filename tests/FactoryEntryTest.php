@@ -58,7 +58,7 @@ it('sets author by username', function () {
 });
 
 it('sets entry parent')
-    ->only()
+    ->skip()
     ->expect(fn () => entry('posts')
         ->parent(entry('posts')->create()->id)
         ->create()

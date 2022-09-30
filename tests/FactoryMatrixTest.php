@@ -13,3 +13,14 @@ it('can create matrix fields', function () {
 
     expect($entry->matrixField->all())->toHaveCount(2);
 });
+
+it('can create matrix fields with multiple blocks', function () {
+    $entry = \markhuot\craftpest\factories\Entry::factory()
+        ->section('posts')
+        ->matrixField(
+            Block::factory()->type('blockTypeOne')->count(5),
+        )
+        ->create();
+
+    expect($entry->matrixField->all())->toHaveCount(5);
+});

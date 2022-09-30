@@ -8,7 +8,6 @@ use craft\models\MatrixBlockType;
 /**
  * @method self name(string $name)
  * @method self handle(string $name)
- * @deprecated
  */
 class BlockType extends Factory
 {
