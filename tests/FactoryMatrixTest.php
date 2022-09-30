@@ -6,6 +6,7 @@ use markhuot\craftpest\factories\Block as BlockFactory;
 use markhuot\craftpest\factories\Field as FieldFactory;
 use craft\fields\PlainText as PlainTextField;
 use markhuot\craftpest\factories\BlockType as BlockTypeFactory;
+use markhuot\craftpest\factories\Section as SectionFactory;
 
 it('can fill matrix fields', function () {
     $entry = EntryFactory::factory()
@@ -38,7 +39,7 @@ it('can create matrix fields', function () {
         ->blockTypes($blockType = BlockTypeFactory::factory()->fields([$plainText]))
         ->create();
 
-    $section = \markhuot\craftpest\factories\Section::factory()
+    $section = SectionFactory::factory()
         ->fields([$matrix])
         ->create();
 
