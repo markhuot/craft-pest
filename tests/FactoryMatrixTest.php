@@ -2,7 +2,7 @@
 
 use markhuot\craftpest\factories\Block;
 
-it('can create matrix fields', function () {
+it('can fill matrix fields', function () {
     $entry = \markhuot\craftpest\factories\Entry::factory()
         ->section('posts')
         ->matrixField(
@@ -14,7 +14,7 @@ it('can create matrix fields', function () {
     expect($entry->matrixField->all())->toHaveCount(2);
 });
 
-it('can create matrix fields with multiple blocks', function () {
+it('can fill matrix fields with multiple blocks', function () {
     $entry = \markhuot\craftpest\factories\Entry::factory()
         ->section('posts')
         ->matrixField(
@@ -23,4 +23,29 @@ it('can create matrix fields with multiple blocks', function () {
         ->create();
 
     expect($entry->matrixField->all())->toHaveCount(5);
+});
+
+it('can create matrix fields', function () {
+    $plainText = \markhuot\craftpest\factories\Field::factory()
+        ->type(\craft\fields\PlainText::class);
+
+    $matrix = \markhuot\craftpest\factories\MatrixField::factory()
+        ->blockTypes(
+            $blockType = \markhuot\craftpest\factories\BlockType::factory()
+                ->fields([$plainText])
+        )
+        ->create();
+
+    $section = \markhuot\craftpest\factories\Section::factory()
+        ->fields([$matrix])
+        ->create();
+
+    $entry = \markhuot\craftpest\factories\Entry::factory()
+        ->section($section->handle)
+        ->{$matrix->handle}(
+            Block::factory()->type($blockType->getMadeModels()->first()->handle)
+        )
+        ->create();
+
+    expect((int)$entry->{$matrix->handle}->count())->toBe(1);
 });

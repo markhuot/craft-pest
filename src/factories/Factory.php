@@ -41,6 +41,15 @@ abstract class Factory {
     protected $count = 1;
 
     /**
+     * Any models this factory eventually ends up making. Stored in the factory
+     * so you can pull them back out if you only have reference to the factory
+     * and the ->make/->create happens deeper because of nesting
+     *
+     * @var Collection
+     */
+    protected $models;
+
+    /**
      * Insert deps
      */
     final function __construct($faker=null)
@@ -125,7 +134,7 @@ abstract class Factory {
         // now that all the "static"/non-callables have been resolved
         // we can run the callables and pass in the existing
         // values for reference
-        foreach ($definition as $key => &$value) {
+        foreach ($definition as &$value) {
             if (!is_callable($value)) {
                 continue;
             }
@@ -146,15 +155,17 @@ abstract class Factory {
      * @return \craft\elements\Entry|Collection
      */
     function make($definition=[]) {
+        // Create the models
         $elements = collect([])
             ->pad($this->count, null)
             ->map(fn () => $this->internalMake($definition));
 
-        if ($this->count === 1) {
-            return $elements->first();
-        }
+        // Store a reference to the created models
+        $this->models = $elements;
 
-        return $elements;
+        // If the count is one we return the first model, otherwise return
+        // the full collection of models
+        return ($this->count === 1) ? $elements->first() : $elements;
     }
 
     /**
@@ -191,11 +202,15 @@ abstract class Factory {
             return $element;
         });
 
-        if ($this->count === 1) {
-            return $elements->first();
-        }
+        // If the count is one return the first model, otherwise return the full
+        // collection of models
+        // @TODO, why is this reversed. It's necessary but I don't know why and I'd like to
+        return ($this->count === 1) ? $elements->first() : $elements->reverse();
+    }
 
-        return $elements->reverse();
+    function getMadeModels()
+    {
+        return $this->models;
     }
 
     abstract function store($element);
