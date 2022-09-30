@@ -11,6 +11,7 @@ use function markhuot\craftpest\helpers\base\array_wrap;
 
 /**
  * @method self type(string $type)
+ * @method Collection|\craft\models\Section create(array $definition=[])
  */
 class Section extends Factory {
 
