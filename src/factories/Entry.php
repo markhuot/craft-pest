@@ -9,11 +9,12 @@ use Faker\Factory as Faker;
 use Illuminate\Support\Collection;
 
 /**
+ * @TODO a lot of these should be copied up to the element factory
  * @method title(string $title)
  * @method slug(string $slug)
  * @method uri(string $uri)
  * @method enabled(bool $enabled)
- * @method parent(\craft\elements\Entry|Entry $parent)
+ * @method parent(\craft\elements\Entry|Entry|string|int $parent)
  */
 class Entry extends Element
 {
