@@ -2,11 +2,11 @@
 
 namespace markhuot\craftpest\factories;
 
-use craft\base\ElementInterface;
-use craft\base\ModelInterface;
 use Faker\Factory as Faker;
 use Illuminate\Support\Collection;
+use markhuot\craftpest\events\FactoryStoreEvent;
 use yii\base\BaseObject;
+use yii\base\Event;
 use function markhuot\craftpest\helpers\base\collection_wrap;
 use function markhuot\craftpest\helpers\base\array_wrap;
 
@@ -18,6 +18,16 @@ abstract class Factory {
      * @var string
      */
     const NULL = '__NULL__';
+
+    /**
+     * An event fired before a model is stored to the persistent storage
+     */
+    const EVENT_BEFORE_STORE = 'beforeStore';
+
+    /**
+     * An event fired after a model is stored to the persistent storage
+     */
+    const EVENT_AFTER_STORE = 'afterStore';
 
     /** @var \Faker\Generator */
     protected $faker;
@@ -135,7 +145,7 @@ abstract class Factory {
         }
 
         // run two passes so all the "static"/non-callable definitions
-        // are reesolved first and then do the callables
+        // are resolved first and then do the callables
         foreach ($definition as $key => &$value) {
             if (is_callable($value)) {
                 continue;
@@ -183,7 +193,7 @@ abstract class Factory {
     }
 
     /**
-     * Persist the entry to local
+     * Write the model to persistent storage
      *
      * @return Collection|\craft\elements\Entry
      */
@@ -191,7 +201,24 @@ abstract class Factory {
         $elements = collection_wrap($this->make($definition));
 
         $elements = $elements->map(function ($element) {
+            $beforeStoreEvent = new FactoryStoreEvent;
+            $beforeStoreEvent->sender = $this;
+            $beforeStoreEvent->model = $element;
+            Event::trigger(static::class, static::EVENT_BEFORE_STORE, $beforeStoreEvent);
+
+            // If our event has been canceled and is no longer valid do not perform the
+            // native storage routine. Instead we'll just return the element as-is assuming
+            // the event has already handled persisting it.
+            if (!$beforeStoreEvent->isValid) {
+                return $element;
+            }
+
             $this->store($element);
+
+            $afterStoreEvent = new FactoryStoreEvent;
+            $afterStoreEvent->sender = $this;
+            $afterStoreEvent->model = $element;
+            Event::trigger(static::class, static::EVENT_AFTER_STORE, $afterStoreEvent);
 
             return $element;
         });
