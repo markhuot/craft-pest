@@ -1,13 +1,18 @@
 <?php
 
-use markhuot\craftpest\factories\Block;
+use markhuot\craftpest\factories\Entry as EntryFactory;
+use markhuot\craftpest\factories\MatrixField as MatrixFieldFactory;
+use markhuot\craftpest\factories\Block as BlockFactory;
+use markhuot\craftpest\factories\Field as FieldFactory;
+use craft\fields\PlainText as PlainTextField;
+use markhuot\craftpest\factories\BlockType as BlockTypeFactory;
 
 it('can fill matrix fields', function () {
-    $entry = \markhuot\craftpest\factories\Entry::factory()
+    $entry = EntryFactory::factory()
         ->section('posts')
         ->matrixField(
-            Block::factory()->type('blockTypeOne')->fieldOne('foo'),
-            Block::factory()->type('blockTypeOne')->fieldOne('bar'),
+            BlockFactory::factory()->type('blockTypeOne')->fieldOne('foo'),
+            BlockFactory::factory()->type('blockTypeOne')->fieldOne('bar'),
         )
         ->create();
 
@@ -15,10 +20,10 @@ it('can fill matrix fields', function () {
 });
 
 it('can fill matrix fields with multiple blocks', function () {
-    $entry = \markhuot\craftpest\factories\Entry::factory()
+    $entry = EntryFactory::factory()
         ->section('posts')
         ->matrixField(
-            Block::factory()->type('blockTypeOne')->count(5),
+            BlockFactory::factory()->type('blockTypeOne')->count(5),
         )
         ->create();
 
@@ -26,26 +31,25 @@ it('can fill matrix fields with multiple blocks', function () {
 });
 
 it('can create matrix fields', function () {
-    $plainText = \markhuot\craftpest\factories\Field::factory()
-        ->type(\craft\fields\PlainText::class);
+    $plainText = FieldFactory::factory()
+        ->type(PlainTextField::class);
 
-    $matrix = \markhuot\craftpest\factories\MatrixField::factory()
-        ->blockTypes(
-            $blockType = \markhuot\craftpest\factories\BlockType::factory()
-                ->fields([$plainText])
-        )
+    $matrix = MatrixFieldFactory::factory()
+        ->blockTypes($blockType = BlockTypeFactory::factory()->fields([$plainText]))
         ->create();
 
     $section = \markhuot\craftpest\factories\Section::factory()
         ->fields([$matrix])
         ->create();
 
-    $entry = \markhuot\craftpest\factories\Entry::factory()
+    $entry = EntryFactory::factory()
         ->section($section->handle)
         ->{$matrix->handle}(
-            Block::factory()->type($blockType->getMadeModels()->first()->handle)
+            BlockFactory::factory()
+                ->type($blockType->getMadeModels()->first()->handle)
+                ->count(5)
         )
         ->create();
 
-    expect((int)$entry->{$matrix->handle}->count())->toBe(1);
-});
+    expect((int)$entry->{$matrix->handle}->count())->toBe(5);
+})->only();
