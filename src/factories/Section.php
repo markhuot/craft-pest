@@ -10,8 +10,10 @@ use Illuminate\Support\Collection;
 use function markhuot\craftpest\helpers\base\array_wrap;
 
 /**
+ * @method self name(string $name)
+ * @method self handle(string $name)
  * @method self type(string $type)
- * @method Collection|\craft\models\Section create(array $definition=[])
+ * @method \craft\models\Section|Collection create()
  */
 class Section extends Factory {
 

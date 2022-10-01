@@ -3,8 +3,11 @@
 namespace markhuot\craftpest;
 
 use craft\base\Plugin;
+use craft\elements\Entry;
+use craft\events\DefineBehaviorsEvent;
 use craft\events\PluginEvent;
 use craft\services\Plugins;
+use markhuot\craftpest\behaviors\ExpectableBehavior;
 use yii\base\Event;
 
 /**
@@ -34,6 +37,14 @@ class Pest extends Plugin {
                         copy(__DIR__ . '/../stubs/init/phpunit.xml', CRAFT_BASE_PATH . '/phpunit.xml');
                     }
                 }
+            }
+        );
+
+        Event::on(
+            Entry::class,
+            Entry::EVENT_DEFINE_BEHAVIORS,
+            function (DefineBehaviorsEvent $event) {
+                $event->behaviors[] = ExpectableBehavior::class;
             }
         );
     }

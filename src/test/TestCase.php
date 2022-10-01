@@ -2,6 +2,7 @@
 
 namespace markhuot\craftpest\test;
 
+use markhuot\craftpest\factories\Entry;
 use markhuot\craftpest\http\RequestBuilder;
 use markhuot\craftpest\web\TestableResponse;
 
@@ -100,6 +101,11 @@ class TestCase extends \PHPUnit\Framework\TestCase {
     function http(string $method, string $uri): RequestBuilder
     {
         return new RequestBuilder($method, $uri);
+    }
+
+    public function factory(string $class)
+    {
+        return $class::factory();
     }
 
 }

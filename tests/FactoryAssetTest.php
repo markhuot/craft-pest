@@ -8,7 +8,10 @@ it('can create volumes and assets', function () {
     $volume = Volume::factory()->create();
     $asset = Asset::factory()->volume($volume->handle)->create();
 
-    $assets = \craft\elements\Asset::find()->volume($volume)->filename($asset->filename)->all();
+    $assets = \craft\elements\Asset::find()
+        ->volume($volume)
+        ->filename($asset->filename)
+        ->all();
 
     expect($assets)->toHaveCount(1);
 });
