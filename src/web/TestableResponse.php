@@ -22,10 +22,6 @@ class TestableResponse extends \craft\web\Response
         // being prematurely written to the screen
     }
 
-    public function expect() {
-        return test()->expect($this);
-    }
-
     // public function __isset($key) {
     //     if (parent::__isset($key)) {
     //         return true;
