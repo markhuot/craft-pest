@@ -8,6 +8,7 @@ use craft\fields\Assets;
 use craft\fields\Categories;
 use craft\fields\Entries;
 use Illuminate\Support\Collection;
+use markhuot\craftpest\exceptions\ModelStoreException;
 use function markhuot\craftpest\helpers\base\collection_wrap;
 use function markhuot\craftpest\helpers\base\array_wrap;
 
@@ -29,7 +30,7 @@ abstract class Element extends Factory
      */
     function store($element) {
         if (!\Craft::$app->elements->saveElement($element)) {
-            throw new \Exception(implode(" ", $element->getErrorSummary(false)));
+            throw new ModelStoreException($element);
         }
     }
 
@@ -74,6 +75,10 @@ abstract class Element extends Factory
         return $return;
     }
 
+    /**
+     * @param array $attributes
+     * @param \craft\base\Element $element
+     */
     protected function setAttributes($attributes, $element)
     {
         // Set the element native fields first (ignoring any custom fields)
@@ -87,7 +92,24 @@ abstract class Element extends Factory
 
         // render out any nested factories while setting the custom field values
         foreach ($attributes as $key => &$value) {
+
+            // Unfortunately $element->fieldLayout->getFields() does not look in all the
+            // tabs for fields (in 3.7, at least), so we need to manually get all the tabs,
+            // then get the fields from each tab and then search over the cumulative list
+            // of fields.
+            // $field = collect($element->fieldLayout->getFields())
+            //     ->concat(collect($element->fieldLayout->getTabs())
+            //         ->map(fn ($tab) => $tab->getFields())
+            //         ->flatten(1)
+            //     )
+            //     ->where('handle', '=', $key)
+            //     ->first();
+            // @TODO, make sure this works in 3.7 and 4.0 and then we can remove the above comment
             $field = $element->fieldLayout->getFieldByHandle($key);
+
+            if (empty($field)) {
+                throw new \Exception('Could not find field with handle `' . $key . '` on `' . get_class($element) . '`');
+            }
 
             if (in_array(get_class($field), [
                 Entries::class,

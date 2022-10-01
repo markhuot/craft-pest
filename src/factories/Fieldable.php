@@ -5,6 +5,7 @@ namespace markhuot\craftpest\factories;
 use craft\fieldlayoutelements\CustomField;
 use craft\models\FieldLayout;
 use craft\models\FieldLayoutTab;
+use markhuot\craftpest\exceptions\ModelStoreException;
 use function markhuot\craftpest\helpers\base\array_wrap;
 use function markhuot\craftpest\helpers\base\version_greater_than_or_equal_to;
 
@@ -35,42 +36,44 @@ trait Fieldable
 
     function storeFields(FieldLayout $fieldLayout, $context=null)
     {
-        if (!empty($this->fields)) {
-            $fields = collect($this->fields)
-                ->map(function ($f) use ($context) {
-                    if (is_a($f, Field::class)) {
-                        $f->context($context ? 'matrixBlockType:' . $context->uid : 'global');
-                        return $f->create();
-                    }
+        if (empty($this->fields)) {
+            return;
+        }
 
-                    return $f;
-                })
-                ->map(function (\craft\base\Field $f) {
-                    if (version_greater_than_or_equal_to(\Craft::$app->version, '4')) {
-                        \Craft::$app->fields->saveField($f);
-                        return new CustomField($f);
-                    }
-
-                    return $f;
-                })
-                ->flatten(1)
-                ->toArray();
-
-            if (version_greater_than_or_equal_to(\Craft::$app->version, '4')) {
-                if (empty($fieldLayout->getTabs()[0])) {           // @phpstan-ignore-line
-                    $fieldLayoutTab = new FieldLayoutTab();        // @phpstan-ignore-line
-                    $fieldLayoutTab->name = 'Content';             // @phpstan-ignore-line
-                    $fieldLayoutTab->sortOrder = 1;                // @phpstan-ignore-line
-                    $fieldLayout->setTabs([$fieldLayoutTab]);      // @phpstan-ignore-line
+        $fields = collect($this->fields)
+            ->map(function ($f) use ($context) {
+                if (is_a($f, Field::class)) {
+                    $f->context($context ? 'matrixBlockType:' . $context->uid : 'global');
+                    return $f->create();
                 }
 
-                $fieldLayout->getTabs()[0]->setElements($fields);  // @phpstan-ignore-line
-            }
-            else if (version_greater_than_or_equal_to(\Craft::$app->version, '3')) {
-                $fieldLayout->setFields($fields);                  // @phpstan-ignore-line
-            }
+                return $f;
+            })
+            ->flatten(1)
+            ->toArray();
 
-            \Craft::$app->fields->saveLayout($fieldLayout);
+        if (empty($fieldLayout->getTabs()[0])) {
+            $fieldLayoutTab = new FieldLayoutTab();
+            $fieldLayoutTab->name = 'Content';
+            $fieldLayoutTab->sortOrder = 1;
+            $fieldLayout->setTabs([$fieldLayoutTab]);
+        }
+
+        if (version_greater_than_or_equal_to(\Craft::$app->version, '4')) {
+            $fieldLayout->getTabs()[0]->setElements(           // @phpstan-ignore-line
+                collect($fields)->map(function ($field) {      // @phpstan-ignore-line
+                    \Craft::$app->fields->saveField($field);   // @phpstan-ignore-line
+                    return new CustomField($field);            // @phpstan-ignore-line
+                })->toArray()                                  // @phpstan-ignore-line
+            );                                                 // @phpstan-ignore-line
+        }
+        else if (version_greater_than_or_equal_to(\Craft::$app->version, '3')) {
+            $fieldLayout->getTabs()[0]->setFields($fields);    // @phpstan-ignore-line
+            $fieldLayout->setFields($fields);                  // @phpstan-ignore-line
+        }
+
+        if (!\Craft::$app->fields->saveLayout($fieldLayout)) {
+            throw new ModelStoreException($fieldLayout);
         }
     }
 }

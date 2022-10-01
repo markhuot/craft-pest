@@ -2,6 +2,9 @@
 
 namespace markhuot\craftpest\factories;
 
+use craft\models\MatrixBlockType;
+use function markhuot\craftpest\helpers\base\version_greater_than_or_equal_to;
+
 class MatrixField extends Field
 {
     protected $blockTypes = [];
@@ -53,8 +56,14 @@ class MatrixField extends Field
         collect($this->blockTypes)
             ->zip($element->blockTypes)
             ->each(function ($props) {
+                /** @var MatrixBlockType $blockType */
                 [$factory, $blockType] = $props;
                 $factory->storeFields($blockType->fieldLayout, $blockType);
+
+                if (version_greater_than_or_equal_to(\Craft::$app->version, '3')) {
+                    $blockType->fieldLayoutId = $blockType->fieldLayout->id;
+                    \Craft::$app->matrix->saveBlockType($blockType);
+                }
             });
 
         return $result;

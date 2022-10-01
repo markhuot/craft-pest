@@ -49,6 +49,7 @@ it('can create matrix fields', function () {
         ->fields($matrix)
         ->create();
 
+    $blockTypeHandle = $blockType->getMadeModels()->first()->handle;
     $plainTextOneHandle = $plainTextOne->getMadeModels()->first()->handle;
     $plainTextTwoHandle = $plainTextTwo->getMadeModels()->first()->handle;
 
@@ -56,7 +57,7 @@ it('can create matrix fields', function () {
         ->section($section->handle)
         ->{$matrix->handle}(
             BlockFactory::factory()
-                ->type($blockType->getMadeModels()->first()->handle)
+                ->type($blockTypeHandle)
                 ->{$plainTextOneHandle}('foo')
                 ->{$plainTextTwoHandle}('bar')
                 ->count(5)
