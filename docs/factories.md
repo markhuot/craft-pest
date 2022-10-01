@@ -53,23 +53,19 @@ class Post extends \markhuot\craftpest\factories\Entry
 {
   function definition()
   {
-    $title = $this->faker->sentence;
-    $categories = Category::factory()->count(3)->create();
-    $categoryIds = $categories->pluck('id')->toArray();
-  
     return [
       // The section and type id can be set, if it is ambiguous. However, by
       // default the section and type will be inferred from the class name. In this
       // case Craft Pest will look for a section named Post with a single entry
       // type that is also named Post.  
-      'sectionId' => $sectionId,
-      'typeId' => $typeId,
+      // 'sectionId' => $sectionId,
+      // 'typeId' => $typeId,
     
       // The entry's title field
-      'title' => $title,          
+      'title' => $this->faker->sentence,          
       
-      // A Category field takes an array of category ids
-      'category' => $categoryIds, 
+      // A Category field takes an array of category ids or category factories
+      'category' => Category::factory()->count(3), 
       
       // Generate three body paragraphs of text
       'body' => $this->faker->paragraphs(3),
