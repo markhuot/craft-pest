@@ -24,10 +24,18 @@ class TestableResponseBehavior extends Behavior {
     }
 
 
-    public function querySelector($selector) {
+    function querySelector(string $selector) {
         $html = $this->response->content;
         $crawler = new Crawler($html);
         return new NodeList($crawler->filter($selector));
+    }
+
+    function expectSelector(string $selector) {
+       return $this->querySelector($selector)->expect();
+    }
+
+    public function expect() {
+        return test()->expect($this);
     }
 
     // public function __isset($key) {
