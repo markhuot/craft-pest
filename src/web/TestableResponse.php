@@ -22,15 +22,6 @@ class TestableResponse extends \craft\web\Response
         // being prematurely written to the screen
     }
 
-    // public function __isset($key) {
-    //     if (parent::__isset($key)) {
-    //         return true;
-    //     }
-    //
-    //     return $this->querySelector($key)->count() > 0;
-    // }
-
-
     /**
      * Make prepare() publicly accessible
      */
