@@ -1,0 +1,70 @@
+field: 71730b1a-49d4-4e53-8f27-408897679aeb # Matrix Field
+fieldLayouts:
+  6caec0e3-74e9-46f1-88b9-eb1948f4cec1:
+    tabs:
+      -
+        elements:
+          -
+            fieldUid: 657fe2c9-a6e2-4408-909e-5ef5b343e271 # Field One
+            instructions: null
+            label: null
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            warning: null
+            width: 100
+          -
+            fieldUid: 28d665c1-92c8-4ead-8286-7eff290cfa63 # Field Two
+            instructions: null
+            label: null
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            warning: null
+            width: 100
+        name: Content
+        uid: 7a0906bb-2298-4128-a950-6d1fc2cab72b
+fields:
+  28d665c1-92c8-4ead-8286-7eff290cfa63: # Field Two
+    columnSuffix: kizkalzy
+    contentColumnType: text
+    fieldGroup: null
+    handle: fieldTwo
+    instructions: null
+    name: 'Field Two'
+    searchable: false
+    settings:
+      byteLimit: null
+      charLimit: null
+      code: false
+      columnType: null
+      initialRows: 4
+      multiline: false
+      placeholder: null
+      uiMode: normal
+    translationKeyFormat: null
+    translationMethod: none
+    type: craft\fields\PlainText
+  657fe2c9-a6e2-4408-909e-5ef5b343e271: # Field One
+    columnSuffix: nmygnnmg
+    contentColumnType: text
+    fieldGroup: null
+    handle: fieldOne
+    instructions: null
+    name: 'Field One'
+    searchable: false
+    settings:
+      byteLimit: null
+      charLimit: null
+      code: false
+      columnType: null
+      initialRows: 4
+      multiline: false
+      placeholder: null
+      uiMode: normal
+    translationKeyFormat: null
+    translationMethod: none
+    type: craft\fields\PlainText
+handle: blockTypeTwo
+name: 'Block Type Two'
+sortOrder: 2
