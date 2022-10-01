@@ -34,6 +34,10 @@ class TestableResponseBehavior extends Behavior {
        return $this->querySelector($selector)->expect();
     }
 
+    public function expect() {
+        return test()->expect($this);
+    }
+
     // public function __isset($key) {
     //     if (parent::__isset($key)) {
     //         return true;
