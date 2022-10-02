@@ -45,4 +45,4 @@ jobs:
           author_email: docbot@markhuot.com
           author_name: docbot
           message: GitHub action updating docs
-          branch: ${{ github.head_ref }}
+          branch: ${{ github.ref_name }}
