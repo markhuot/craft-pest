@@ -11,8 +11,8 @@ use yii\base\Behavior;
  * A testable response is returned whenever you perform a HTTP request
  * with Pest. It is an extension of Craft's native Response with a
  * number of convience methods added for testing. For example, most
- * tests will perform a get and want to check that the response did
- * not return an error. you may use `->assertOk()` to check that the
+ * tests will perform a `get()` and want to check that the response did
+ * not return an error. You may use `->assertOk()` to check that the
  * status code was 200.
  * 
  * @property \craft\web\Response $owner
@@ -51,10 +51,27 @@ class TestableResponseBehavior extends Behavior {
         return new NodeList($crawler->filter($selector));
     }
 
+    /**
+     * Runs the same `querySelector()` against the response's HTML but instead
+     * of returning a `NodeList` it returns an expectation against the `NodeList`.
+     * This allows you to use Pest's expectation API against the found nodes.
+     * 
+     * ```php
+     * $response->expectSelector('h1')->text->toBe('Hello World!');
+     * ```
+     */
     function expectSelector(string $selector) {
        return $this->querySelector($selector)->expect();
     }
 
+    /**
+     * Starts an expectation on the response. This allows you to use the expectation
+     * API on Craft's response properties.
+     *
+     * ```php
+     * $response->expect()->statusCode->toBe(200);
+     * ```
+     */
     public function expect() {
         return test()->expect($this);
     }
