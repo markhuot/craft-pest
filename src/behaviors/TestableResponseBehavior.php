@@ -8,6 +8,13 @@ use Symfony\Component\DomCrawler\Crawler;
 use yii\base\Behavior;
 
 /**
+ * A testable response is returned whenever you perform a HTTP request
+ * with Pest. It is an extension of Craft's native Response with a
+ * number of convience methods added for testing. For example, most
+ * tests will perform a get and want to check that the response did
+ * not return an error. you may use `->assertOk()` to check that the
+ * status code was 200.
+ * 
  * @property \craft\web\Response $owner
  */
 class TestableResponseBehavior extends Behavior {
@@ -24,6 +31,20 @@ class TestableResponseBehavior extends Behavior {
     }
 
 
+    /**
+     * If the response returns HTML you can `querySelector()` to inspect the
+     * HTML for specific content. The `querySelector()` method takes a
+     * CSS selector to look for (just like in Javascript).
+     * 
+     * The return from `querySelector()` is always a `NodeList` containing zero
+     * or more nodes. You can interact with the `NodeList` regardless of the return
+     * and you will get back a scalar value or a collection of values.
+     * 
+     * ```php
+     * $response->querySelector('h1')->text; // returns the string contents of the h1 element
+     * $response->querySelector('li')->text; // returns a collection containing the text of all list items
+     * ```
+     */
     function querySelector(string $selector) {
         $html = $this->response->content;
         $crawler = new Crawler($html);
