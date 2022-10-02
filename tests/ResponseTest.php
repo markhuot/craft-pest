@@ -8,4 +8,4 @@ it('asserts cookie presence')
 it('asserts cookie presence')
   ->get('/response-test')
   ->assertOk()
-  ->assertCookie('foo', 'bar);
+  ->assertCookie('foo', 'bar');
