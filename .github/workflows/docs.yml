@@ -13,6 +13,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+          fetch-depth: 0
 
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
@@ -35,6 +38,7 @@ jobs:
       - name: Commit & Push changes
         uses: actions-js/push@master
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           author_email: docbot@markhuot.com
           author_name: docbot
           message: GitHub action updating docs
