@@ -35,5 +35,10 @@ API on Craft's response properties.
 $response->expect()->statusCode->toBe(200);
 ```
 
+## assertCookie()
+Checks that the response contains the given cookie. When not passed a value
+the assertion only checks the presence of the cookie. When passed a value the
+value will be checked for strict equality.
+
 ## assertNoContent()
 Assert that the response has the given status code and no content.
