@@ -92,8 +92,18 @@ class TestableResponseBehavior extends Behavior {
     //     return $this->querySelector($key);
     // }
 
-    function assertCookie() {
-        // TODO
+    /**
+     * Checks that the response contains the given cookie. When not passed a value
+     * the assertion only checks the presence of the cookie. When passed a value the
+     * value will be checked for strict equality.
+     */
+    function assertCookie($name, $value='__NULL__') {
+        if ($value === '__NULL__') {
+          $this->assertContains($name, array_keys($this->response->cookies));
+        }
+
+        $this->assertSame($this->response->cookie->{$name}, $value);
+
         return $this->response;
     }
 
