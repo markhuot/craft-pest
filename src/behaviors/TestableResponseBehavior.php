@@ -99,7 +99,7 @@ class TestableResponseBehavior extends Behavior {
      */
     function assertCookie($name, $value='__NULL__') {
         if ($value === '__NULL__') {
-          test()->assertContains($name, array_keys($this->response->cookies->all()));
+          test()->assertContains($name, array_keys($this->response->cookies->toArray()));
         }
 
         test()->assertSame($this->response->cookie->get($name), $value);
