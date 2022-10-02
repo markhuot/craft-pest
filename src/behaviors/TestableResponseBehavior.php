@@ -102,7 +102,7 @@ class TestableResponseBehavior extends Behavior {
           test()->assertContains($name, array_keys($this->response->cookies->toArray()));
         }
 
-        test()->assertSame($this->response->cookie->get($name), $value);
+        test()->assertSame($this->response->cookies->get($name), $value);
 
         return $this->response;
     }
