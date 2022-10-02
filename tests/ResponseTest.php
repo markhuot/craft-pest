@@ -5,7 +5,7 @@ it('asserts cookie presence')
   ->assertOk()
   ->assertCookie('foo');
 
-it('asserts cookie presence')
+it('asserts cookie value')
   ->get('/response-test')
   ->assertOk()
   ->assertCookie('foo', 'bar');
