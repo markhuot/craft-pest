@@ -33,13 +33,31 @@ That example uses most of the common factory methods, outlined in more detail be
 All factories share some common methods to generate elements. More specific factories (outlined later) are responsible for adding specific methods for interacting with those element types. For example, all factories can be `->create()`-ed but only the field factory can specify a field's `->type()`.
 
 ### ->create()
-Will create the element in the database. The created element is returned after being fully created. If there was an error during the creation the element's `->errors` will be filled.
+Will create the model in the database. The created model is returned after being fully created. If there was an error during the creation the model's `->errors` will be filled and an exception thrown.
 
 ### ->make()
 Works the same as `->create()` but does not persist the element to the database. It is up to the test to call `->saveElement()` if you need the element persisted.
 
 ### ->count()
-When called will change `->create()` and `->make()` to generate a sequence of elements instead of a single element.
+When specified, the count will change `->create()` and `->make()` to generate a sequence of elements instead of a single element. The sequence will be returned as a `Collection`.
+
+### ->getMadeModels()
+Returns the models that were made after calling `->make()` or `->create()`. This can be helpful if you are passing factories in to nested factories and you need to reference them later on. For example, the following creates a plain text field, a matrix field with a single block type containing that plain text field, a section with the matrix field and finally an entry in that section. Notice that we only call `->create()` on the section and let the system figure out the rest of the inter-dependencies (like which fields are global and which fields are matrix fields).
+
+```php
+$plainText = Field::factory()->type(PlainText::class);
+$blockType = BlockType::factory()->fields($plainText);
+$matrix = MatrixField::factory()->blockTypes($blockType);
+$section = Section::factory()->fields($matrix)->create();
+$entry = Entry::factory()
+    ->section($section->handle)
+    ->set(
+        $matrix->getMadeModels()->first()->handle,
+        Block::factory()
+            ->set($plainText->getMadeModels()->first()->handle, 'foo')
+            ->count(3)
+    );
+```
 
 ## Custom Factories
 You can, and should, create your own factories specific to your site's schema. The `Entry` factory, specifically, is intended to be extended in to a `Post` or `Article` or `News` factory, depending on your site's sections.

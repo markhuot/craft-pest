@@ -92,6 +92,16 @@ abstract class Factory {
     }
 
     /**
+     * Set an attribute and return the factory so you can chain on multiple field sets
+     */
+    function set($key, $value)
+    {
+        $this->attributes[$key] = $value;
+
+        return $this;
+    }
+
+    /**
      * Get the element to be generated.
      *
      * @return mixed
