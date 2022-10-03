@@ -122,15 +122,24 @@ class TestableResponseBehavior extends Behavior {
         return $this->response;
     }
 
+    /**
+     * Checks that the response has a 201 Created status code
+     */
     function assertCreated() {
         return $this->assertStatus(201);
     }
 
+    /**
+     * Checks that the given string does not appear in thr response.
+     */
     function assertDontSee(string $text) {
         test()->assertStringNotContainsString($text, $this->response->content);
         return $this->response;
     }
 
+    /**
+     * Checks that the given steing does not appear in thr response after first stripping all non-text elements (like HMTL) from the response.
+     */
     function assertDontSeeText(string $text) {
         test()->assertStringNotContainsString($text, preg_replace('/\s+/', ' ', strip_tags($this->response->data)));
         return $this->response;
