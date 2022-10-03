@@ -12,7 +12,7 @@ if (empty($input) || empty($output) || !file_exists($input)) {
 $basename = basename($input);
 $info = pathinfo($input);
 $className = $info['filename'];
-$namespace = str_replace('/', '\\', preg_replace('/^src\//', '', $info['dirname']));
+$namespace = str_replace('/', '\\', preg_replace('/^(.\/)?src\//', '', $info['dirname']));
 
 require $input;
 $reflection = new ReflectionClass('markhuot\\craftpest\\' . $namespace . '\\' . $className);
@@ -22,7 +22,10 @@ $contents[] = parseComment($reflection->getDocComment());
 
 foreach ($reflection->getMethods() as $method) {
     if ($method->getDeclaringClass()->getName() === $reflection->getName() && $comment = $method->getDocComment()) {
-        $contents[] = '## ' . $method->getName() . "()\n" . parseComment($method->getDocComment());
+        $comment = parseComment($method->getDocComment());
+        if (!empty($comment)) {
+            $contents[] = '## ' . $method->getName() . "()\n" . $comment;
+        }
     }
 }
 
@@ -37,4 +40,7 @@ function parseComment(string $comment)
     return $comment;
 }
 
+if (!is_dir(dirname($output))) {
+    mkdir(dirname($output), 0777, true);
+}
 file_put_contents($output, implode("\n\n", $contents));

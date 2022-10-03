@@ -9,6 +9,10 @@ use yii\base\Event;
 use function markhuot\craftpest\helpers\base\collection_wrap;
 use function markhuot\craftpest\helpers\craft\volumeDeleteFileAtPath;
 
+/**
+ * Assets can be generated via the `Asset` factory. By only defining a volume you can create an entire asset that is
+ * ready to be inserted in to Craft's asset library.
+ */
 class Asset extends Element {
 
     /** @var string */
