@@ -195,3 +195,10 @@ it('takes an array of entries', function ($props) {
 
     expect(\craft\elements\Entry::find()->id($entry->id)->one()->{$field->handle}->ids())->toEqualCanonicalizing($children->pluck('id')->toArray());
 })->with('entries field');
+
+it('allows you to use ->set()` on a factory', function () {
+    $section = \markhuot\craftpest\factories\Section::factory()->create();
+    $entry = \markhuot\craftpest\factories\Entry::factory()->section($section->handle)->set('title', 'foo')->create();
+
+    expect($entry->title)->toBe('foo');
+});
