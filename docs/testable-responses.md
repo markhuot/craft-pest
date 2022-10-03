@@ -40,5 +40,14 @@ Checks that the response contains the given cookie. When not passed a value
 the assertion only checks the presence of the cookie. When passed a value the
 value will be checked for strict equality.
 
+## assertCreated()
+Checks that the response has a 201 Created status code
+
+## assertDontSee()
+Checks that the given string does not appear in thr response.
+
+## assertDontSeeText()
+Checks that the given steing does not appear in thr response after first stripping all non-text elements (like HMTL) from the response.
+
 ## assertNoContent()
 Assert that the response has the given status code and no content.
