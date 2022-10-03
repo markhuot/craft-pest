@@ -125,4 +125,37 @@ $response->assertLocation('/foo/bar');
 ```
 
 ## assertNoContent()
-Assert that the response has the given status code and no content.
+Check that the response has the given status code and no content.
+```php
+$response->assertNoContent();
+```
+
+## assertNotFound()
+Check that the response returns a 404 Not Found status code
+```php
+$response->assertNotFound();
+```
+
+## assertOk()
+Check that the response returns a 200 OK status code
+```php
+$response->assertOk();
+```
+
+## assertRedirect()
+Check that the response returns a 300 status code
+```php
+$response->assertRedirect();
+```
+
+## assertRedirectTo()
+A sugar method that checks the status code as well as the location of the redirect.
+```php
+$response->assertRedirectTo('/foo/bar');
+```
+
+## assertSee()
+Checks that the response contains the given text
+```php
+$response->assertSee('foo bar');
+```
