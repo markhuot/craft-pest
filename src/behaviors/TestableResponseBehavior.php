@@ -364,12 +364,13 @@ class TestableResponseBehavior extends Behavior {
     }
 
     /**
-     * Assert that the response has the given status code and no content.
+     * Check that the response has the given status code and no content.
      *
-     * @param  int  $status
-     * @return $this|\craft\web\Response
+     * ```php
+     * $response->assertNoContent();
+     * ```
      */
-    function assertNoContent($status = 204) {
+    function assertNoContent($status=204) {
         $this->assertStatus($status);
 
         test()->assertEmpty($this->response->content, 'Response content is not empty.');
@@ -377,10 +378,24 @@ class TestableResponseBehavior extends Behavior {
         return $this->response;
     }
 
+    /**
+     * Check that the response returns a 404 Not Found status code
+     *
+     * ```php
+     * $response->assertNotFound();
+     * ```
+     */
     function assertNotFound() {
         return $this->assertStatus(404);
     }
 
+    /**
+     * Check that the response returns a 200 OK status code
+     *
+     * ```php
+     * $response->assertOk();
+     * ```
+     */
     function assertOk() {
         return $this->assertStatus(200);
     }
@@ -390,32 +405,48 @@ class TestableResponseBehavior extends Behavior {
         return $this->response;
     }
 
+    /**
+     * Check that the response returns a 300 status code
+     *
+     * ```php
+     * $response->assertRedirect();
+     * ```
+     */
     function assertRedirect() {
-
         test()->assertGreaterThanOrEqual(300, $this->response->getStatusCode());
         test()->assertLessThan(400, $this->response->getStatusCode());
 
         return $this->response;
     }
 
+    /**
+     * A sugar method that checks the status code as well as the location of the redirect.
+     *
+     * ```php
+     * $response->assertRedirectTo('/foo/bar');
+     * ```
+     */
     function assertRedirectTo(string $location) {
-
         $this->assertRedirect();
         $this->assertLocation($location);;
 
         return $this->response;
     }
 
-    // function assertRedirectToSignedRoute() {
-    // }
-
-    function assertSee($text) {
+    /**
+     * Checks that the response contains the given text
+     *
+     * ```php
+     * $response->assertSee('foo bar');
+     * ```
+     */
+    function assertSee(string $text) {
         test()->assertStringContainsString($text, $this->response->content);
 
         return $this->response;
     }
 
-    function assertSeeInOrder() {
+    function assertSeeInOrder(array $text) {
         // TODO
         return $this->response;
     }
