@@ -1,0 +1,12 @@
+defaultPlacement: end
+enableVersioning: true
+handle: posts
+name: Posts
+propagationMethod: all
+siteSettings:
+  bda4d299-4f91-43c1-91d1-48abd1dd5fb4: # Pest
+    enabledByDefault: true
+    hasUrls: true
+    template: posts/_entry
+    uriFormat: 'posts/{slug}'
+type: channel

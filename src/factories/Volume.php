@@ -2,10 +2,7 @@
 
 namespace markhuot\craftpest\factories;
 
-use craft\fs\Local;
-use craft\helpers\FileHelper;
 use craft\helpers\StringHelper;
-use Illuminate\Support\Collection;
 use markhuot\craftpest\test\RefreshesDatabase;
 use yii\base\Event;
 use function markhuot\craftpest\helpers\base\collection_wrap;

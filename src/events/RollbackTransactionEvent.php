@@ -1,6 +1,6 @@
 <?php
 
-namespace markhuot\craftpest\test;
+namespace markhuot\craftpest\events;
 
 use yii\base\Event;
 

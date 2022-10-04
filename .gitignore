@@ -2,7 +2,8 @@
 .DS_Store
 .idea
 composer.lock
-src/bootstrap/cpresources
+cpresources
+/src/bin/index.php
 .phpunit.result.cache
 /config
 .env

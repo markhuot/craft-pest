@@ -2,8 +2,13 @@
 
 namespace markhuot\craftpest\factories;
 
+use craft\helpers\StringHelper;
 use craft\models\MatrixBlockType;
 
+/**
+ * @method self name(string $name)
+ * @method self handle(string $name)
+ */
 class BlockType extends Factory
 {
     use Fieldable;
@@ -14,8 +19,16 @@ class BlockType extends Factory
 
         return [
             'name' => $name,
-            'handle' => \craft\helpers\StringHelper::toCamelCase($name),
         ];
+    }
+
+    function inferences(array $definition = [])
+    {
+        if (empty($definition['handle']) && !empty($definition['name'])) {
+            $definition['handle'] = StringHelper::toCamelCase($definition['name']);
+        }
+
+        return $definition;
     }
 
     function newElement()

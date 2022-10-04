@@ -2,13 +2,12 @@
 
 namespace markhuot\craftpest\factories;
 
-use craft\base\ElementInterface;
-use craft\base\ModelInterface;
 use Faker\Factory as Faker;
 use Illuminate\Support\Collection;
+use markhuot\craftpest\events\FactoryStoreEvent;
 use yii\base\BaseObject;
+use yii\base\Event;
 use function markhuot\craftpest\helpers\base\collection_wrap;
-use function markhuot\craftpest\helpers\base\array_wrap;
 
 abstract class Factory {
 
@@ -19,24 +18,21 @@ abstract class Factory {
      */
     const NULL = '__NULL__';
 
+    /**
+     * An event fired before a model is stored to the persistent storage
+     */
+    const EVENT_BEFORE_STORE = 'beforeStore';
+
+    /**
+     * An event fired after a model is stored to the persistent storage
+     */
+    const EVENT_AFTER_STORE = 'afterStore';
+
     /** @var \Faker\Generator */
     protected $faker;
 
     /** @var array */
     protected $attributes = [];
-
-    /**
-     * When a custom field is set, most of the time, we only care about
-     * a single argument, e.g. ->title('foo'). Because of this the __call
-     * magic method automatically sets the ->attributes to the first
-     * passed argument. _But_, for Element references we want to support
-     * those extra arga, e.g. ->related($entry1, $entry2...). So, this
-     * extraAttributes prop gives us a place to drop those extra args
-     * until we know what to do with them.
-     * 
-     * @var array
-     */
-    protected $extraAttributes = [];
 
     /** @var array|null */
     protected $definition = null;
@@ -45,37 +41,36 @@ abstract class Factory {
     protected $count = 1;
 
     /**
+     * Any models this factory eventually ends up making. Stored in the factory
+     * so you can pull them back out if you only have reference to the factory
+     * and the ->make/->create happens deeper because of nesting
+     *
+     * @var Collection
+     */
+    protected $models;
+
+    /**
      * Insert deps
      */
-    final public function __construct($faker=null) {
+    final function __construct($faker=null)
+    {
         $this->faker = $faker ?? Faker::create();
     }
 
     /**
      * Set custom fields
-     *
-     * @param string $method The method name
-     * @param array $args Any args passed to the method
      */
-    function __call($method, $args) {
-        $setter = 'set' . ucfirst($method);
-        if (method_exists($this, $setter)) {
-            return $this->{$setter}(...$args);
+    function __call(string $method, array $args)
+    {
+        if (count($args) > 1) {
+            $this->attributes[$method] = array_merge($this->attributes[$method] ?? [], $args);
         }
-
-        $value = $args[0] ?? null;
-        $this->attributes[$method] = $value;
-        $this->extraAttributes[$method] = array_slice($args, 1);
+        else {
+            $this->attributes[$method] = $args[0] ?? null;
+        }
 
         return $this;
     }
-
-    /**
-     * Get the element to be generated.
-     *
-     * @return BaseObject
-     */
-    abstract function newElement();
 
     /**
      * Whether an attribute has been set
@@ -84,7 +79,8 @@ abstract class Factory {
      *
      * @return bool
      */
-    function __isset($key) {
+    function __isset($key)
+    {
         return isset($this->attributes[$key]);
     }
 
@@ -96,13 +92,26 @@ abstract class Factory {
     }
 
     /**
-     * Set the number of entries to be created
-     *
-     * @param int $count
-     *
-     * @return $this
+     * Set an attribute and return the factory so you can chain on multiple field sets
      */
-    function count($count=1) {
+    function set($key, $value)
+    {
+        $this->attributes[$key] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Get the element to be generated.
+     *
+     * @return mixed
+     */
+    abstract function newElement();
+
+    /**
+     * Set the number of entries to be created
+     */
+    function count(int $count=1) {
         $this->count = $count;
 
         return $this;
@@ -110,8 +119,6 @@ abstract class Factory {
 
     /**
      * The faker definition
-     *
-     * @return array
      */
     function definition(int $index = 0) {
         return [];
@@ -134,23 +141,10 @@ abstract class Factory {
             $definition = [];
         }
 
-        // run two passes so all the "static"/non-callable definitions
-        // are reesolved first and then do the callables
-        foreach ($definition as $key => &$value) {
-            if (is_callable($value)) {
-                continue;
-            }
-
-            if  (method_exists($this, $key)) {
-                $this->{$key}($value);
-                unset($definition[$key]);
-            }
-        }
-
         // now that all the "static"/non-callables have been resolved
         // we can run the callables and pass in the existing
         // values for reference
-        foreach ($definition as $key => &$value) {
+        foreach ($definition as &$value) {
             if (!is_callable($value)) {
                 continue;
             }
@@ -161,8 +155,8 @@ abstract class Factory {
         return $definition;
     }
 
-    function inferences() {
-        return [];
+    function inferences(array $definition=[]) {
+        return $definition;
     }
 
     /**
@@ -171,19 +165,21 @@ abstract class Factory {
      * @return \craft\elements\Entry|Collection
      */
     function make($definition=[]) {
+        // Create the models
         $elements = collect([])
             ->pad($this->count, null)
             ->map(fn () => $this->internalMake($definition));
 
-        if ($this->count === 1) {
-            return $elements->first();
-        }
+        // Store a reference to the created models
+        $this->models = $elements;
 
-        return $elements;
+        // If the count is one we return the first model, otherwise return
+        // the full collection of models
+        return ($this->count === 1) ? $elements->first() : $elements;
     }
 
     /**
-     * Persist the entry to local
+     * Write the model to persistent storage
      *
      * @return Collection|\craft\elements\Entry
      */
@@ -191,16 +187,40 @@ abstract class Factory {
         $elements = collection_wrap($this->make($definition));
 
         $elements = $elements->map(function ($element) {
+            $beforeStoreEvent = new FactoryStoreEvent;
+            $beforeStoreEvent->sender = $this;
+            $beforeStoreEvent->model = $element;
+            Event::trigger(static::class, static::EVENT_BEFORE_STORE, $beforeStoreEvent);
+
+            // If our event has been canceled and is no longer valid do not perform the
+            // native storage routine. Instead we'll just return the element as-is assuming
+            // the event has already handled persisting it.
+            if (!$beforeStoreEvent->isValid) {
+                return $element;
+            }
+
             $this->store($element);
+            if (!empty($element->errors)) {
+                throw new \Exception(json_encode($element->errors));
+            }
+
+            $afterStoreEvent = new FactoryStoreEvent;
+            $afterStoreEvent->sender = $this;
+            $afterStoreEvent->model = $element;
+            Event::trigger(static::class, static::EVENT_AFTER_STORE, $afterStoreEvent);
 
             return $element;
         });
 
-        if ($this->count === 1) {
-            return $elements->first();
-        }
+        // If the count is one return the first model, otherwise return the full
+        // collection of models
+        // @TODO, why is this reversed. It's necessary but I don't know why and I'd like to
+        return ($this->count === 1) ? $elements->first() : $elements->reverse();
+    }
 
-        return $elements->reverse();
+    function getMadeModels()
+    {
+        return $this->models;
     }
 
     abstract function store($element);
@@ -211,8 +231,13 @@ abstract class Factory {
             $this->resolveDefinition($this->definition()),
             $this->resolveDefinition($this->attributes),
             $this->resolveDefinition($definition),
-            $this->inferences(),
         );
+
+        // Once we have all the attributes from the definition give consumers
+        // one final chance to update the attributes. This is where we'll usually
+        // take defined names and turn them in to handles or take handles and
+        // turn them in to IDs
+        $attributes = array_merge($attributes, $this->inferences($attributes));
 
         // final pass to clean up resolved fields
         foreach ($attributes as $key => $value) {
@@ -244,7 +269,7 @@ abstract class Factory {
 
         $attributes = $this->getAttributes($definition);
 
-        $this->setAttributes($attributes, $element);
+        $element = $this->setAttributes($attributes, $element);
 
         return $element;
     }

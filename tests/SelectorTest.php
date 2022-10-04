@@ -8,6 +8,11 @@ it('finds selectors', function () {
         ->text->toBe('heading text');
 });
 
+it('expects selectors')
+    ->get('/selectors')
+    ->expectSelector('h1')
+    ->text->toBe('heading text');
+
 it('gets inner html by class name', function () {
     get('/selectors')
         ->querySelector('.paragraph-element')->expect()

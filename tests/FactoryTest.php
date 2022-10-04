@@ -34,7 +34,8 @@ it('can set hasUrls of the section', function () {
         ->hasUrls(false)
         ->create();
 
-    expect(Craft::$app->sections->getSectionByHandle($section->handle)->siteSettings[1]->hasUrls)->toBe(false);
+    $siteId = \Craft::$app->sites->getCurrentSite()->id;
+    expect(Craft::$app->sections->getSectionByHandle($section->handle)->siteSettings[$siteId]->hasUrls)->toBe(false);
 });
 
 it('can set uriFormat of the section', function () {
@@ -42,7 +43,8 @@ it('can set uriFormat of the section', function () {
         ->uriFormat('{sluggy}')
         ->create();
 
-    expect(Craft::$app->sections->getSectionByHandle($section->handle)->siteSettings[1]->uriFormat)->toBe('{sluggy}');
+    $siteId = \Craft::$app->sites->getCurrentSite()->id;
+    expect(Craft::$app->sections->getSectionByHandle($section->handle)->siteSettings[$siteId]->uriFormat)->toBe('{sluggy}');
 });
 
 it('can set enabledByDefault of the section', function () {
@@ -50,7 +52,8 @@ it('can set enabledByDefault of the section', function () {
         ->enabledByDefault(false)
         ->create();
 
-    expect(Craft::$app->sections->getSectionByHandle($section->handle)->siteSettings[1]->enabledByDefault)->toBe(false);
+    $siteId = \Craft::$app->sites->getCurrentSite()->id;
+    expect(Craft::$app->sections->getSectionByHandle($section->handle)->siteSettings[$siteId]->enabledByDefault)->toBe(false);
 });
 
 it('can set template of the section', function () {
@@ -58,7 +61,19 @@ it('can set template of the section', function () {
         ->template('_foo/{handle}/bar')
         ->create();
 
-    expect(Craft::$app->sections->getSectionByHandle($section->handle)->siteSettings[1]->template)->toBe(implode('/', ['_foo', $section->handle, 'bar']));
+    $siteId = \Craft::$app->sites->getCurrentSite()->id;
+    expect(Craft::$app->sections->getSectionByHandle($section->handle)->siteSettings[$siteId]->template)->toBe(implode('/', ['_foo', $section->handle, 'bar']));
+});
+
+it('can fill an entries field', function () {
+    $entry = \markhuot\craftpest\factories\Entry::factory()
+        ->section('posts')
+        ->entriesField(
+            \markhuot\craftpest\factories\Entry::factory()->section('posts')
+        )
+        ->create();
+
+    expect($entry->entriesField->all())->toHaveCount(1);
 });
 
 it('can place fields in groups', function () {
@@ -181,50 +196,9 @@ it('takes an array of entries', function ($props) {
     expect(\craft\elements\Entry::find()->id($entry->id)->one()->{$field->handle}->ids())->toEqualCanonicalizing($children->pluck('id')->toArray());
 })->with('entries field');
 
-it('can create matrix blocks', function () {
-    $textField = \markhuot\craftpest\factories\Field::factory()
-        ->type(PlainText::class);
+it('allows you to use ->set()` on a factory', function () {
+    $section = \markhuot\craftpest\factories\Section::factory()->create();
+    $entry = \markhuot\craftpest\factories\Entry::factory()->section($section->handle)->set('title', 'foo')->create();
 
-    $matrixTextField = \markhuot\craftpest\factories\Field::factory()
-        ->type(PlainText::class);
-
-    $matrixField = \markhuot\craftpest\factories\MatrixField::factory()
-        ->blockTypes(
-            \markhuot\craftpest\factories\BlockType::factory()
-                ->fields([$matrixTextField])
-        );
-
-    $section = \markhuot\craftpest\factories\Section::factory()
-        ->name('whoops1')
-        ->fields([$matrixField, $textField])
-        ->create();
-
-    $matrixFieldObj = $section->entryTypes[0]->fieldLayout->getFields()[0];
-    $textFieldObj = $section->entryTypes[0]->fieldLayout->getFields()[1];
-    $nestedTextFieldObj = $matrixFieldObj->blockTypes[0]->fieldLayout->getFields()[0];
-
-    $entry = \markhuot\craftpest\factories\Entry::factory()
-        ->section($section->handle)
-        ->{$textFieldObj->handle}('bar')
-        ->{$matrixFieldObj->handle}([
-            'NEW1' => [
-                'type' => $matrixFieldObj->blockTypes[0]->handle,
-                'enabled' => 1,
-                'fields' => [
-                    $nestedTextFieldObj->handle => 'foo',
-                ],
-            ],
-            // \markhuot\craftpest\factories\MatrixBlock::factory()
-            //     ->type('foo')
-            //     ->customField('bar')
-        ])
-        ->create();
-
-
-    expect($entry->id)->toBeTruthy();
-    expect($entry->{$textFieldObj->handle})->toBe('bar');
-    expect($entry->{$matrixFieldObj->handle}->all())->toHaveCount(1);
-    expect($entry->{$matrixFieldObj->handle}->one()->{$nestedTextFieldObj->handle})->toBe('foo');
-    //var_dump($entry->{$matrixField->handle}->one()->{$textField->handle});
-    //var_dump($textField->handle, $matrixField->blockTypes[0]->fieldLayout->getFieldByHandle($textField->handle));
-})->skip();
+    expect($entry->title)->toBe('foo');
+});
