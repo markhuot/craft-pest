@@ -2,6 +2,7 @@
 
 namespace markhuot\craftpest\behaviors;
 
+use markhuot\craftpest\dom\Form;
 use markhuot\craftpest\dom\NodeList;
 use markhuot\craftpest\web\TestableResponse;
 use Symfony\Component\DomCrawler\Crawler;
@@ -24,10 +25,16 @@ class TestableResponseBehavior extends Behavior {
     }
 
 
-    public function querySelector($selector) {
+    public function querySelector($selector)
+    {
         $html = $this->response->content;
         $crawler = new Crawler($html);
         return new NodeList($crawler->filter($selector));
+    }
+
+    public function selectFrom($selector): Form
+    {
+        return new Form($this->querySelector($selector));
     }
 
     // public function __isset($key) {
@@ -157,6 +164,18 @@ class TestableResponseBehavior extends Behavior {
 
     function assertLocation(string $location) {
         test()->assertSame($location, $this->response->getHeaders()->get('Location'));
+        return $this->response;
+    }
+
+
+    function assertFlash(?string $message = null)
+    {
+        // What's the structure???
+        $flash = \Craft::$app->getSession()->getAllFlashes();
+
+        // ;-)
+        test()->markAsRisky();
+
         return $this->response;
     }
 

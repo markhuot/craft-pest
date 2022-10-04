@@ -40,6 +40,12 @@ class RequestBuilder
         return $this;
     }
 
+    public function setBodyParams(array $params): self
+    {
+        $this->request->setBodyParams($params);
+        return $this;
+    }
+
     public function setReferrer(?string $value): self
     {
        $this->request->headers->set('Referer', $value);

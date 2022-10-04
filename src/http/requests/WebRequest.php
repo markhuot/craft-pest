@@ -48,6 +48,13 @@ abstract class WebRequest extends \craft\web\Request
         return [$route, $params + $this->getQueryParams()];
     }
 
+    public function setBodyParams($params): self
+    {
+        $this->setRaw(['_bodyParams' => $params]);
+
+        return $this;
+    }
+
     /**
      * Populate private properties
      */
