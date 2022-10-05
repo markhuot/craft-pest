@@ -19,6 +19,14 @@ $response->querySelector('h1')->text; // returns the string contents of the h1 e
 $response->querySelector('li')->text; // returns a collection containing the text of all list items
 ```
 
+## form()
+The entry point for interactions with forms
+To submit the for use ->submit() or ->click('button-selector')
+
+## fill()
+Initialize new form on then page on the fly
+To select a specific form use ->form($selector) instead
+
 ## expectSelector()
 Runs the same `querySelector()` against the response's HTML but instead
 of returning a `NodeList` it returns an expectation against the `NodeList`.
