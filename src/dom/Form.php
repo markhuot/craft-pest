@@ -24,8 +24,14 @@ final class Form
         }
 
         $this->crawler = $nodeList->crawler->eq(0);
+        $node = $this->crawler->getNode(0);
 
-        $this->form = $this->crawler->form(null, $this->crawler->attr('method'));
+        if (!$node instanceof \DOMElement) {
+            throw new \InvalidArgumentException(sprintf('The selected node should be instance of DOMElement, got "%s".', get_debug_type($node)));
+        }
+
+        $this->form = new \Symfony\Component\DomCrawler\Form($node, 'http://localhost:8080/');
+
     }
 
     /**
@@ -106,8 +112,19 @@ final class Form
         return $request->send();
     }
 
+    /**
+     * Useful to verify the fields before submitting the form
+     */
     public function dd(): void
     {
         dd($this->form->getValues());
+    }
+
+    /**
+     * Useful to verify the fields before submitting the form
+     */
+    public function getFields(): array
+    {
+        return $this->form->getPhpValues();
     }
 }

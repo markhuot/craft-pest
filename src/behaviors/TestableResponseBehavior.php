@@ -57,7 +57,7 @@ class TestableResponseBehavior extends Behavior {
      * The entry point for interactions with forms
      * To submit the for use ->submit() or ->click('button-selector')
      */
-    public function form(string $selector): Form
+    public function form(string $selector = 'form'): Form
     {
         return new Form($this->querySelector($selector));
     }
