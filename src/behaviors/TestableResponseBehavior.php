@@ -53,10 +53,26 @@ class TestableResponseBehavior extends Behavior {
         return new NodeList($crawler->filter($selector));
     }
 
-    public function selectFrom($selector): Form
+    /**
+     * The entry point for interactions with forms
+     * To submit the for use ->submit() or ->click('button-selector')
+     */
+    public function form(string $selector): Form
     {
         return new Form($this->querySelector($selector));
     }
+
+    /**
+     * Initialize new form on then page on the fly
+     * To select a specific form use ->form($selector) instead
+     */
+    public function fill(string $fieldNameOrSelector, mixed $value): Form
+    {
+        $form = new Form($this->querySelector('form'));
+
+        return $form->fill($fieldNameOrSelector, $value);
+    }
+
 
     /**
      * Runs the same `querySelector()` against the response's HTML but instead

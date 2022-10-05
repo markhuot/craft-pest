@@ -5,14 +5,14 @@ namespace markhuot\craftpest\dom;
 use markhuot\craftpest\http\RequestBuilder;
 use markhuot\craftpest\web\TestableResponse;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 
 final class Form
 {
-    public NodeList $node;
+    private \Symfony\Component\DomCrawler\Form $form;
+    private Crawler $crawler;
 
-    public array $fields = [];
-
-    public function __construct(NodeList $nodeList)
+    public function __construct(?NodeList $nodeList)
     {
         if ($nodeList->count === 0) {
             throw new \InvalidArgumentException("Unable to select form.");
@@ -23,22 +23,91 @@ final class Form
             throw new \InvalidArgumentException("From selector is ambiguous. Found {$nodeList->count} forms: {$ids}.");
         }
 
-        $this->node = $nodeList;
+        $this->crawler = $nodeList->crawler->eq(0);
+
+        $this->form = $this->crawler->form(null, $this->crawler->attr('method'));
     }
 
-    public function fill(string $field, mixed $value): self
+    /**
+     * Fills input or textarea
+     */
+    public function fill(string $fieldNameOrSelector, mixed $value): self
     {
-        $this->fields[$field] = $value;
+        $this->form[$fieldNameOrSelector]->setValue((string) $value);
 
         return $this;
     }
 
+    /**
+     * Checks checkbox
+     */
+    public function tick(string $fieldNameOrSelector): self
+    {
+       if (!($this->form[$fieldNameOrSelector] instanceof ChoiceFormField)) {
+           throw new \InvalidArgumentException("Field '$fieldNameOrSelector' is not a checkbox, unable to tick()");
+       }
+
+        $this->form[$fieldNameOrSelector]->tick();
+
+        return $this;
+    }
+
+    /**
+     * Unchecks checkbox
+     */
+    public function untick(string $fieldNameOrSelector): self
+    {
+        if (!($this->form[$fieldNameOrSelector] instanceof ChoiceFormField)) {
+            throw new \InvalidArgumentException("Field '$fieldNameOrSelector' is not a checkbox, unable to untick()");
+        }
+
+        $this->form[$fieldNameOrSelector]->untick();
+
+        return $this;
+    }
+
+    /**
+     * Selects one or many options from select
+     */
+    public function select(string $fieldNameOrSelector, string|array|bool $value): self
+    {
+        if (!($this->form[$fieldNameOrSelector] instanceof ChoiceFormField)) {
+            throw new \InvalidArgumentException("Field '$fieldNameOrSelector' is not a select, unable to select()");
+        }
+
+        $this->form[$fieldNameOrSelector]->select($value);
+
+        return $this;
+    }
+
+
+    public function click(string $buttonSelectorOrLabel): TestableResponse
+    {
+        $button = $this->crawler->selectButton($buttonSelectorOrLabel);
+
+        if ($button->count() !== 1) {
+            throw new \InvalidArgumentException("Unable to find exact button to click on.");
+        }
+
+        $this->fill($button->attr('name'), $button->attr('value') ?: $button->attr('formaction'));
+
+        return $this->submit();
+    }
+
     public function submit(): TestableResponse
     {
-        $uri =  $this->node->getNodeOrNodes(fn (Crawler $node) => $node->attr('id'));
-        $request = new RequestBuilder('post', $uri);
-        $request->setBodyParams($this->fields);
+        $request = new RequestBuilder(
+            $this->form->getMethod(),
+            $this->form->getUri()
+        );
+
+        $request->setBodyParams($this->form->getValues());
 
         return $request->send();
+    }
+
+    public function dd(): void
+    {
+        dd($this->form->getValues());
     }
 }
