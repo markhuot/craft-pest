@@ -81,7 +81,14 @@ final class Form
             throw new \InvalidArgumentException("Field '$fieldNameOrSelector' is not a select, unable to select()");
         }
 
-        $this->form[$fieldNameOrSelector]->select($value);
+        try {
+            $this->form[$fieldNameOrSelector]->select($value);
+        } catch (\InvalidArgumentException) {
+            $optionByName = $this->crawler
+                ->filterXPath(sprintf("//select[@name='%s']", $fieldNameOrSelector))
+                ->filterXPath(sprintf("//option[contains(.,'%s')]", $value))->attr('value');
+            $this->form[$fieldNameOrSelector]->select($optionByName);
+        }
 
         return $this;
     }

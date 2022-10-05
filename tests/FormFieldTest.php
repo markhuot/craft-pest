@@ -70,8 +70,11 @@ it('works with select fields', function () {
         ->form('#form5');
 
     $initalState = $form->getFields();
-    $selectedState = $form->select('country', 'UA')->getFields();
+    $selectByName = $form->select('country', 'Ukraine')->getFields();
+    $selectByValue = $form->select('country', 'DE')->getFields();
 
     expect($initalState)->toBe(['country' => '']);
-    expect($selectedState)->toBe(['country' => 'UA']);
+    expect($selectByName)->toBe(['country' => 'UA']);
+    expect($selectByValue)->toBe(['country' => 'DE']);
+
 });
