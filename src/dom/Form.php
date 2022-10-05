@@ -6,6 +6,7 @@ use markhuot\craftpest\http\RequestBuilder;
 use markhuot\craftpest\web\TestableResponse;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
+use Symfony\Component\VarDumper\VarDumper;
 
 final class Form
 {
@@ -124,7 +125,8 @@ final class Form
      */
     public function dd(): void
     {
-        dd($this->form->getValues());
+        VarDumper::dump($this->form->getValues());
+        exit(1);
     }
 
     /**
