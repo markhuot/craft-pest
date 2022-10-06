@@ -63,9 +63,10 @@ class TestController extends Controller {
     protected function runTests() {
         $params = $this->request->getParams();
         $pestOptions = [];
+        $stdOutIndex = array_search('--', $params, true);
 
-        if ($params[1] === '--') {
-            $pestOptions = array_slice($params, 2);
+        if ($stdOutIndex !== false) {
+            $pestOptions = array_slice($params, ++$stdOutIndex);
         }
 
         $process = new Process(['./vendor/bin/pest', ...$pestOptions]);
