@@ -1,6 +1,7 @@
 name: PHP Composer
 
 on:
+  pull_request:
   push:
 
 permissions:

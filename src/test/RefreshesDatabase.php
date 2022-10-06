@@ -21,7 +21,7 @@ trait RefreshesDatabase {
 
     /**
      * The config version before the test ran, so we can re-set it back after
-     * 
+     *
      * @var string
      */
     public $oldConfigVersion = null;
@@ -147,7 +147,7 @@ trait RefreshesDatabase {
 
     protected function projectConfigApply()
     {
-        $process = new Process(['./craft', 'project-config/apply', '--force']);
+        $process = new Process(['./craft', 'project-config/apply'], null, $_SERVER);
         $process->setTty(true);
         $process->setTimeout(null);
         $process->start();
