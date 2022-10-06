@@ -67,6 +67,10 @@ class TestController extends Controller {
 
         if ($stdOutIndex !== false) {
             $pestOptions = array_slice($params, ++$stdOutIndex);
+
+            if (array_search('--coverage', $pestOptions, true) !== false) {
+                $_ENV['XDEBUG_MODE'] = 'coverage';
+            }
         }
 
         $process = new Process(['./vendor/bin/pest', ...$pestOptions]);
