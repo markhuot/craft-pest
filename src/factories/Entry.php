@@ -115,7 +115,6 @@ class Entry extends Element
 
 
         if (empty($section)) {
-            var_dump($this->sectionIdentifier);
             throw new \Exception("A section could not be inferred from this factory. Make sure you set a ::factory()->section(\"handle\") in your test. Tried to find `{$this->sectionIdentifier}");
         }
 
