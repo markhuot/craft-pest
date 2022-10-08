@@ -21,16 +21,18 @@ class Entry extends Element
     /** @var EntryType */
     protected $type;
 
-    /** @var string */
-    protected $sectionHandle;
+    /** @var string|\craft\models\Section */
+    protected $sectionIdentifier;
 
     /**
      * Set the section
      *
+     * @param \craft\models\Section|string $identifier
      * @return self
      */
-    function section(string $handle) {
-        $this->sectionHandle = $handle;
+    function section($identifier) {
+        $this->sectionIdentifier = $identifier;
+
         return $this;
     }
 
@@ -90,16 +92,26 @@ class Entry extends Element
      * @return int
      */
     function inferSectionId() {
-        if (empty($this->sectionHandle)) {
+        if (is_a($this->sectionIdentifier, \craft\models\Section::class)) {
+            $section = $this->sectionIdentifier;
+        }
+        else if (is_numeric($this->sectionIdentifier)) {
+            $section = \Craft::$app->sections->getSectionById($this->sectionIdentifier);
+        }
+        else if (is_string($this->sectionIdentifier)) {
+            $section = \Craft::$app->sections->getSectionByHandle($this->sectionIdentifier);
+        }
+        else {
             $reflector = new \ReflectionClass($this);
             $className = $reflector->getShortName();
-            $this->sectionHandle = lcfirst($className);
+            $sectionHandle = lcfirst($className);
+            $section = \Craft::$app->sections->getSectionByHandle($sectionHandle);
         }
 
-        $section = \Craft::$app->sections->getSectionByHandle($this->sectionHandle);
 
         if (empty($section)) {
-            throw new \Exception("A section could not be inferred from this factory. Make sure you set a ::factory()->section(\"handle\") in your test. Tried to find `{$this->sectionHandle}");
+            var_dump($this->sectionIdentifier);
+            throw new \Exception("A section could not be inferred from this factory. Make sure you set a ::factory()->section(\"handle\") in your test. Tried to find `{$this->sectionIdentifier}");
         }
 
         return $section->id;

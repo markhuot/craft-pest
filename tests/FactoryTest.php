@@ -65,6 +65,19 @@ it('can set template of the section', function () {
     expect(Craft::$app->sections->getSectionByHandle($section->handle)->siteSettings[$siteId]->template)->toBe(implode('/', ['_foo', $section->handle, 'bar']));
 });
 
+it('can create entries with section id, handle, and object', function () {
+    $section = \markhuot\craftpest\factories\Section::factory()->create();
+
+    // $setById = \markhuot\craftpest\factories\Entry::factory()->section($section->id)->create();
+    // expect($setById->errors)->toBeEmpty();
+    
+    // $setByHandle = \markhuot\craftpest\factories\Entry::factory()->section($section->handle)->create();
+    // expect($setByHandle->errors)->toBeEmpty();
+    
+    $setByObject = \markhuot\craftpest\factories\Entry::factory()->section($section)->create();
+    expect($setByObject->errors)->toBeEmpty();
+});
+
 it('can fill an entries field', function () {
     $entry = \markhuot\craftpest\factories\Entry::factory()
         ->section('posts')
