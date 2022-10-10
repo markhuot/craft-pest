@@ -159,3 +159,9 @@ Checks that the response contains the given text
 ```php
 $response->assertSee('foo bar');
 ```
+
+## fill()
+Fills any form data with a matching key with the given value.
+
+## submit()
+Submits a form matching the given selector
