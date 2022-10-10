@@ -29,11 +29,10 @@ trait SubmitsForm
         $values = array_replace_recursive($form->getPhpValues(), $this->formData);
         $files = $form->getFiles();
         
-        $request = test()->http($method, $url)
-            ->addHeader('X-Http-Method-Override', $method)
-            ->setBody($values);
-
-        return $request->send();
+        return test()
+            ->http($method, $url)
+            ->setBody($values)
+            ->send();
     }
 
 }

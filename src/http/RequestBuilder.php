@@ -17,12 +17,18 @@ class RequestBuilder
     private RequestHandler $handler;
 
     /**
+     * Store the HTTP verb to be executed/method. Could be GET,
+     * POST, PUT, or DELETE, for example.
+     */
+    protected string $method;
+
+    /**
      * When sending a request we need to fake the $_POST data so
      * before we overwrite it we store a reference to what it was
      * so that we can return it to the original value after our
      * request goes through.
      */
-    protected $originalPost;
+    protected array $originalGlobals = [];
 
     /**
      * The intended body for the request
@@ -35,6 +41,7 @@ class RequestBuilder
         Application    $app = null,
         RequestHandler $handler = null,
     ) {
+        $this->method = $method;
         $this->app = $app ?? \Craft::$app;
         $this->handler = $handler ?? new RequestHandler($this->app);
         $this->request = $this->prepareRequest($method, $uri);
@@ -100,7 +107,9 @@ class RequestBuilder
 
     protected function registerBodyValues(): void
     {
-        $this->originalPost = array_merge($_POST);
+        $this->originalGlobals['_POST'] = array_merge($_POST);
+        $this->originalGlobals['_SERVER'] = array_merge($_SERVER);
+        $_SERVER['HTTP_METHOD'] = $this->method;
         $_POST = $body = $this->body ?? [];
 
         $contentType = $this->request->getContentType();
@@ -117,8 +126,9 @@ class RequestBuilder
 
     protected function resetBodyValues(): void
     {
-        $_POST = $this->originalPost ?? [];
-        $this->originalPost = null;
+        $_POST = $this->originalGlobals['_POST'] ?? [];
+        $_POST = $this->originalGlobals['_SERVER'] ?? [];
+        $this->originalGlobals = [];
     }
 
     private function uriContainsAdminSlug(string $uri): bool
