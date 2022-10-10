@@ -3,9 +3,11 @@
 namespace markhuot\craftpest\behaviors;
 
 use markhuot\craftpest\dom\NodeList;
+use markhuot\craftpest\traits\SubmitsForm;
 use markhuot\craftpest\web\TestableResponse;
 use Symfony\Component\DomCrawler\Crawler;
 use yii\base\Behavior;
+use yii\base\Request;
 
 /**
  * A testable response is returned whenever you perform a HTTP request
@@ -17,8 +19,11 @@ use yii\base\Behavior;
  * 
  * @property \craft\web\Response $owner
  */
-class TestableResponseBehavior extends Behavior {
+class TestableResponseBehavior extends Behavior
+{
+    use SubmitsForm;
 
+    public Request $request;
     public TestableResponse $response;
 
     public function attach($owner)
@@ -30,6 +35,12 @@ class TestableResponseBehavior extends Behavior {
         }
     }
 
+    function setRequest(Request $request)
+    {
+        $this->request = $request;
+
+        return $this;
+    }
 
     /**
      * If the response returns HTML you can `querySelector()` to inspect the
@@ -47,7 +58,7 @@ class TestableResponseBehavior extends Behavior {
      */
     function querySelector(string $selector) {
         $html = $this->response->content;
-        $crawler = new Crawler($html);
+        $crawler = new Crawler($html, 'http://localhost:8080', 'http://localhost:8080');
         return new NodeList($crawler->filter($selector));
     }
 

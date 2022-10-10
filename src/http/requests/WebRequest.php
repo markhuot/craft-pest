@@ -26,6 +26,15 @@ abstract class WebRequest extends \craft\web\Request
         return $request;
     }
 
+    public function setBody(array $body)
+    {
+        $this->setRaw([
+            '_rawBody' => json_encode($body),
+            '_bodyParams' => $body,
+        ]);
+
+        return $this;
+    }
 
     /**
      * It's called by Application::handleRequest()

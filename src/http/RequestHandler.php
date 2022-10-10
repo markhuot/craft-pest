@@ -26,6 +26,7 @@ class RequestHandler
             // The actual call
             /** @var TestableResponse $response */
             $response = $this->app->handleRequest($request, $skipSpecialHandling);
+            $response->setRequest($request);
             $response->prepare();
 
             $this->app->trigger(Application::EVENT_AFTER_REQUEST);

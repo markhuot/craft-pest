@@ -1,0 +1,12 @@
+<html>
+<body>
+<div id="first-form">
+    <form action="/form" method="post">
+        <input name="firstFormTextField">
+        <input type="submit">
+    </form>
+</div>
+
+<pre id="form-data">{{ craft.app.request.getBodyParams()|json_encode }}</pre>
+</body>
+</html>

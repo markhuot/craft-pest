@@ -2,6 +2,9 @@
 
 namespace markhuot\craftpest\dom;
 
+use markhuot\craftpest\traits\SubmitsForm;
+use yii\helpers\VarDumper;
+
 /**
  * A `NodeList` represents a fragment of HTML. It can contain one or more nodes and
  * the return values of its methods vary based on the count. For example getting the text
@@ -13,7 +16,10 @@ namespace markhuot\craftpest\dom;
  * @property string $innerHTML
  * @property int $count
  */
-class NodeList implements \Countable {
+class NodeList implements \Countable
+{
+    use SubmitsForm;
+
     /** @var \Symfony\Component\DomCrawler\Crawler */
     public $crawler;
 
@@ -56,6 +62,43 @@ class NodeList implements \Countable {
         }
 
         return $result;
+    }
+
+    /**
+     * Filter the node list down further. For example, get a specific unordered list
+     * and then get the list items within,
+     * 
+     * ```php
+     * $response->querySelector('ul')->querySelector('li');
+     * ```
+     * 
+     * Note, many times this could be better written in a single selector such as,
+     * 
+     * ```php
+     * $response->querySelector('ul li');
+     * ```
+     * 
+     * Sometimes, this is necessary, though, when you have a form and you want get a
+     * specific element within the form, for example,
+     * 
+     * ```php
+     * $response->querySelector('form')
+     *     ->assertAttribute('method', 'post')
+     *     ->querySelector('input')
+     *     ->assertCount(1);
+     * ```
+     */
+    function querySelector(string $selector)
+    {
+        return new NodeList($this->crawler->filter($selector));
+    }
+
+    /**
+     * Get a form for the current crawler instance
+     */
+    function form()
+    {
+        return $this->crawler->form();
     }
 
     /**

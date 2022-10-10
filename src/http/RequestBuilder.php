@@ -43,7 +43,15 @@ class RequestBuilder
     public function setReferrer(?string $value): self
     {
        $this->request->headers->set('Referer', $value);
+
        return $this;
+    }
+
+    function setBody(array $value): self
+    {
+        $this->request->setBody($value);
+
+        return $this;
     }
 
     public function asUser(User|string $user): self
@@ -74,8 +82,13 @@ class RequestBuilder
     /**
      * Pre-populate the request object
      */
-    private function prepareRequest(string $method, string $uri): WebRequest
+    private function prepareRequest(string $method, string $url): WebRequest
     {
+        // TODO, figure out what to do here if the host is not
+        // our craft host...
+        $info = parse_url($url);
+        $uri = $info['path'];
+
         $isCpRequest = $this->uriContainsAdminSlug($uri);
         if ($isCpRequest) {
             $uri = preg_replace('#^'.preg_quote($this->app->getConfig()->getGeneral()->cpTrigger).'/?#', '', $uri);

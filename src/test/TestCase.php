@@ -93,9 +93,9 @@ class TestCase extends \PHPUnit\Framework\TestCase {
         return (new RequestBuilder('get', ...$args))->send();
     }
 
-    function post(...$args): TestableResponse
+    function post($uri, $body=[], ...$args): TestableResponse
     {
-        return (new RequestBuilder('post', ...$args))->send();
+        return (new RequestBuilder('post', $uri, ...$args))->setBody($body)->send();
     }
 
     function http(string $method, string $uri): RequestBuilder
