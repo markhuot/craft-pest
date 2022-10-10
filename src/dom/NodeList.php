@@ -3,7 +3,6 @@
 namespace markhuot\craftpest\dom;
 
 use markhuot\craftpest\traits\SubmitsForm;
-use yii\helpers\VarDumper;
 
 /**
  * A `NodeList` represents a fragment of HTML. It can contain one or more nodes and
