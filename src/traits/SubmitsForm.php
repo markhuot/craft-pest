@@ -30,8 +30,7 @@ trait SubmitsForm
         $files = $form->getFiles();
         
         $request = test()->http($method, $url)
-            ->addHeader('content-type', 'application/json')
-            ->addHeader('X-Http-Method-Override', 'post')
+            ->addHeader('X-Http-Method-Override', $method)
             ->setBody($values);
 
         return $request->send();

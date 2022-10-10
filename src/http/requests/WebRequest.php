@@ -26,11 +26,11 @@ abstract class WebRequest extends \craft\web\Request
         return $request;
     }
 
-    public function setBody(array $body)
+    public function setBody(string $body)
     {
         $this->setRaw([
-            '_rawBody' => json_encode($body),
-            '_bodyParams' => $body,
+            '_rawBody' => $body,
+            '_bodyParams' => null,
         ]);
 
         return $this;

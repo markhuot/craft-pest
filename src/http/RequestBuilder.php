@@ -16,6 +16,19 @@ class RequestBuilder
     private \craft\web\Application $app;
     private RequestHandler $handler;
 
+    /**
+     * When sending a request we need to fake the $_POST data so
+     * before we overwrite it we store a reference to what it was
+     * so that we can return it to the original value after our
+     * request goes through.
+     */
+    protected $originalPost;
+
+    /**
+     * The intended body for the request
+     */
+    protected array $body = [];
+
     public function __construct(
         string         $method,
         string         $uri,
@@ -47,9 +60,18 @@ class RequestBuilder
        return $this;
     }
 
-    function setBody(array $value): self
+    /**
+     * We don't actually _set_ the body here, because our fluent interface means
+     * we don't actually know what kind of body to set. For example, the body 
+     * may need to be encoded as JSON or as form data. We won't know that until
+     * the content-type header is set.
+     * Instead, we'll store a reference to what the user _wants_ the body to be
+     * and then, right before the request is sent (and the content-type is known),
+     * we'll set the body and encode it for them.
+     */
+    public function setBody(array $body)
     {
-        $this->request->setBody($value);
+        $this->body = $body;
 
         return $this;
     }
@@ -67,8 +89,36 @@ class RequestBuilder
         // if (\Craft::alias('@webroot') === '@webroot') {
         //     throw new \Exception('The `@webroot` alias is not set. This could cause requests in Pest to fail.');
         // }
+        
 
-        return $this->handler->handle($this->request, $skipSpecialHandling);
+        $this->registerBodyValues();
+        $response = $this->handler->handle($this->request, $skipSpecialHandling);
+        $this->resetBodyValues();
+
+        return $response;
+    }
+
+    protected function registerBodyValues(): void
+    {
+        $this->originalPost = array_merge($_POST);
+        $_POST = $body = $this->body ?? [];
+
+        $contentType = $this->request->getContentType();
+        $isJson = strpos($contentType, 'json') !== false;
+
+        // Not needed just yet. If we add more content-types we'll need
+        // to add more to this conditional
+        // $isFormData = strpos($contentType, 'form-data') !== false;
+
+        $this->request->setBody(
+            $isJson ? json_encode($body) : http_build_query($body)
+        );
+    }
+
+    protected function resetBodyValues(): void
+    {
+        $_POST = $this->originalPost ?? [];
+        $this->originalPost = null;
     }
 
     private function uriContainsAdminSlug(string $uri): bool

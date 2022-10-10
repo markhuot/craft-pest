@@ -3,7 +3,9 @@
 namespace markhuot\craftpest\http;
 
 use markhuot\craftpest\web\Application;
+use markhuot\craftpest\web\Request;
 use markhuot\craftpest\web\TestableResponse;
+use yii\base\Request as BaseRequest;
 use yii\web\HttpException;
 
 class RequestHandler

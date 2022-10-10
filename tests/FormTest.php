@@ -7,4 +7,4 @@ it ('test', function () {
         ->querySelector('#form-data')
         ->expect()
         ->innerHTML->toBe(json_encode(['firstFormTextField' => 'test']));
-});
+})->only();
