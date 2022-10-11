@@ -128,11 +128,7 @@ Checks that the location header matches the given location
 $response->assertLocation('/foo/bar');
 ```
 
-<<<<<<< HEAD
 ## assertFlash(? string$message = NULL, ? string$key = NULL)
-=======
-## assertFlash()
->>>>>>> 27a7cf193a143af8ef5519966f1889be4e3c6028
 Check that the given message/key is present in the flashed data.
 
 ```php
@@ -140,11 +136,7 @@ $response->assertFlash('The title is required');
 $response->assertFlash('Field is required', 'title');
 ```
 
-<<<<<<< HEAD
 ## assertNoContent($status = 204)
-=======
-## assertNoContent()
->>>>>>> 27a7cf193a143af8ef5519966f1889be4e3c6028
 Check that the response has the given status code and no content.
 ```php
 $response->assertNoContent();
