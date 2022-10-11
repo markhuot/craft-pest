@@ -135,6 +135,14 @@ Checks that the location header matches the given location
 $response->assertLocation('/foo/bar');
 ```
 
+## assertFlash()
+Check that the given message/key is present in the flashed data.
+
+```php
+$response->assertFlash('The title is required');
+$response->assertFlash('Field is required', 'title');
+```
+
 ## assertNoContent()
 Check that the response has the given status code and no content.
 ```php
