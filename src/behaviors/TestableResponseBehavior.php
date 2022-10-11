@@ -75,6 +75,9 @@ class TestableResponseBehavior extends Behavior
         return $this;
     }
 
+    /**
+     * Get the requesr that triggered this reaponse.
+     */
     function getRequest(): WebRequest
     {
         return $this->request;
@@ -131,8 +134,14 @@ class TestableResponseBehavior extends Behavior
     }
 
     /**
-     * The entry point for interactions with forms
-     * To submit the for use ->submit() or ->click('button-selector')
+     * The entry point for interactions with forms. This returns a testable
+     * implementaion of the [Symfony DomCrawler's Form](#) class.
+     * 
+     * If a response only has one form you may call `->form()` without any parameters
+     * to get the only form in the response. If the response contains more than
+     * one form then you must pass in a selector matching a specific form.
+     * 
+     * To submit the form use `->submit()` or `->click('.button-selector')`.
      */
     public function form(string|null $selector=null): Form
     {
