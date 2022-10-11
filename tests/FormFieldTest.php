@@ -6,24 +6,31 @@ it('renders the page with a form')
     ->form();
 
 
-it('is unhappy when no form found', function () {
-    $this->expectExceptionMessage("Unable to select form.");
-    $this->get('/response-test')
-        ->assertOk()
-        ->form();
-});
+it('is unhappy when no form found')
+    ->expectExceptionMessage("Unable to select form.")
+    ->get('/response-test')
+    ->assertOk()
+    ->form();
 
 
 it('can fill a field and collect existing fields', function () {
-    $fields = $this->get('/page-with-basic-form')
-        ->assertOk()
-        ->fill('second', 'updated value')
-        ->getFields();
+    $formResponse = $this->get('/page-with-basic-form')
+        ->assertOk();
+    
+    $formResponse->getRequest()
+        ->assertMethod('get');
 
-    expect($fields)->toBe([
-        'first' => 'prefilled',
-        'second' => 'updated value'
-    ]);
+    $submitResponse = $formResponse
+        ->fill('second', 'updated value')
+        ->submit()
+        ->assertOk();
+
+    $submitResponse->getRequest()
+        ->assertMethod('post')
+        ->assertBody([
+            'first' => 'prefilled',
+            'second' => 'updated value'
+        ]);
 });
 
 

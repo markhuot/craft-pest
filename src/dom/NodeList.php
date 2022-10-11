@@ -13,7 +13,8 @@ namespace markhuot\craftpest\dom;
  * @property string $innerHTML
  * @property int $count
  */
-class NodeList implements \Countable {
+class NodeList implements \Countable
+{
     /** @var \Symfony\Component\DomCrawler\Crawler */
     public $crawler;
 

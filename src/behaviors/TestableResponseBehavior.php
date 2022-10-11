@@ -2,8 +2,11 @@
 
 namespace markhuot\craftpest\behaviors;
 
+use craft\web\Response;
 use markhuot\craftpest\dom\Form;
 use markhuot\craftpest\dom\NodeList;
+use markhuot\craftpest\http\requests\WebRequest;
+use markhuot\craftpest\traits\Dd;
 use markhuot\craftpest\web\TestableResponse;
 use Symfony\Component\DomCrawler\Crawler;
 use yii\base\Behavior;
@@ -17,10 +20,44 @@ use yii\base\Behavior;
  * status code was 200.
  * 
  * @property \craft\web\Response $owner
+ * @method self fill(string $key, string $value)
+ * @method self tick(string $key)
+ * @method self untick(string $key)
+ * @method self select(string $key, string|array $value)
+ * @method self submit(string? $key)
  */
-class TestableResponseBehavior extends Behavior {
+class TestableResponseBehavior extends Behavior
+{
+    use Dd;
 
+    /**
+     * The request that 
+     */
+    public WebRequest $request;
+
+    /**
+     * The response we're testing against
+     */
     public TestableResponse $response;
+
+    /**
+     * The methods of the Form class that we're proxying and what each
+     * method should return.
+     */
+    const FORM_METHODS = [
+        'fill' => 'self',
+        'tick' => 'self',
+        'untick' => 'self',
+        'select' => 'self',
+        'click' => '',
+        'submit' => '',
+    ];
+
+    /**
+     * The first form on the page. Automatically grabbed when a form
+     * is interacted with the first time
+     */
+    protected $form;
 
     public function attach($owner)
     {
@@ -31,6 +68,44 @@ class TestableResponseBehavior extends Behavior {
         }
     }
 
+    function setRequest(WebRequest $request)
+    {
+        $this->request = $request;
+
+        return $this;
+    }
+
+    function getRequest(): WebRequest
+    {
+        return $this->request;
+    }
+
+    /**
+     * We're proxying some methods from the underlying Form
+     * class.
+     */
+    function hasMethod($method)
+    {
+        if (in_array($method, array_keys(static::FORM_METHODS))) {
+            return true;
+        }
+
+        return parent::hasMethod($method);
+    }
+
+    /**
+     * If this is a form method, proxy the call to the form
+     */
+    function __call($method, $args)
+    {
+        if (in_array($method, array_keys(static::FORM_METHODS))) {
+            $result = $this->form()->{$method}(...$args);
+
+            return static::FORM_METHODS[$method] === 'self' ? $this : $result;
+        }
+
+        throw new \Exception('Unknown method ' . $method . ' called.');
+    }
 
     /**
      * If the response returns HTML you can `querySelector()` to inspect the
@@ -57,22 +132,18 @@ class TestableResponseBehavior extends Behavior {
      * The entry point for interactions with forms
      * To submit the for use ->submit() or ->click('button-selector')
      */
-    public function form(string $selector = 'form'): Form
+    public function form(string|null $selector=null): Form
     {
+        if ($selector === null) {
+            if ($this->form) {
+                return $this->form;
+            }
+
+            return $this->form = new Form($this->querySelector('form'));
+        }
+
         return new Form($this->querySelector($selector));
     }
-
-    /**
-     * Initialize new form on then page on the fly
-     * To select a specific form use ->form($selector) instead
-     */
-    public function fill(string $fieldNameOrSelector, mixed $value): Form
-    {
-        $form = new Form($this->querySelector('form'));
-
-        return $form->fill($fieldNameOrSelector, $value);
-    }
-
 
     /**
      * Runs the same `querySelector()` against the response's HTML but instead

@@ -3,10 +3,13 @@
 namespace markhuot\craftpest\http\requests;
 
 use craft\helpers\App;
+use markhuot\craftpest\traits\Dd;
 use yii\web\NotFoundHttpException;
 
 abstract class WebRequest extends \craft\web\Request
 {
+    use Dd;
+
     private const HEADER_USER_AGENT = 'Pest-Agent';
     private const HEADER_X_FORWARDED_FOR = '127.0.0.1';
 
@@ -48,9 +51,12 @@ abstract class WebRequest extends \craft\web\Request
         return [$route, $params + $this->getQueryParams()];
     }
 
-    public function setBodyParams($params): self
+    public function setBody($body): self
     {
-        $this->setRaw(['_bodyParams' => $params]);
+        $this->setRaw([
+            '_rawBody' => $body,
+            '_bodyParams' => null,
+        ]);
 
         return $this;
     }
@@ -82,14 +88,16 @@ abstract class WebRequest extends \craft\web\Request
         return $this;
     }
 
-    protected static function defaultProperties(string $uri): array
+    protected static function defaultProperties(string $url): array
     {
         // Split path and query params
+        $parts = parse_url($url);
+        
+        $uri = $parts['path'] ?? '';
         $uri = ltrim($uri, '/');
-        $parts = preg_split('/\?/', $uri);
-        $uri = $parts[0];
-        $queryString = $parts[1] ?? '';
 
+        $queryString = $parts['query'] ?? '';
+        
         parse_str($queryString, $queryParams);
 
         return [
@@ -111,6 +119,20 @@ abstract class WebRequest extends \craft\web\Request
             '_port' => 8080,
             '_isCpRequest' => false,
         ];
+    }
+
+    function assertMethod($method)
+    {
+        test()->assertSame(strtoupper($method), $this->getMethod());
+
+        return $this;
+    }
+
+    function assertBody($body)
+    {
+        test()->assertEqualsCanonicalizing($body, $this->getBodyParams());
+
+        return $this;
     }
 
 }

@@ -3,13 +3,15 @@
 namespace markhuot\craftpest\dom;
 
 use markhuot\craftpest\http\RequestBuilder;
+use markhuot\craftpest\traits\Dd;
 use markhuot\craftpest\web\TestableResponse;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
-use Symfony\Component\VarDumper\VarDumper;
 
 final class Form
 {
+    use Dd;
+
     private \Symfony\Component\DomCrawler\Form $form;
     private Crawler $crawler;
 
@@ -20,7 +22,7 @@ final class Form
         }
 
         if ($nodeList->count > 1) {
-            $ids = $nodeList->getNodeOrNodes(fn (Crawler $node) => $node->attr('id'));
+            $ids = implode(', ', $nodeList->getNodeOrNodes(fn (Crawler $node) => $node->attr('id')));
             throw new \InvalidArgumentException("From selector is ambiguous. Found {$nodeList->count} forms: {$ids}.");
         }
 
@@ -115,18 +117,9 @@ final class Form
             $this->form->getUri()
         );
 
-        $request->setBodyParams($this->form->getValues());
+        $request->setBody($this->form->getPhpValues());
 
         return $request->send();
-    }
-
-    /**
-     * Useful to verify the fields before submitting the form
-     */
-    public function dd(): void
-    {
-        VarDumper::dump($this->form->getValues());
-        exit(1);
     }
 
     /**

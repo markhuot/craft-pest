@@ -26,6 +26,7 @@ class RequestHandler
             // The actual call
             /** @var TestableResponse $response */
             $response = $this->app->handleRequest($request, $skipSpecialHandling);
+            $response->setRequest($request);
             $response->prepare();
 
             $this->app->trigger(Application::EVENT_AFTER_REQUEST);
@@ -74,7 +75,7 @@ class RequestHandler
 
         $this->app->setComponents([
             'request' => $request,
-            'response' => $this->app->get('response'),
+            'response' => $response,
 
             // Since we just modified the request on demand a lot of Craft's native assumptions
             // are out of date. Craft works off a request/response paradigm and by sending
