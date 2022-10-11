@@ -5,6 +5,9 @@ tests will perform a `get()` and want to check that the response did
 not return an error. You may use `->assertOk()` to check that the
 status code was 200.
 
+## getRequest()
+Get the requesr that triggered this reaponse.
+
 ## querySelector(string $selector)
 If the response returns HTML you can `querySelector()` to inspect the
 HTML for specific content. The `querySelector()` method takes a
@@ -20,8 +23,14 @@ $response->querySelector('li')->text; // returns a collection containing the tex
 ```
 
 ## form(?string $selector = NULL)
-The entry point for interactions with forms
-To submit the for use ->submit() or ->click('button-selector')
+The entry point for interactions with forms. This returns a testable
+implementaion of the [Symfony DomCrawler's Form](#) class.
+
+If a response only has one form you may call `->form()` without any parameters
+to get the only form in the response. If the response contains more than
+one form then you must pass in a selector matching a specific form.
+
+To submit the form use `->submit()` or `->click('.button-selector')`.
 
 ## expectSelector(string $selector)
 Runs the same `querySelector()` against the response's HTML but instead
