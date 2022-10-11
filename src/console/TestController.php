@@ -61,7 +61,15 @@ class TestController extends Controller {
      * Run the tests
      */
     protected function runTests() {
-        $process = new Process(['./vendor/bin/pest']);
+        $params = $this->request->getParams();
+        $pestOptions = [];
+        $stdOutIndex = array_search('--', $params, true);
+
+        if ($stdOutIndex !== false) {
+            $pestOptions = array_slice($params, ++$stdOutIndex);
+        }
+
+        $process = new Process(['./vendor/bin/pest', ...$pestOptions]);
         $process->setTty(true);
         $process->setTimeout(null);
         $process->start();
