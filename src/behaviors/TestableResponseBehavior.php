@@ -24,7 +24,7 @@ use yii\base\Behavior;
  * @method self tick(string $key)
  * @method self untick(string $key)
  * @method self select(string $key, string|array $value)
- * @method self submit(string? $key)
+ * @method self submit(?string $key)
  */
 class TestableResponseBehavior extends Behavior
 {
