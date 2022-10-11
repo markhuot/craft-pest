@@ -83,6 +83,8 @@ class TestableResponseBehavior extends Behavior
     /**
      * We're proxying some methods from the underlying Form
      * class.
+     * 
+     * @internal
      */
     function hasMethod($method)
     {

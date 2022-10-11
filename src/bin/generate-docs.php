@@ -21,10 +21,21 @@ $contents = [];
 $contents[] = parseComment($reflection->getDocComment());
 
 foreach ($reflection->getMethods() as $method) {
-    if ($method->getDeclaringClass()->getName() === $reflection->getName() && $comment = $method->getDocComment()) {
+    if ($method->getDeclaringClass()->getName() === $reflection->getName() &&
+        $comment = $method->getDocComment() &&
+        $method->isPublic() &&
+        substr($method->getName(), 0, 2) !== '__' &&
+        strpos($method->getDocComment(), '@internal') === false
+    ) {
         $comment = parseComment($method->getDocComment());
         if (!empty($comment)) {
-            $contents[] = '## ' . $method->getName() . "()\n" . $comment;
+            $params = array_map(function (ReflectionParameter $param) {
+                return ($param->getType()?->allowsNull()?'? ':'') .
+                    $param->getType()?->getName() .
+                    '$' . $param->getName() .
+                    ($param->isDefaultValueAvailable() ? ' = ' . var_export($param->getDefaultValue(), true) : '');
+            }, $method->getParameters());
+            $contents[] = '## ' . $method->getName() . "(" . implode(', ', $params) . ")\n" . $comment;
         }
     }
 }
