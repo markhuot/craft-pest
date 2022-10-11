@@ -1,6 +1,6 @@
 
 
-## section(string$handle)
+## section(string $handle)
 Set the section
 
 ## type($handle)
