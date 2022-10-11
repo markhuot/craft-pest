@@ -29,45 +29,45 @@ it('can fill a field and collect existing fields', function () {
         ->assertMethod('post')
         ->assertBody([
             'first' => 'prefilled',
-            'second' => 'updated value'
+            'second' => 'updated value',
+            'third' => 'foo',
         ]);
 });
 
 
-it('can deal with many forms on one page')->get('/page-with-multiple-forms')
+it('can deal with many forms on one page')
+    ->get('/page-with-multiple-forms')
     ->assertOk()
     ->form('#form2');
 
 
-it('can fill fields with array style names', function () {
-    $fields = $this->get('/page-with-multiple-forms')
-        ->assertOk()
-        ->form('#form3')
-        ->fill('row[two]', 'updated')
-        ->getFields();
-
-    expect($fields)->toBe([
+it('can fill fields with array style names')
+    ->get('/page-with-multiple-forms')
+    ->assertOk()
+    ->form('#form3')
+    ->fill('row[two]', 'updated')
+    ->submit()
+    ->getRequest()
+    ->assertBody([
         'row' => [
             'one' => 'one',
             'two' => 'updated',
             'three' => 'three'
         ]
     ]);
-});
 
 
 it('does not see disabled fields', function () {
-    $fields = $this->get('/page-with-multiple-forms')
+    $this->get('/page-with-multiple-forms')
         ->assertOk()
         ->form('#form4')
-        ->getFields();
+        ->submit()
+        ->getRequest()
+        ->expect()
 
-    // row[one] exists but is disabled
-    expect($fields)->toBe([
-        'row' => [
-            'two' => 'two'
-        ]
-    ]);
+        // row[one] exists but is disabled
+        ->bodyParams->not->toHaveKey('row.one')
+        ->bodyParams->toHaveKey('row.two');
 });
 
 
@@ -83,5 +83,14 @@ it('works with select fields', function () {
     expect($initalState)->toBe(['country' => '']);
     expect($selectByName)->toBe(['country' => 'UA']);
     expect($selectByValue)->toBe(['country' => 'DE']);
+});
 
+it('works with select fields on single form pages', function () {
+    $form = $this->get('/page-with-basic-form')
+        ->assertOk()
+        ->select('third', 'baz')
+        ->submit()
+        ->getRequest()
+        ->expect()
+        ->bodyParams->toMatchArray(['third' => 'baz']);
 });

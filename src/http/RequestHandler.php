@@ -40,6 +40,7 @@ class RequestHandler
             // Fake a response and set the HTTP status code
             $response = \Craft::createObject(\markhuot\craftpest\web\TestableResponse::class);
             $response->setStatusCode($e->statusCode);
+            $response->setRequest($request);
 
             // Error response
             return $response;

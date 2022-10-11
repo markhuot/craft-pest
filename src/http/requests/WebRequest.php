@@ -29,6 +29,22 @@ abstract class WebRequest extends \craft\web\Request
         return $request;
     }
 
+    function __isset($key)
+    {
+        $method = 'get' . ucfirst($key);
+        return method_exists($this, $method);
+    }
+
+    function __get($key)
+    {
+        $method = 'get' . ucfirst($key);
+        return $this->{$method}();
+    }
+
+    function expect()
+    {
+        return test()->expect($this);
+    }
 
     /**
      * It's called by Application::handleRequest()
@@ -130,7 +146,7 @@ abstract class WebRequest extends \craft\web\Request
 
     function assertBody($body)
     {
-        test()->assertEqualsCanonicalizing($body, $this->getBodyParams());
+        expect($body)->toBe($this->getBodyParams());
 
         return $this;
     }
