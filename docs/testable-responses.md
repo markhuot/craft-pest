@@ -5,6 +5,13 @@ tests will perform a `get()` and want to check that the response did
 not return an error. You may use `->assertOk()` to check that the
 status code was 200.
 
+## hasMethod()
+We're proxying some methods from the underlying Form
+class.
+
+## __call()
+If this is a form method, proxy the call to the form
+
 ## querySelector()
 If the response returns HTML you can `querySelector()` to inspect the
 HTML for specific content. The `querySelector()` method takes a
@@ -22,10 +29,6 @@ $response->querySelector('li')->text; // returns a collection containing the tex
 ## form()
 The entry point for interactions with forms
 To submit the for use ->submit() or ->click('button-selector')
-
-## fill()
-Initialize new form on then page on the fly
-To select a specific form use ->form($selector) instead
 
 ## expectSelector()
 Runs the same `querySelector()` against the response's HTML but instead
@@ -167,3 +170,6 @@ Checks that the response contains the given text
 ```php
 $response->assertSee('foo bar');
 ```
+
+## dd()
+Does a dump on the class
