@@ -30,7 +30,7 @@ foreach ($reflection->getMethods() as $method) {
         $comment = parseComment($method->getDocComment());
         if (!empty($comment)) {
             $params = array_map(function (ReflectionParameter $param) {
-                return ($param->getType()?->allowsNull()?'? ':'') .
+                return ($param->getType()?->allowsNull()?'?':'') .
                     ($param->getType() ? $param->getType()->getName() . ' ' : '') .
                     '$' . $param->getName() .
                     ($param->isDefaultValueAvailable() ? ' = ' . var_export($param->getDefaultValue(), true) : '');
