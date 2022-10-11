@@ -13,7 +13,8 @@ namespace markhuot\craftpest\dom;
  * @property string $innerHTML
  * @property int $count
  */
-class NodeList implements \Countable {
+class NodeList implements \Countable
+{
     /** @var \Symfony\Component\DomCrawler\Crawler */
     public $crawler;
 
@@ -44,7 +45,7 @@ class NodeList implements \Countable {
         throw new \Exception("Property `{$property}` not found on Pest\\CraftCms\\NodeList");
     }
 
-    protected function getNodeOrNodes(callable $callback) {
+    public function getNodeOrNodes(callable $callback) {
         if ($this->crawler->count() === 1) {
             return $callback($this->crawler->eq(0));
         }

@@ -1,6 +1,6 @@
 
 
-## section()
+## section($identifier)
 Set the section for the entry to be created. You may pass a section
 in three ways,
 
@@ -8,13 +8,13 @@ in three ways,
 2. a section id
 3. a section handle
 
-## type()
+## type($handle)
 Set the entry type
 
 ## inferSectionId()
 Infer the section based on the class name
 
-## inferTypeId()
+## inferTypeId($sectionid)
 Infer the type based on the class name
 
 ## newElement()

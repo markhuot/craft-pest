@@ -2,7 +2,11 @@
 
 namespace markhuot\craftpest\behaviors;
 
+use craft\web\Response;
+use markhuot\craftpest\dom\Form;
 use markhuot\craftpest\dom\NodeList;
+use markhuot\craftpest\http\requests\WebRequest;
+use markhuot\craftpest\traits\Dd;
 use markhuot\craftpest\web\TestableResponse;
 use Symfony\Component\DomCrawler\Crawler;
 use yii\base\Behavior;
@@ -16,10 +20,44 @@ use yii\base\Behavior;
  * status code was 200.
  * 
  * @property \craft\web\Response $owner
+ * @method self fill(string $key, string $value)
+ * @method self tick(string $key)
+ * @method self untick(string $key)
+ * @method self select(string $key, string|array $value)
+ * @method self submit(?string $key)
  */
-class TestableResponseBehavior extends Behavior {
+class TestableResponseBehavior extends Behavior
+{
+    use Dd;
 
+    /**
+     * The request that 
+     */
+    public WebRequest $request;
+
+    /**
+     * The response we're testing against
+     */
     public TestableResponse $response;
+
+    /**
+     * The methods of the Form class that we're proxying and what each
+     * method should return.
+     */
+    const FORM_METHODS = [
+        'fill' => 'self',
+        'tick' => 'self',
+        'untick' => 'self',
+        'select' => 'self',
+        'click' => '',
+        'submit' => '',
+    ];
+
+    /**
+     * The first form on the page. Automatically grabbed when a form
+     * is interacted with the first time
+     */
+    protected $form;
 
     public function attach($owner)
     {
@@ -30,6 +68,49 @@ class TestableResponseBehavior extends Behavior {
         }
     }
 
+    function setRequest(WebRequest $request)
+    {
+        $this->request = $request;
+
+        return $this;
+    }
+
+    /**
+     * Get the requesr that triggered this reaponse.
+     */
+    function getRequest(): WebRequest
+    {
+        return $this->request;
+    }
+
+    /**
+     * We're proxying some methods from the underlying Form
+     * class.
+     * 
+     * @internal
+     */
+    function hasMethod($method)
+    {
+        if (in_array($method, array_keys(static::FORM_METHODS))) {
+            return true;
+        }
+
+        return parent::hasMethod($method);
+    }
+
+    /**
+     * If this is a form method, proxy the call to the form
+     */
+    function __call($method, $args)
+    {
+        if (in_array($method, array_keys(static::FORM_METHODS))) {
+            $result = $this->form()->{$method}(...$args);
+
+            return static::FORM_METHODS[$method] === 'self' ? $this : $result;
+        }
+
+        throw new \Exception('Unknown method ' . $method . ' called.');
+    }
 
     /**
      * If the response returns HTML you can `querySelector()` to inspect the
@@ -45,10 +126,34 @@ class TestableResponseBehavior extends Behavior {
      * $response->querySelector('li')->text; // returns a collection containing the text of all list items
      * ```
      */
-    function querySelector(string $selector) {
+    function querySelector(string $selector)
+    {
         $html = $this->response->content;
         $crawler = new Crawler($html);
         return new NodeList($crawler->filter($selector));
+    }
+
+    /**
+     * The entry point for interactions with forms. This returns a testable
+     * implementaion of the [Symfony DomCrawler's Form](#) class.
+     * 
+     * If a response only has one form you may call `->form()` without any parameters
+     * to get the only form in the response. If the response contains more than
+     * one form then you must pass in a selector matching a specific form.
+     * 
+     * To submit the form use `->submit()` or `->click('.button-selector')`.
+     */
+    public function form(string|null $selector=null): Form
+    {
+        if ($selector === null) {
+            if ($this->form) {
+                return $this->form;
+            }
+
+            return $this->form = new Form($this->querySelector('form'));
+        }
+
+        return new Form($this->querySelector($selector));
     }
 
     /**
@@ -93,7 +198,6 @@ class TestableResponseBehavior extends Behavior {
         else {
             test()->assertSame($this->response->cookies->getValue($name), $value);
         }
-
 
         return $this->response;
     }
@@ -359,6 +463,29 @@ class TestableResponseBehavior extends Behavior {
      */
     function assertLocation(string $location) {
         test()->assertSame($location, $this->response->getHeaders()->get('Location'));
+
+        return $this->response;
+    }
+
+    /**
+     * Check that the given message/key is present in the flashed data.
+     * 
+     * ```php
+     * $response->assertFlash('The title is required');
+     * $response->assertFlash('Field is required', 'title');
+     * ```
+     */
+    function assertFlash(?string $message = null, ?string $key = null)
+    {
+        $flash = \Craft::$app->getSession()->getAllFlashes();
+
+        if ($key) {
+            expect($flash)->toMatchArray([$key => $message]);
+        }
+
+        else if ($message) {
+            expect($flash)->toContain($message);
+        }
 
         return $this->response;
     }

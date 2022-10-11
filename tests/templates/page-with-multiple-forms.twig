@@ -1,0 +1,72 @@
+<form action="/target" method="post">
+
+    <label>
+        First Input
+        <input type="text" name="first" value="prefilled" />
+    </label>
+
+    <label>
+        Second Input
+        <input type="text" name="second" value="" />
+    </label>
+
+    <button type="submit">Submit</button>
+</form>
+
+
+<form action="/target" method="post" id="form2">
+
+    <label>
+        First Input
+        <input type="text" name="first" value="prefilled" />
+    </label>
+
+    <label>
+        Multiple rows
+        <input type="text" name="row[one]" value="one" />
+        <input type="text" name="row[two]" value="two" />
+        <input type="text" name="row[three]" value="three" />
+    </label>
+
+    <button type="submit">Submit</button>
+</form>
+
+
+<form action="/target" method="post" id="form3">
+
+    <label>
+        Multiple rows
+        <input type="text" name="row[one]" value="one" />
+        <input type="text" name="row[two]" value="two" />
+        <input type="text" name="row[three]" value="three" />
+    </label>
+
+    <button type="submit">Submit</button>
+</form>
+
+
+<form action="/target" method="post" id="form4">
+
+    <label>
+        Multiple rows, first is disabled
+        <input type="text" name="row[one]" value="one" disabled/>
+        <input type="text" name="row[two]" value="two" />
+    </label>
+
+    <button type="submit">Submit</button>
+</form>
+
+
+<form action="/target" method="post" id="form5">
+
+    <label>
+       <select name="country">
+           <option value="">Please select</option>
+           <option value="DE">Germany</option>
+           <option value="US">United States</option>
+           <option value="UA">Ukraine</option>
+       </select>
+    </label>
+
+    <button type="submit">Submit</button>
+</form>
