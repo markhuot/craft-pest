@@ -456,14 +456,25 @@ class TestableResponseBehavior extends Behavior
         return $this->response;
     }
 
-
-    function assertFlash(?string $message = null)
+    /**
+     * Check that the given message/key is present in the flashed data.
+     * 
+     * ```php
+     * $response->assertFlash('The title is required');
+     * $response->assertFlash('Field is required', 'title');
+     * ```
+     */
+    function assertFlash(?string $message = null, ?string $key = null)
     {
-        // What's the structure???
         $flash = \Craft::$app->getSession()->getAllFlashes();
 
-        // ;-)
-        test()->markAsRisky();
+        if ($key) {
+            expect($flash)->toMatchArray([$key => $message]);
+        }
+
+        else if ($message) {
+            expect($flash)->toContain($message);
+        }
 
         return $this->response;
     }

@@ -56,3 +56,13 @@ it('asserts header value')
 it('asserts missing header')
     ->get('/responses/header')
     ->assertHeaderMissing('x-qux');
+
+it('asserts flash data')
+    ->get('/responses/flash')
+    ->assertFlash('You\'re not allowed to go there.')
+    ->only();
+
+it('asserts flash data by key')
+    ->get('/responses/flash')
+    ->assertFlash('You\'re not allowed to go there.', 'error')
+    ->only();

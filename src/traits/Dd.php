@@ -9,9 +9,9 @@ trait Dd
     /**
      * Does a dump on the class
      */
-    public function dd(): void
+    public function dd($var=null): void
     {
-        VarDumper::dump($this);
+        VarDumper::dump($var ?? $this);
         exit(1);
     }
 }
