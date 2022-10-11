@@ -31,7 +31,7 @@ foreach ($reflection->getMethods() as $method) {
         if (!empty($comment)) {
             $params = array_map(function (ReflectionParameter $param) {
                 return ($param->getType()?->allowsNull()?'?':'') .
-                    ($param->getType() ? $param->getType()->getName() . ' ' : '') .
+                    ($param->getType() ? $param->getType()?->getName() . ' ' : '') .
                     '$' . $param->getName() .
                     ($param->isDefaultValueAvailable() ? ' = ' . var_export($param->getDefaultValue(), true) : '');
             }, $method->getParameters());
