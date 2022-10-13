@@ -5,6 +5,7 @@ namespace markhuot\craftpest\behaviors;
 use craft\web\Response;
 use markhuot\craftpest\dom\Form;
 use markhuot\craftpest\dom\NodeList;
+use markhuot\craftpest\http\RequestBuilder;
 use markhuot\craftpest\http\requests\WebRequest;
 use markhuot\craftpest\traits\Dd;
 use markhuot\craftpest\web\TestableResponse;
@@ -462,7 +463,21 @@ class TestableResponseBehavior extends Behavior
      * ```
      */
     function assertLocation(string $location) {
-        test()->assertSame($location, $this->response->getHeaders()->get('Location'));
+        $header = $this->response->getHeaders()->get('Location');
+        $headerParts = parse_url($header);
+
+        // If $location is passed in as an absolute path like /foo we want to
+        // make sure that UrlHelper::url() generates a full schema+host URL and
+        // the current logic (as of Craft 4.2) only does that if the path is
+        // relative. Stripping off the leading slash will allow this while also
+        // keeping any full URLs like `http://foo.com` in tact.
+        // @TODO this will break protocol relative URLs though because they
+        // start with a double slash like `//foo.com`
+        $locationUri = ltrim($location, '/');
+        $locationUrl = \craft\helpers\UrlHelper::url($locationUri);
+        $locationParts = parse_url($locationUrl);
+
+        test()->assertSame($locationParts, $headerParts);
 
         return $this->response;
     }
@@ -542,6 +557,7 @@ class TestableResponseBehavior extends Behavior
     function assertRedirect() {
         test()->assertGreaterThanOrEqual(300, $this->response->getStatusCode());
         test()->assertLessThan(400, $this->response->getStatusCode());
+        test()->assertContains('location', array_keys($this->response->headers->toArray()), 'The response does not contain a location header.');
 
         return $this->response;
     }
@@ -555,9 +571,20 @@ class TestableResponseBehavior extends Behavior
      */
     function assertRedirectTo(string $location) {
         $this->assertRedirect();
-        $this->assertLocation($location);;
+        $this->assertLocation($location);
 
         return $this->response;
+    }
+
+    /**
+     * For a 300 class response with a `Location` header, trigger a new
+     * request for the redirected page.
+     */
+    function followRedirect()
+    {
+        $this->assertRedirect();
+
+        return (new RequestBuilder('get', $this->response->headers->get('location')))->send();
     }
 
     /**
