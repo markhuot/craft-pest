@@ -2,18 +2,24 @@
 
 namespace markhuot\craftpest\web;
 
+use markhuot\craftpest\behaviors\ExpectableBehavior;
 use markhuot\craftpest\behaviors\TestableResponseBehavior;
-use markhuot\craftpest\dom\NodeList;
-use Symfony\Component\DomCrawler\Crawler;
+use markhuot\craftpest\traits\Dd;
 
 /**
+ * @mixin ExpectableBehavior
  * @mixin TestableResponseBehavior
  */
 class TestableResponse extends \craft\web\Response
 {
+    use Dd;
+
     public function behaviors(): array
     {
-        return [TestableResponseBehavior::class];
+        return [
+            ExpectableBehavior::class,
+            TestableResponseBehavior::class
+        ];
     }
 
     public function send()

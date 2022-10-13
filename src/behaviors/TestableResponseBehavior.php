@@ -2,12 +2,10 @@
 
 namespace markhuot\craftpest\behaviors;
 
-use craft\web\Response;
 use markhuot\craftpest\dom\Form;
 use markhuot\craftpest\dom\NodeList;
 use markhuot\craftpest\http\RequestBuilder;
 use markhuot\craftpest\http\requests\WebRequest;
-use markhuot\craftpest\traits\Dd;
 use markhuot\craftpest\web\TestableResponse;
 use Symfony\Component\DomCrawler\Crawler;
 use yii\base\Behavior;
@@ -29,8 +27,6 @@ use yii\base\Behavior;
  */
 class TestableResponseBehavior extends Behavior
 {
-    use Dd;
-
     /**
      * The request that 
      */
@@ -168,18 +164,6 @@ class TestableResponseBehavior extends Behavior
      */
     function expectSelector(string $selector) {
        return $this->querySelector($selector)->expect();
-    }
-
-    /**
-     * Starts an expectation on the response. This allows you to use the expectation
-     * API on Craft's response properties.
-     *
-     * ```php
-     * $response->expect()->statusCode->toBe(200);
-     * ```
-     */
-    public function expect() {
-        return test()->expect($this);
     }
 
     /**
