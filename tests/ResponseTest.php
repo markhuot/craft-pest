@@ -77,8 +77,21 @@ it('redirects match offsite')
     ->get('/responses/302-offsite')
     ->assertRedirectTo('https://www.example.com/');
 
-it('follows redirects')
+it('follows a redirect')
     ->get('/responses/302')
     ->followRedirect()
+    ->assertOk()
+    ->assertSee('Hello World!');
+
+it('follows multiple redirects')
+    ->get('/responses/302-nested')
+    ->followRedirect()
+    ->followRedirect()
+    ->assertOk()
+    ->assertSee('Hello World!');
+
+it('follows multiple redirects in one call')
+    ->get('/responses/302-nested')
+    ->followRedirects()
     ->assertOk()
     ->assertSee('Hello World!');

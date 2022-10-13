@@ -588,6 +588,22 @@ class TestableResponseBehavior extends Behavior
     }
 
     /**
+     * For a 300 class response with a `Location` header, trigger a new
+     * request for the redirected page.
+     */
+    function followRedirects()
+    {
+        $this->assertRedirect();
+        $response = $this->response;
+
+        while ($response->isRedirection) {
+            $response = (new RequestBuilder('get', $response->headers->get('location')))->send();
+        }
+
+        return $response;
+    }
+
+    /**
      * Checks that the response contains the given text
      *
      * ```php
