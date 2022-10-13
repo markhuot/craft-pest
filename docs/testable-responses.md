@@ -41,13 +41,6 @@ This allows you to use Pest's expectation API against the found nodes.
 $response->expectSelector('h1')->text->toBe('Hello World!');
 ```
 
-## expect()
-Starts an expectation on the response. This allows you to use the expectation
-API on Craft's response properties.
-```php
-$response->expect()->statusCode->toBe(200);
-```
-
 ## assertCookie(string $name, ?string $value = NULL)
 Checks that the response contains the given cookie. When not passed a value
 the assertion only checks the presence of the cookie. When passed a value the
@@ -188,6 +181,3 @@ Checks that the response contains the given text
 ```php
 $response->assertSee('foo bar');
 ```
-
-## dd($var = NULL)
-Does a dump on the class
