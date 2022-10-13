@@ -179,6 +179,10 @@ $response->assertRedirectTo('/foo/bar');
 For a 300 class response with a `Location` header, trigger a new
 request for the redirected page.
 
+## followRedirects()
+For a 300 class response with a `Location` header, trigger a new
+request for the redirected page.
+
 ## assertSee(string $text)
 Checks that the response contains the given text
 ```php
