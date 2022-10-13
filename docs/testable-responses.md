@@ -175,6 +175,10 @@ A sugar method that checks the status code as well as the location of the redire
 $response->assertRedirectTo('/foo/bar');
 ```
 
+## followRedirect()
+For a 300 class response with a `Location` header, trigger a new
+request for the redirected page.
+
 ## assertSee(string $text)
 Checks that the response contains the given text
 ```php
