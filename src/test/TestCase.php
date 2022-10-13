@@ -78,6 +78,10 @@ class TestCase extends \PHPUnit\Framework\TestCase {
         // (see https://craftcms.com/docs/3.x/config/#php-constants)
         define('CRAFT_ENVIRONMENT', getenv('ENVIRONMENT') ?: 'production');
 
+        // Set this so we can catch calls to `\Craft::$app->exit()` and handle them
+        // uniquely in testing. We don't actually want to `exit()` in test.
+        define('YII_ENV_TEST', true);
+
         // Load and run Craft
         /** @var \craft\web\Application $app */
         $app = require CRAFT_VENDOR_PATH . '/craftcms/cms/bootstrap/web.php';

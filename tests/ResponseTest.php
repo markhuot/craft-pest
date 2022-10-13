@@ -59,10 +59,39 @@ it('asserts missing header')
 
 it('asserts flash data')
     ->get('/responses/flash')
-    ->assertFlash('You\'re not allowed to go there.')
-    ->only();
+    ->assertFlash('You\'re not allowed to go there.');
 
 it('asserts flash data by key')
     ->get('/responses/flash')
-    ->assertFlash('You\'re not allowed to go there.', 'error')
-    ->only();
+    ->assertFlash('You\'re not allowed to go there.', 'error');
+
+it('redirects match path')
+    ->get('/responses/302')
+    ->assertRedirectTo('/');
+
+it('redirects match hostname')
+    ->get('/responses/302')
+    ->assertRedirectTo('http://localhost:8080/');
+
+it('redirects match offsite')
+    ->get('/responses/302-offsite')
+    ->assertRedirectTo('https://www.example.com/');
+
+it('follows a redirect')
+    ->get('/responses/302')
+    ->followRedirect()
+    ->assertOk()
+    ->assertSee('Hello World!');
+
+it('follows multiple redirects')
+    ->get('/responses/302-nested')
+    ->followRedirect()
+    ->followRedirect()
+    ->assertOk()
+    ->assertSee('Hello World!');
+
+it('follows multiple redirects in one call')
+    ->get('/responses/302-nested')
+    ->followRedirects()
+    ->assertOk()
+    ->assertSee('Hello World!');

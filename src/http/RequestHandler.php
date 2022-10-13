@@ -2,8 +2,9 @@
 
 namespace markhuot\craftpest\http;
 
-use markhuot\craftpest\web\Application;
 use markhuot\craftpest\web\TestableResponse;
+use Twig\Error\RuntimeError;
+use yii\base\ExitException;
 use yii\web\HttpException;
 
 class RequestHandler
@@ -21,7 +22,7 @@ class RequestHandler
         $this->registerWithCraft($request);
 
         try {
-            $this->app->trigger(Application::EVENT_BEFORE_REQUEST);
+            $this->app->trigger(\craft\web\Application::EVENT_BEFORE_REQUEST);
 
             // The actual call
             /** @var TestableResponse $response */
@@ -29,7 +30,7 @@ class RequestHandler
             $response->setRequest($request);
             $response->prepare();
 
-            $this->app->trigger(Application::EVENT_AFTER_REQUEST);
+            $this->app->trigger(\craft\web\Application::EVENT_AFTER_REQUEST);
 
             return $response;
         }
@@ -44,6 +45,23 @@ class RequestHandler
 
             // Error response
             return $response;
+        }
+
+        // Twig is _so_ annoying that it wraps actual exceptions. So we need to catch _all_ twig
+        // exceptions and unpack them to see what the underlying exception was and then handle
+        // it here. Unfortunately, this is duplicated because if the exception is thrown outside
+        // of twig then the normal `catch` block will catch it too.
+        catch (RuntimeError $e) {
+            if (is_a($e->getPrevious(), ExitException::class)) {
+                /** @var TestableResponse */
+                return \Craft::$app->response;
+            }
+
+            throw $e;
+        }
+        catch (ExitException $e) {
+            /** @var TestableResponse */
+            return \Craft::$app->response;
         }
 
         // Clear out output buffering that may still be left open because of an exception. Ideally

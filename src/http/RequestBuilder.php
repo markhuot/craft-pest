@@ -6,7 +6,6 @@ use craft\web\User;
 use markhuot\craftpest\http\requests\GetRequest;
 use markhuot\craftpest\http\requests\PostRequest;
 use markhuot\craftpest\http\requests\WebRequest;
-use markhuot\craftpest\web\Application;
 use markhuot\craftpest\web\TestableResponse;
 use yii\web\Cookie;
 
@@ -22,7 +21,7 @@ class RequestBuilder
     public function __construct(
         string         $method,
         string         $uri,
-        Application    $app = null,
+        \craft\web\Application    $app = null,
         RequestHandler $handler = null,
     ) {
         $this->method = $method;
