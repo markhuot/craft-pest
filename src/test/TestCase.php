@@ -2,13 +2,13 @@
 
 namespace markhuot\craftpest\test;
 
-use markhuot\craftpest\factories\Entry;
 use markhuot\craftpest\http\RequestBuilder;
+use markhuot\craftpest\traits\DatabaseAssertions;
 use markhuot\craftpest\web\TestableResponse;
 
 class TestCase extends \PHPUnit\Framework\TestCase {
 
-    use ActingAs;
+    use ActingAs, DatabaseAssertions;
 
     protected function setUp(): void
     {
