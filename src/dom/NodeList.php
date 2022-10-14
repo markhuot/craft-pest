@@ -8,6 +8,8 @@ namespace markhuot\craftpest\dom;
  * of a single h1 element via `$response->querySelector('h1')->text === "string"` will return the string
  * contents of that node. However, if the `NodeList` contains multiple nodes the return
  * will be an array such as when you get back multiple list items, `$response->querySelector('li')->text === ["list", "text", "items"]`
+ *
+ * @property int $count
  */
 class NodeList implements \Countable
 {
