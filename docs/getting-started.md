@@ -26,7 +26,7 @@ it('loads the homepage', function() {
 
 The `->get()` method will query your site in testing the same way a user would through a web browser (without executing any JavaScript). It returns a `TestableResponse` that contains a number of convenience methods allowing you to verify various parts of the response. Commonly you'll want to `->assertOk()` to ensure you got a successful 200 response back from the server.
 
-For a full list of the assertions you can make on a `TestableResponse` see the [testable-response.md](testable-responses.md) doc.
+For a full list of the assertions you can make on a `TestableResponse` see the [response.md](assertions/response.md) doc.
 
 ## Higher Order Tests
 
