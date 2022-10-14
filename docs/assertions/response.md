@@ -1,4 +1,3 @@
-# Response Assertions
 A testable response is returned whenever you perform a HTTP request
 with Pest. It is an extension of Craft's native Response with a
 number of convience methods added for testing. For example, most
