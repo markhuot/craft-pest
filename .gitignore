@@ -11,5 +11,6 @@ bootstrap.php
 craft
 src/bin/cpresources
 !src/bin/craft
-storage/*
-!storage/.gitkeep
+/storage
+/src/storage/*
+!/src/storage/.gitkeep

@@ -1,8 +1,8 @@
 <?php
 
 use craft\fields\Entries;
-use craft\fields\Matrix;
-use craft\fields\PlainText;
+use markhuot\craftpest\storage\Posts\EntryTypeDefault;
+
 use function markhuot\craftpest\helpers\http\get;
 
 it('can create singles', function () {

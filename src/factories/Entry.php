@@ -15,6 +15,8 @@ use Illuminate\Support\Collection;
  * @method uri(string $uri)
  * @method enabled(bool $enabled)
  * @method parent(\craft\elements\Entry|Entry|string|int $parent)
+ * @mixin \markhuot\craftpest\storage\EntryFactory
+ * @mixin \markhuot\craftpest\storage\Posts\EntryTypeDefault
  */
 class Entry extends Element
 {

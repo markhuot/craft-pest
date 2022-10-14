@@ -1,0 +1,12 @@
+<?php
+
+namespace markhuot\craftpest\storage\Section{{ section.handle|ucfirst }};
+
+class EntryType{{ entryType.handle|ucfirst }}
+{
+    function title(string $title) { }
+
+    {% for field in entryType.fields %}
+    function {{ field.handle }}($value) { }
+    {% endfor %}
+}
