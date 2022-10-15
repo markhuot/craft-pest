@@ -12,7 +12,7 @@ const getSidebarItems = (dir, currentRoot, root, options) => {
         collapsed: options.collapsed,
         items: getSidebarItems(fs.readdirSync(childDir), childDir, root, {...options, showMd: true, showGroups: true}, true)
       };
-    } else if (options.showMd && e.endsWith('.md')) {
+    } else if (options.showMd && e.endsWith('.md') && e != 'index.md') {
       return {
         text: ((e.charAt(0).toUpperCase() + e.slice(1)).slice(0, -3)).replaceAll('-', ' '),
         link: '/' + childDir.replace(root, '').replace(/\.md$/, '.html')
