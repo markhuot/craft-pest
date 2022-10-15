@@ -61,6 +61,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Copy in readme
+        run: cp README.md docs/index.md
+
       - name: Generate docs
         run: npx vitepress build docs
 
