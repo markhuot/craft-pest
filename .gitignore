@@ -13,3 +13,5 @@ src/bin/cpresources
 !src/bin/craft
 storage/*
 !storage/.gitkeep
+node_modules
+/docs/.vitepress/dist

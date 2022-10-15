@@ -32,7 +32,6 @@ const sidebar = [
   },
   ...getSidebarItems(fs.readdirSync(docsPath), docsPath, docsPath, { contentDirs: null, collapsible: false, collapsed: false, showMd: false, showGroups: true }),
 ]
-console.log('DEBUG', sidebar[1])
 export default {
   title: 'Craft Pest',
   themeConfig: {
