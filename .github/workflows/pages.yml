@@ -62,7 +62,9 @@ jobs:
         run: npm ci
 
       - name: Copy in readme
-        run: cp README.md docs/index.md
+        run: |
+          cp README.md docs/index.md
+          cp screenshot.png docs./screenshot.png
 
       - name: Generate docs
         run: npx vitepress build docs
