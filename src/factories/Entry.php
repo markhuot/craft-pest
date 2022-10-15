@@ -9,6 +9,10 @@ use Faker\Factory as Faker;
 use Illuminate\Support\Collection;
 
 /**
+ * Entry Factory
+ * 
+ * You can easily build entries using the Entry factory.
+ * 
  * @TODO a lot of these should be copied up to the element factory
  * @method title(string $title)
  * @method slug(string $slug)
@@ -31,9 +35,6 @@ class Entry extends Element
      * 1. a section object (typically after creating one via the `Section` factory)
      * 2. a section id
      * 3. a section handle
-     *
-     * @param \craft\models\Section|string $identifier
-     * @return self
      */
     function section($identifier) {
         $this->sectionIdentifier = $identifier;
@@ -43,20 +44,26 @@ class Entry extends Element
 
     /**
      * Set the entry type
-     *
-     * @param string $handle The entry type handle
      */
     function type($handle) {
 
     }
 
+    /**
+     * Set the post date by passing a `DateTime`, a string representing the date like
+     * "2022-04-25 04:00:00", or a unix timestamp as an integer.
+     */
     function postDate(\DateTime|string|int $value)
     {
         $this->setDateField('postDate', $value);
-
+        
         return $this;
     }
-
+    
+    /**
+     * Set the expiration date by passing a `DateTime`, a string representing the date like
+     * "2022-04-25 04:00:00", or a unix timestamp as an integer.
+     */
     function expiryDate(\DateTime|string|int $value)
     {
         $this->setDateField('expiryDate', $value);
@@ -64,15 +71,31 @@ class Entry extends Element
         return $this;
     }
 
+    /**
+     * Date fields in Craft require a `DateTime` object.  You can use `->setDateField` to pass
+     * in other representations such as a timestamp or a string.
+     * 
+     * ```php
+     * Entry::factory()->setDateField('approvedOn', '2022-04-18 -04:00:00');
+     * Entry::factory()->setDateField('approvedOn', 1665864918);
+     * ```
+     */
     function setDateField($key, $value)
     {
-        if (is_string($value)) {
+        if (is_numeric($value)) {
+            $value = new \DateTime('@' . $value);
+        }
+        else if (is_string($value)) {
             $value = new \DateTime($value);
         }
 
         $this->attributes[$key] = $value;
     }
 
+    /**
+     * Set the author of the entry. You may pass a full user object, a user ID,
+     * a username, email, or a user ID.
+     */
     function author(\craft\web\User|string|int $user)
     {
         if (is_numeric($user)) {
@@ -93,8 +116,7 @@ class Entry extends Element
 
     /**
      * Infer the section based on the class name
-     *
-     * @return int
+     * @internal
      */
     function inferSectionId() {
         if (is_a($this->sectionIdentifier, \craft\models\Section::class)) {
@@ -123,6 +145,7 @@ class Entry extends Element
 
     /**
      * Infer the type based on the class name
+     * @internal
      */
     function inferTypeId($sectionid): int {
         $reflector = new \ReflectionClass($this);
@@ -138,13 +161,15 @@ class Entry extends Element
 
     /**
      * Get the element to be generated
-     *
-     * @return ElementInterface
+     * @internal
      */
     function newElement() {
         return new \craft\elements\Entry();
     }
 
+    /**
+     * @internal
+     */
     function inferences(array $definition = []) {
         $sectionId = $this->inferSectionId();
         $typeId = $this->inferTypeId($sectionId);
