@@ -1,0 +1,54 @@
+name: Doc Generation
+
+on:
+  push:
+    branches-ignore:
+      - master
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Generate docs
+        run: |
+          php src/bin/generate-docs.php src/dom/NodeList.php docs/node-list.md
+          php src/bin/generate-docs.php src/factories/Factory.php docs/factories.md
+          php src/bin/generate-docs.php src/factories/Entry.php docs/factories/entry.md
+          php src/bin/generate-docs.php src/factories/Asset.php docs/factories/asset.md
+          php src/bin/generate-docs.php src/behaviors/TestableResponseBehavior.php docs/assertions/response.md
+          php src/bin/generate-docs.php src/traits/DatabaseAssertions.php docs/assertions/database.md
+      - name: Add files
+        run: git add -A docs/
+
+      - name: Commit & Push changes
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          author_email: docbot@markhuot.com
+          author_name: docbot
+          message: GitHub action updating docs
+          branch: ${{ github.ref_name }}

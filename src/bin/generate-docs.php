@@ -30,8 +30,7 @@ foreach ($reflection->getMethods() as $method) {
         $comment = parseComment($method->getDocComment());
         if (!empty($comment)) {
             $params = array_map(function (ReflectionParameter $param) {
-                return ($param->getType()?->allowsNull()?'?':'') .
-                    ($param->getType() ? (string)$param->getType() . ' ' : '') . // @phpstan-ignore-line for some reason PHP stan doesn't like ->getName on a type
+                return ($param->getType() ? (string)$param->getType() . ' ' : '') . // @phpstan-ignore-line for some reason PHP stan doesn't like ->getName on a type
                     '$' . $param->getName() .
                     ($param->isDefaultValueAvailable() ? ' = ' . var_export($param->getDefaultValue(), true) : '');
             }, $method->getParameters());
