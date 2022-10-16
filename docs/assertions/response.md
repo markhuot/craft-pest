@@ -23,7 +23,7 @@ $response->querySelector('h1')->text; // returns the string contents of the h1 e
 $response->querySelector('li')->text; // returns a collection containing the text of all list items
 ```
 
-## form(?string $selector = NULL)
+## form(??string $selector = NULL)
 The entry point for interactions with forms. This returns a testable
 implementaion of the [Symfony DomCrawler's Form](#) class.
 
@@ -42,7 +42,7 @@ This allows you to use Pest's expectation API against the found nodes.
 $response->expectSelector('h1')->text->toBe('Hello World!');
 ```
 
-## assertCookie(string $name, ?string $value = NULL)
+## assertCookie(string $name, ??string $value = NULL)
 Checks that the response contains the given cookie. When not passed a value
 the assertion only checks the presence of the cookie. When passed a value the
 value will be checked for strict equality.
@@ -90,7 +90,7 @@ For example, if the response contains `foo <em>bar</em>` you could check against
 $response->assertDontSeeText('foo bar');
 ```
 
-## assertDownload(?string $filename = NULL)
+## assertDownload(??string $filename = NULL)
 Checks that the response contains a file download, optionally checking that the filename of the download
 matches the given filename.
 ```php
@@ -111,7 +111,7 @@ Checks that the response has a 403 Forbidden status code
 $response->assertForbidden();
 ```
 
-## assertHeader(string $name, ?string $expected = NULL)
+## assertHeader(string $name, ??string $expected = NULL)
 Checks that the given header is present in the response and, if provided, that the value of the
 header matches the given value.
 ```php
@@ -131,7 +131,7 @@ Checks that the location header matches the given location
 $response->assertLocation('/foo/bar');
 ```
 
-## assertFlash(?string $message = NULL, ?string $key = NULL)
+## assertFlash(??string $message = NULL, ??string $key = NULL)
 Check that the given message/key is present in the flashed data.
 
 ```php
