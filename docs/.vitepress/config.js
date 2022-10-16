@@ -35,18 +35,21 @@ const sidebar = [
 export default {
   title: 'Craft Pest',
   head: [
-    ['meta', {
-      property: 'og:title',
-      content: 'Craft Pest',
-    }],
-    ['meta', {
-      property: 'og:description',
-      content: 'A Craft plugin to make testing insanely easy.',
-    }],
-    ['meta', {
-      property: 'og:image',
-      content: '/screenshot.png',
-    }],
+    // Facebook Meta Tags
+    ['meta', { property: "og:url", content: "http://Craft-pest.com" }],
+    ['meta', { property: "og:type", content: "website" }],
+    ['meta', { property: "og:title", content: "Craft Pest" }],
+    ['meta', { property: "og:description", content: "Craft Pest" }],
+    ['meta', { property: "og:image", content: "http://Craft-pest.com/screenshot.png" }],
+
+    // Twitter Meta Tags
+    ['meta', { name: "twitter:card", content: "summary_large_image" }],
+    ['meta', { property: "twitter:domain", content: "Craft-pest.com" }],
+    ['meta', { property: "twitter:url", content: "http://Craft-pest.com" }],
+    ['meta', { name: "twitter:title", content: "Craft Pest" }],
+    ['meta', { name: "twitter:description", content: "Craft Pest" }],
+    ['meta', { name: "twitter:image", content: "http://Craft-pest.com/screenshot.png" }],
+
   ],
   themeConfig: {
     // sidebar: getSidebar({ contentRoot: '/docs/', contentDirs: null, collapsible: false, collapsed: false })
