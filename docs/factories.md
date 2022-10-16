@@ -1,93 +1,149 @@
 # Factories
-
-Elements (and some models) within Craft can be generated at test time utilizing Craft Pest's built in Factory methods. Factories abstract away the boilerplate of creating elements within the Craft database and allow you to concentrate more on the action of the test than the act of setting up the environment to be tested.
-
-For example, you could create a new section, with specific fields. Then, create an entry in that new section and, finally, test that a template renders the detail view of the entry correctly.
-
+Elements (and some models) within Craft can be generated at test time utilizing
+Craft Pest's built in Factory methods. Factories abstract away the boilerplate
+of creating elements within the Craft database and allow you to concentrate
+more on the action of the test than the act of setting up the environment to
+be tested.
+For example, you could create a new section, with specific fields. Then, create
+an entry in that new section and, finally, test that a template renders the
+detail view of the entry correctly.
 ```php
 it('renders detail views', function () {
   $plainTextField = Field::factory()
     ->type(\craft\fields\PlainText::class)
     ->create();
-  
+
   $section = Section::factory()
     ->template('_test/entry')
     ->fields([$plainTextField])
     ->create();
-    
+   
   $text = 'plain text value';
   $entry = Entry::factory()
     ->section($section->handle)
     ->{$plainTextField->handle}($text)
     ->create(); 
-    
+  
   get($entry->uri)
     ->assertOk()
     ->assertSee($text)
 });
 ```
+That example uses most of the common factory methods.
 
-That example uses most of the common factory methods, outlined in more detail below.
+## factory()
+Create a new factory by calling `::factory()` on the type of element to be
+created, such as `Entry::factort()` or `Asset::factory()`.
 
-## Methods
-All factories share some common methods to generate elements. More specific factories (outlined later) are responsible for adding specific methods for interacting with those element types. For example, all factories can be `->create()`-ed but only the field factory can specify a field's `->type()`.
+## set($key, $value)
+Set an attribute and return the factory so you can chain on multiple field
+in one call, for example,
 
-### ->create()
-Will create the model in the database. The created model is returned after being fully created. If there was an error during the creation the model's `->errors` will be filled and an exception thrown.
+```php
+Asset::factory()
+  ->set('volume', 'someVolumeHandle')
+  ->set('fooField', 'the value of fooField')
+```
 
-### ->make()
-Works the same as `->create()` but does not persist the element to the database. It is up to the test to call `->saveElement()` if you need the element persisted.
+The an attributes value can be set in two ways,
 
-### ->count()
-When specified, the count will change `->create()` and `->make()` to generate a sequence of elements instead of a single element. The sequence will be returned as a `Collection`.
+1. a scalar value, like a steing or integer
+2. a callable that returns a scalar. In this case the callable will be
+passed an instance of faker
 
-### ->getMadeModels()
-Returns the models that were made after calling `->make()` or `->create()`. This can be helpful if you are passing factories in to nested factories and you need to reference them later on. For example, the following creates a plain text field, a matrix field with a single block type containing that plain text field, a section with the matrix field and finally an entry in that section. Notice that we only call `->create()` on the section and let the system figure out the rest of the inter-dependencies (like which fields are global and which fields are matrix fields).
+```php
+Entry::factory()
+  ->set('title, 'SOME GREAT TITLE')
+  ->set('title', fn ($faker) => str_to_upper($faker->sentence))
+```
 
+Sometimes you need to ensure an attribute is unset, not just null. If you
+set an attribute's value to `Factory::NULL` it will be removed from the
+model before it is made.
+
+## count(int $count = 1)
+Set the number of entries to be created.
+
+This method affects the return of `->create()` and `->make()`. When only a
+single model is created the single model will be returned. When 2 or more
+models are created a collection of models will be returned.
+
+```php
+Entry::factory()->count(3)->make() // array of three Entry objects
+Entry::factory()->count(1)->make() // returns a single Entry
+
+## definition(int $index = 0)
+The faker definition for this model. Each model has its own unique definitions. For example
+an Entry will automatically set the title, while an Asset will automatically set the source.
+
+Factories are meant to be extended and subclasses should almost certainly overwrite the 
+`definition()` method to set sensible defaults for the model. The definition can overwrite
+any fields that the model may need. For example a `Post` factory may look like this,
+
+```php
+use \markhuot\craftpest\factories\Category;
+class Post extends \markhuot\craftpest\factories\Entry
+{
+  function definition()
+  {
+    return [
+      // The entry's title field
+      'title' => $this->faker->sentence,          
+      // A Category field takes an array of category ids or category factories
+      'category' => Category::factory()->count(3), 
+      // Generate three body paragraphs of text
+      'body' => $this->faker->paragraphs(3),
+    ];
+  }
+}
+```
+
+## inferences(array $definition = array (
+))
+When building a model's definition the inferences are the last step before the
+model is build. tThis provides a place to take all the statically defined attributes
+and make some dynamic assumptions based on it.
+
+For example the `Entry` factory uses this to set the `slug` after the title has been
+set by definiton or through a `->set()` call.
+
+When creating custom factories, this will most likely meed to be overridden.
+
+## make($definition = array (
+))
+Instantiate an Model without persisting it to the database.
+
+You may pass additional definition to further customize the model's attributes.
+
+Because the model is not persisted it is up to the caller to ensure the model is saved
+via something like `->saveElement($model)`.
+
+## create(array $definition = array (
+))
+Instantiate an Model and persist it to the database.
+
+You may pass additional definition to further customize the model's attributes.
+
+## getMadeModels()
+Returns the models that were made after calling `->make()` or `->create()`.
+This can be helpful if you are passing factories in to nested factories and
+you need to reference them later on. For example, the following creates a
+plain text field, a matrix field with a single block type containing that
+plain text field, a section with the matrix field and finally an entry in
+that section. Notice that we only call `->create()` on the section and let
+the system figure out the rest of the inter-dependencies (like which fields
+are global and which fields are matrix fields).
 ```php
 $plainText = Field::factory()->type(PlainText::class);
 $blockType = BlockType::factory()->fields($plainText);
 $matrix = MatrixField::factory()->blockTypes($blockType);
 $section = Section::factory()->fields($matrix)->create();
 $entry = Entry::factory()
-    ->section($section->handle)
-    ->set(
-        $matrix->getMadeModels()->first()->handle,
-        Block::factory()
-            ->set($plainText->getMadeModels()->first()->handle, 'foo')
-            ->count(3)
-    );
-```
-
-## Custom Factories
-You can, and should, create your own factories specific to your site's schema. The `Entry` factory, specifically, is intended to be extended in to a `Post` or `Article` or `News` factory, depending on your site's sections.
-
-When creating a custom factory you'll most commonly want to overwrite the `definition()` method with your own custom definition. Here is an example of a `Post` factory that extends the default `Entry` factory with some fields specific to a blog post,
-
-```php
-use \markhuot\craftpest\factories\Category;
-
-class Post extends \markhuot\craftpest\factories\Entry
-{
-  function definition()
-  {
-    return [
-      // The section and type id can be set, if it is ambiguous. However, by
-      // default the section and type will be inferred from the class name. In this
-      // case Craft Pest will look for a section named Post with a single entry
-      // type that is also named Post.  
-      // 'sectionId' => $sectionId,
-      // 'typeId' => $typeId,
-    
-      // The entry's title field
-      'title' => $this->faker->sentence,          
-      
-      // A Category field takes an array of category ids or category factories
-      'category' => Category::factory()->count(3), 
-      
-      // Generate three body paragraphs of text
-      'body' => $this->faker->paragraphs(3),
-    ];
-  }
-}
+  ->section($section->handle)
+  ->set(
+    $matrix->getMadeModels()->first()->handle,
+    Block::factory()
+      ->set($plainText->getMadeModels()->first()->handle, 'foo')
+      ->count(3)
+  );
 ```
