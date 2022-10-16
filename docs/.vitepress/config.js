@@ -41,7 +41,7 @@ export default {
     }],
     ['meta', {
       property: 'og:description',
-      content: 'Craft Pest',
+      content: 'A Craft plugin to make testing insanely easy.',
     }],
     ['meta', {
       property: 'og:image',
