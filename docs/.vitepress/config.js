@@ -34,6 +34,20 @@ const sidebar = [
 ]
 export default {
   title: 'Craft Pest',
+  head: [
+    ['meta', {
+      property: 'og:title',
+      content: 'Craft Pest',
+    }],
+    ['meta', {
+      property: 'og:description',
+      content: 'Craft Pest',
+    }],
+    ['meta', {
+      property: 'og:image',
+      content: '/screenshot.png',
+    }],
+  ],
   themeConfig: {
     // sidebar: getSidebar({ contentRoot: '/docs/', contentDirs: null, collapsible: false, collapsed: false })
     //sidebar: getSidebarItems(fs.readdirSync(docsPath), docsPath, docsPath, { contentDirs: null, collapsible: false, collapsed: false })
