@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import screenshotUrl from '../../screenshot.png';
 
 const getSidebarItems = (dir, currentRoot, root, options) => {
 	return dir.filter(e => e.endsWith('.md') || fs.statSync(path.resolve(currentRoot, e)).isDirectory()).map((e) => {
@@ -40,7 +39,7 @@ export default {
     ['meta', { property: "og:type", content: "website" }],
     ['meta', { property: "og:title", content: "Craft Pest" }],
     ['meta', { property: "og:description", content: "Craft Pest" }],
-    ['meta', { property: "og:image", content: screenshotUrl }],
+    ['meta', { property: "og:image", content: '/screenshot.png' }],
 
     // Twitter Meta Tags
     ['meta', { name: "twitter:card", content: "summary_large_image" }],
@@ -48,7 +47,7 @@ export default {
     ['meta', { property: "twitter:url", content: "https://craft-pest.com" }],
     ['meta', { name: "twitter:title", content: "Craft Pest" }],
     ['meta', { name: "twitter:description", content: "Craft Pest" }],
-    ['meta', { name: "twitter:image", content: screenshotUrl }],
+    ['meta', { name: "twitter:image", content: '/screenshot.png' }],
 
   ],
   themeConfig: {

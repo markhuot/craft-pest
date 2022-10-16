@@ -31,7 +31,9 @@ jobs:
       - name: Copy Readme
         run: |
           cp README.md docs/index.md
+          mkdir -p docs/public/
           cp screenshot.png docs/screenshot.png
+          cp screenshot.png docs/public/screenshot.png
 
       - name: Generate docs
         run: npx vitepress build docs
