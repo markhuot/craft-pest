@@ -98,8 +98,7 @@ class Post extends \markhuot\craftpest\factories\Entry
 }
 ```
 
-## inferences(array $definition = array (
-))
+## inferences(array $definition = array ())
 When building a model's definition the inferences are the last step before the
 model is build. tThis provides a place to take all the statically defined attributes
 and make some dynamic assumptions based on it.
@@ -109,8 +108,7 @@ set by definiton or through a `->set()` call.
 
 When creating custom factories, this will most likely meed to be overridden.
 
-## make($definition = array (
-))
+## make($definition = array ())
 Instantiate an Model without persisting it to the database.
 
 You may pass additional definition to further customize the model's attributes.
@@ -118,8 +116,7 @@ You may pass additional definition to further customize the model's attributes.
 Because the model is not persisted it is up to the caller to ensure the model is saved
 via something like `->saveElement($model)`.
 
-## create(array $definition = array (
-))
+## create(array $definition = array ())
 Instantiate an Model and persist it to the database.
 
 You may pass additional definition to further customize the model's attributes.
