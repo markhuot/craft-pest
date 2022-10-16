@@ -36,19 +36,19 @@ export default {
   title: 'Craft Pest',
   head: [
     // Facebook Meta Tags
-    ['meta', { property: "og:url", content: "http://craft-pest.com" }],
+    ['meta', { property: "og:url", content: "https://craft-pest.com" }],
     ['meta', { property: "og:type", content: "website" }],
     ['meta', { property: "og:title", content: "Craft Pest" }],
     ['meta', { property: "og:description", content: "Craft Pest" }],
-    ['meta', { property: "og:image", content: "http://craft-pest.com/screenshot.png" }],
+    ['meta', { property: "og:image", content: "https://craft-pest.com/screenshot.png" }],
 
     // Twitter Meta Tags
     ['meta', { name: "twitter:card", content: "summary_large_image" }],
     ['meta', { property: "twitter:domain", content: "craft-pest.com" }],
-    ['meta', { property: "twitter:url", content: "http://craft-pest.com" }],
+    ['meta', { property: "twitter:url", content: "https://craft-pest.com" }],
     ['meta', { name: "twitter:title", content: "Craft Pest" }],
     ['meta', { name: "twitter:description", content: "Craft Pest" }],
-    ['meta', { name: "twitter:image", content: "http://craft-pest.com/screenshot.png" }],
+    ['meta', { name: "twitter:image", content: "https://craft-pest.com/screenshot.png" }],
 
   ],
   themeConfig: {
