@@ -114,7 +114,7 @@ abstract class WebRequest extends \craft\web\Request
         $queryString = $parts['query'] ?? '';
         parse_str($queryString, $queryParams);
 
-        if (\Craft::$app->config->general->omitScriptNameInUrls === false && $queryParams['p'] ?? false) {
+        if (\Craft::$app->config->general->omitScriptNameInUrls === false && ($queryParams['p'] ?? false)) {
             $uri = $queryParams['p'];
             unset($queryParams['p']);
         }
