@@ -18,11 +18,10 @@ abstract class WebRequest extends \craft\web\Request
         $config = App::webRequestConfig();
         $config['class'] = static::class;
 
-        $opts = self::defaultProperties($uri);
-
+        
         /** @var self $request */
         $request = \Craft::createObject($config);
-        $request->setRaw($opts);
+        $request->setDefaultProperties($uri);
         $request->headers->set('User-Agent', self::HEADER_USER_AGENT);
         $request->headers->set('X-Forwarded-For', self::HEADER_X_FORWARDED_FOR);
 
@@ -104,19 +103,28 @@ abstract class WebRequest extends \craft\web\Request
         return $this;
     }
 
-    protected static function defaultProperties(string $url): array
+    function setDefaultProperties(string $url)
     {
         // Split path and query params
         $parts = parse_url($url);
         
         $uri = $parts['path'] ?? '';
         $uri = ltrim($uri, '/');
-
-        $queryString = $parts['query'] ?? '';
         
+        $queryString = $parts['query'] ?? '';
         parse_str($queryString, $queryParams);
 
-        return [
+        if (\Craft::$app->config->general->omitScriptNameInUrls === false && ($queryParams['p'] ?? false)) {
+            $uri = $queryParams['p'];
+            unset($queryParams['p']);
+        }
+
+        $isCpRequest = $this->uriContainsAdminSlug($uri);
+        if ($isCpRequest) {
+            $uri = preg_replace('#^'.preg_quote(\Craft::$app->getConfig()->getGeneral()->cpTrigger).'/?#', '', $uri);
+        }
+
+        $this->setRaw([
             '_isConsoleRequest' => false,
             '_fullPath' => $uri,
             '_path' => $uri,
@@ -133,8 +141,16 @@ abstract class WebRequest extends \craft\web\Request
             '_pathInfo' => $uri,
             '_url' => "/{$uri}?{$queryString}",
             '_port' => 8080,
-            '_isCpRequest' => false,
-        ];
+            '_isCpRequest' => $isCpRequest,
+        ]);
+    }
+
+    protected function uriContainsAdminSlug(string $uri): bool
+    {
+        $path = parse_url($uri, PHP_URL_PATH);
+        $slug = \Craft::$app->getConfig()->getGeneral()->cpTrigger ?? 'admin';
+
+        return str_starts_with(ltrim($path,'/'), $slug);
     }
 
     function assertMethod($method)
