@@ -106,31 +106,16 @@ class RequestBuilder
         $this->originalGlobals = [];
     }
 
-    private function uriContainsAdminSlug(string $uri): bool
-    {
-        $path = parse_url($uri, PHP_URL_PATH);
-        $slug = $this->app->getConfig()->getGeneral()->cpTrigger ?? 'admin';
-
-        return str_starts_with(ltrim($path,'/'), $slug);
-    }
-
     /**
      * Pre-populate the request object
      */
     private function prepareRequest(string $method, string $uri): WebRequest
     {
-        $isCpRequest = $this->uriContainsAdminSlug($uri);
-        if ($isCpRequest) {
-            $uri = preg_replace('#^'.preg_quote($this->app->getConfig()->getGeneral()->cpTrigger).'/?#', '', $uri);
-        }
-
         $request = match (strtolower($method)) {
             'get' => GetRequest::make($uri),
             'post' => PostRequest::make($uri),
             default => throw new \InvalidArgumentException("Unable to build request. Unknown method '$method'"),
         };
-
-        $request->setIsCpRequest($isCpRequest);
 
         return $request;
     }
