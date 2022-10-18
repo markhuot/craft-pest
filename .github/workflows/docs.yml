@@ -1,9 +1,7 @@
 name: Doc Generation
 
 on:
-  push:
-    branches-ignore:
-      - master
+  pull_request:
 
 permissions:
   contents: write
