@@ -8,7 +8,7 @@ use markhuot\craftpest\web\TestableResponse;
 
 class TestCase extends \PHPUnit\Framework\TestCase {
 
-    use ActingAs, DatabaseAssertions;
+    use DatabaseAssertions;
 
     protected function setUp(): void
     {
