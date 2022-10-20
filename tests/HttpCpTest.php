@@ -53,3 +53,8 @@ it('supports non-standard cpTrigger', function () {
         ->get($entry->cpEditUrl)
         ->assertOk();
 });
+
+it('sends action requests', function () {
+    $this->action('dashboard/widget/create')
+        ->assertOk();
+})->only();

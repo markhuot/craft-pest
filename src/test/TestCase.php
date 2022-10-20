@@ -2,6 +2,7 @@
 
 namespace markhuot\craftpest\test;
 
+use craft\helpers\UrlHelper;
 use markhuot\craftpest\http\RequestBuilder;
 use markhuot\craftpest\traits\DatabaseAssertions;
 use markhuot\craftpest\web\TestableResponse;
@@ -112,6 +113,16 @@ class TestCase extends \PHPUnit\Framework\TestCase {
     function post(...$args): TestableResponse
     {
         return (new RequestBuilder('post', ...$args))->send();
+    }
+
+    function action(string $action, array $body=[])
+    {
+        return (new RequestBuilder('post', '/'))
+            ->setBody([
+                'CSRF_TOKEN' => \Craft::$app->getRequest()->getCsrfToken(),
+                'action' => $action,
+                ...$body,
+            ])->send();
     }
 
     function http(string $method, string $uri): RequestBuilder
