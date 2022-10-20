@@ -53,7 +53,7 @@ class VolumeFolder extends Factory {
         $path = '/'.StringHelper::toCamelCase($name).'/';
         // @phpstan-ignore-next-line ignored because Craft 3.7 does not expose ->id in it's types
         $volumeId = $this->volume->id;
-        $parentId = $this->parent?->id ?: \Craft::$app->assets->getRootFolderByVolumeId($volumeId)->id;
+        $parentId = !empty($this->parent->id) ? $this->parent->id : \Craft::$app->assets->getRootFolderByVolumeId($volumeId)->id;
 
         return [
             'name' => $name,

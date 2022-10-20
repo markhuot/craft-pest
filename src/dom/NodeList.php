@@ -2,6 +2,8 @@
 
 namespace markhuot\craftpest\dom;
 
+use markhuot\craftpest\traits\Dd;
+
 /**
  * A `NodeList` represents a fragment of HTML. It can contain one or more nodes and
  * the return values of its methods vary based on the count. For example getting the text
@@ -13,6 +15,8 @@ namespace markhuot\craftpest\dom;
  */
 class NodeList implements \Countable
 {
+    use Dd;
+
     /** @var \Symfony\Component\DomCrawler\Crawler */
     public $crawler;
 
@@ -89,15 +93,19 @@ class NodeList implements \Countable
      * Available as a method or a magic property of `->text`. Gets the text content of the node or nodes. This
      * will only return the text content of the node as well as any child nodes. Any non-text content such as
      * HTML tags will be removed.
+     *
+     * @return array|string
      */
-    function getText(): array|string {
+    function getText() {
         return $this->getNodeOrNodes(fn ($node) => $node->text());
     }
 
     /**
      * Available as a method or a magic property of `->innerHTML`. Gets the inner HTML of the node or nodes.
+     *
+     * @return array|string
      */
-    public function getInnerHTML(): array|string  {
+    public function getInnerHTML()  {
         return $this->getNodeOrNodes(fn ($node) => $node->html());
     }
 

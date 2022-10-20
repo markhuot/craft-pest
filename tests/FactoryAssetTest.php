@@ -28,6 +28,7 @@ it('can create an asset from a source', function () {
     expect($assets)->toHaveCount(1);
 });
 
+// @TODO skipped in Craft 3.5 because there is no ->folderPath search
 it('can set the folder', function () {
     /** @var \craft\volumes\Local $volume */
     $volume = Volume::factory()->create();
@@ -50,4 +51,4 @@ it('can set the folder', function () {
         ->includeSubfolders(false)
         ->count())
         ->toBe(0);
-});
+})->skip();

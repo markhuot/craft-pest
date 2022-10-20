@@ -103,10 +103,9 @@ class TestCase extends \PHPUnit\Framework\TestCase {
         return $app;
     }
 
-    function get(...$args): TestableResponse
+    function get($uri): TestableResponse
     {
-        //return Pest::getInstance()->http->get(...$args);
-        return (new RequestBuilder('get', ...$args))->send();
+        return (new RequestBuilder('get', $uri))->send();
     }
 
     function post(...$args): TestableResponse

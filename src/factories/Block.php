@@ -4,7 +4,8 @@ namespace markhuot\craftpest\factories;
 
 class Block extends Element
 {
-    protected string|null $type;
+    /** @var string|null */
+    protected $type;
     protected bool $enabled = true;
 
     function type($type)
