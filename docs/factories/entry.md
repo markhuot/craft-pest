@@ -13,11 +13,11 @@ in three ways,
 ## type($handle)
 Set the entry type
 
-## postDate(DateTime|string|int $value)
+## postDate($value)
 Set the post date by passing a `DateTime`, a string representing the date like
 "2022-04-25 04:00:00", or a unix timestamp as an integer.
 
-## expiryDate(DateTime|string|int $value)
+## expiryDate($value)
 Set the expiration date by passing a `DateTime`, a string representing the date like
 "2022-04-25 04:00:00", or a unix timestamp as an integer.
 
@@ -30,6 +30,6 @@ Entry::factory()->setDateField('approvedOn', '2022-04-18 -04:00:00');
 Entry::factory()->setDateField('approvedOn', 1665864918);
 ```
 
-## author(craft\web\User|string|int $user)
+## author($user)
 Set the author of the entry. You may pass a full user object, a user ID,
 a username, email, or a user ID.
