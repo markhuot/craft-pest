@@ -63,7 +63,7 @@ jobs:
           ${{ runner.os }}-php-
 
     - name: Install dependencies
-      run: composer require "craftcms/cms:^3.7" --prefer-dist --no-progress
+      run: composer require "craftcms/cms:^3.5" --prefer-dist --no-progress
 
     - name: Copy config files
       run: mkdir -p ./storage && cp -r ./stubs/config ./config
