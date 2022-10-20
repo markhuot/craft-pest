@@ -1,8 +1,13 @@
-dateModified: 1666268571
+dateModified: 1666268924
 email:
   fromEmail: michael@bluth.com
   fromName: pest
   transportType: craft\mail\transportadapters\Sendmail
+plugins:
+  pest:
+    edition: standard
+    enabled: true
+    schemaVersion: 1.0.0
 system:
   edition: solo
   live: true
