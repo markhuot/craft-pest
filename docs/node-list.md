@@ -58,3 +58,6 @@ Asserts that the given count matches the count of nodes in the node list.
 ```php
 $nodeList->assertCount(2);
 ```
+
+## dd($var = NULL)
+Does a dump on the class
