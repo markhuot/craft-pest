@@ -1,0 +1,67 @@
+contentColumnType: string
+fieldGroup: 166f0a69-50b4-4e70-85b4-70ee4ab52e5a
+handle: dropdownField
+instructions: ''
+name: 'Dropdown Field'
+searchable: false
+settings:
+  optgroups: true
+  options:
+    -
+      __assoc__:
+        -
+          - label
+          - 'Label One'
+        -
+          - value
+          - valueOne
+        -
+          - default
+          - ''
+    -
+      __assoc__:
+        -
+          - label
+          - 'Label Two'
+        -
+          - value
+          - labelTwo
+        -
+          - default
+          - ''
+    -
+      __assoc__:
+        -
+          - label
+          - 'Label Three'
+        -
+          - value
+          - labelThree
+        -
+          - default
+          - ''
+    -
+      __assoc__:
+        -
+          - label
+          - 'Label Four'
+        -
+          - value
+          - labelFour
+        -
+          - default
+          - ''
+    -
+      __assoc__:
+        -
+          - label
+          - 'Label Five'
+        -
+          - value
+          - labelFive
+        -
+          - default
+          - ''
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Dropdown

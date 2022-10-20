@@ -1,0 +1,11 @@
+contentColumnType: string(7)
+fieldGroup: 166f0a69-50b4-4e70-85b4-70ee4ab52e5a
+handle: colorField
+instructions: ''
+name: 'Color Field'
+searchable: false
+settings:
+  defaultColor: ''
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Color
