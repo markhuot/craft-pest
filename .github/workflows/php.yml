@@ -45,10 +45,24 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        craftVersion: ["~3.5", "~3.7.57", "~4.2.8"]
+        phpVersion: ["8.0"]
+        include:
+          - phpVersion: "7.4"
+            craftVersion: "~3.5"
+            startingVersion: "~3.5.19"
+          - phpVersion: "8.0"
+            craftVersion: "~3.7.57"
+            startingVersion: "~3.7.57"
+          - phpVersion: "8.0"
+            craftVersion: "~4.2.8"
+            startingVersion: "~3.7.57"
 
     steps:
     - uses: actions/checkout@v3
+
+    - uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.phpVersion }}
 
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
@@ -63,7 +77,7 @@ jobs:
           ${{ runner.os }}-php-
 
     - name: Install dependencies
-      run: composer require "craftcms/cms:~3.5.19" --prefer-dist --no-progress
+      run: composer require "craftcms/cms:${{ matrix.startingVersion }}" --prefer-dist --no-progress
 
     - name: Copy config files
       run: mkdir -p ./storage && cp -r ./stubs/config ./config
