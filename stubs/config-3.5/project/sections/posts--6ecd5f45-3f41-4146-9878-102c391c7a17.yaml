@@ -1,0 +1,11 @@
+enableVersioning: true
+handle: posts
+name: Posts
+propagationMethod: all
+siteSettings:
+  49cd12c4-b594-4557-b2b1-e6b82946fc4d:
+    enabledByDefault: true
+    hasUrls: true
+    template: null
+    uriFormat: 'posts/{slug}'
+type: channel

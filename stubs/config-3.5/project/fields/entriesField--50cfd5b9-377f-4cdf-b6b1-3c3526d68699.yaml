@@ -1,0 +1,20 @@
+contentColumnType: string
+fieldGroup: 5fc3ead3-b5b3-4b51-b846-2fe248c291d2
+handle: entriesField
+instructions: ''
+name: 'Entries Field'
+searchable: false
+settings:
+  allowSelfRelations: false
+  limit: ''
+  localizeRelations: false
+  selectionLabel: ''
+  showSiteMenu: false
+  source: null
+  sources: '*'
+  targetSiteId: null
+  validateRelatedElements: false
+  viewMode: null
+translationKeyFormat: null
+translationMethod: site
+type: craft\fields\Entries

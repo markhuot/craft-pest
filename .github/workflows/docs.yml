@@ -43,7 +43,7 @@ jobs:
         run: git add -A docs/
 
       - name: Commit & Push changes
-        uses: actions-js/push@master
+        uses: stefanzweifel/git-auto-commit-action@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           author_email: docbot@markhuot.com
