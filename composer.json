@@ -14,7 +14,7 @@
         "mockery/mockery": "^1.5",
         "symfony/css-selector": "^5.3|^6.0",
         "symfony/dom-crawler": "^5.4|^6.0.3",
-        "symfony/process": "^5.3|^6.0",
+        "symfony/process": "^4.4|^5.3|^6.0",
         "illuminate/collections": "^8.83|^9.1",
         "pestphp/pest": "^1.21",
         "craftcms/cms": "^3.5|^4.0",
