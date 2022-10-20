@@ -199,7 +199,7 @@ trait RefreshesDatabase {
     {
         foreach ($this->autoCommittedModels as $model) {
             if (is_a($model, \craft\base\Field::class) || is_subclass_of($model, \craft\base\Field::class)) {
-                // \Craft::$app->fields->deleteField($model);
+                \Craft::$app->fields->deleteField($model);
             }
         }
     }
