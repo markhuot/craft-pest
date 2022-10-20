@@ -14,8 +14,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          persist-credentials: false
-          fetch-depth: 0
           ref: ${{ github.head_ref }}
 
       - name: Validate composer.json and composer.lock
