@@ -49,4 +49,3 @@ jobs:
           commit_user_email: docbot@markhuot.com
           commit_user_name: docbot
           commit_message: GitHub action updating docs
-          branch: ${{ github.ref_name }}
