@@ -45,7 +45,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        craftVersion: ["~3.5", "~3.7", "~4.2"]
+        craftVersion: ["~3.5", "~3.7.57", "~4.2.8"]
 
     steps:
     - uses: actions/checkout@v3
@@ -63,7 +63,7 @@ jobs:
           ${{ runner.os }}-php-
 
     - name: Install dependencies
-      run: composer require "craftcms/cms:~3.5" --prefer-dist --no-progress
+      run: composer require "craftcms/cms:~3.5.19" --prefer-dist --no-progress
 
     - name: Copy config files
       run: mkdir -p ./storage && cp -r ./stubs/config ./config
