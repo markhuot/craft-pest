@@ -45,7 +45,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        craftVersion: ["^3.7", "^4.2"]
+        craftVersion: ["^3.5", "^3.7", "^4.2"]
 
     steps:
     - uses: actions/checkout@v3
@@ -73,7 +73,7 @@ jobs:
 
     - name: Update to Craft ${{ matrix.craftVersion }}
       run: composer require "craftcms/cms:${{ matrix.craftVersion }}" -W && ./src/bin/craft migrate/all --no-backup=1 --interactive=0
-      if: ${{ matrix.craftVersion != '^3.7' }}
+      if: ${{ matrix.craftVersion != '^3.5' }}
 
     - name: Run PHPStan
       run: ./vendor/bin/phpstan analyse src
