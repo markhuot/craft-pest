@@ -32,7 +32,11 @@ class Block extends Element
         return [];
     }
 
-    protected function setAttributes($attributes, $element)
+    /**
+     * @param array $attributes
+     * @param array $element
+     */
+    protected function setAttributes($attributes, $element) // @phpstan-ignore-line since Element::setAttribute types $element as an Element, but here it's an array
     {
         $element['type'] = $this->type;
         $element['enabled'] = $this->enabled;

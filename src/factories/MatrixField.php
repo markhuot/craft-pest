@@ -58,10 +58,10 @@ class MatrixField extends Field
             ->each(function ($props) {
                 /** @var MatrixBlockType $blockType */
                 [$factory, $blockType] = $props;
-                $factory->storeFields($blockType->fieldLayout, $blockType);
+                $factory->storeFields($blockType->fieldLayout, $blockType); // @phpstan-ignore-line because ->fieldLayout is not typed in Craft 3.5 even though it exists via magic method
 
                 if (version_greater_than_or_equal_to(\Craft::$app->version, '3')) {
-                    $blockType->fieldLayoutId = $blockType->fieldLayout->id;
+                    $blockType->fieldLayoutId = $blockType->fieldLayout->id; // @phpstan-ignore-line because ->fieldLayout is not typed in Craft 3.5 even though it exists via magic method
                     \Craft::$app->matrix->saveBlockType($blockType);
                 }
             });
