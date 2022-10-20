@@ -46,8 +46,7 @@ jobs:
       - name: Commit & Push changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          author_email: docbot@markhuot.com
-          author_name: docbot
-          message: GitHub action updating docs
+          commit_user_email: docbot@markhuot.com
+          commit_user_name: docbot
+          commit_message: GitHub action updating docs
           branch: ${{ github.ref_name }}
