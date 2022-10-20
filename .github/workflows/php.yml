@@ -45,7 +45,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        phpVersion: ["8.0"]
         include:
           - phpVersion: "7.4"
             craftVersion: "~3.5"
