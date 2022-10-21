@@ -82,8 +82,11 @@ class TestCase extends \PHPUnit\Framework\TestCase {
         // (see https://craftcms.com/docs/3.x/config/#php-constants)
         define('CRAFT_ENVIRONMENT', getenv('ENVIRONMENT') ?: 'production');
 
-        // Set this so we can catch calls to `\Craft::$app->exit()` and handle them
-        // uniquely in testing. We don't actually want to `exit()` in test.
+        // Setting this causes Yii to skip calls to `exit()` and instead throw a catchable exception
+        // in place of `exit()`. Setting this allows us to handle the response from a `->get()` call
+        // uniquely in testing. We don't actually want to write to the screen and `exit()` in test.
+        // Instead we'll catch that exception and return the response to the tester. That's possible
+        // because this ENV disables `exit()` and gives us that catchable exception.
         define('YII_ENV_TEST', true);
 
         // Since we're mostly making Http requests via the `\Craft::$app` we want to simulate
@@ -105,13 +108,48 @@ class TestCase extends \PHPUnit\Framework\TestCase {
         // will then register its console controller namespace. For _most_ prople this is not what we
         // want. Most people are typically testing web requests. So, for the majority we reset the
         // isConsoleRequest flag back to web. Eventually this should probably be configurable.
-        Event::on(Plugins::class, Plugins::EVENT_BEFORE_LOAD_PLUGINS, function() {
-            \Craft::$app->request->setIsConsoleRequest(false);
-        });
 
-        // Load and run Craft
         /** @var \craft\web\Application $app */
-        $app = require CRAFT_VENDOR_PATH . '/craftcms/cms/bootstrap/web.php';
+        // Load and run Craft. We have two ways we can do this. The safe way or the flexible way.
+        //
+        // First, the safe way allows us to just lean on Craft and let it do its thing. The problem
+        // here is that there are no hooks for us to get in to the bootstrapping lifecycle and
+        // therefore no way for us to inject customizations. Specifically, we need some hooks in
+        // to the Application boot. Normally Craft is bootstrapped from nothing on every request.
+        // We don't do that in testing, because Yii uses too many singletons and completely dies
+        // when you try to `createObject(Application)` multiple times. So, unfortunately, this
+        // very nice, very clean, approach is out.
+        // $app = require CRAFT_VENDOR_PATH . '/craftcms/cms/bootstrap/web.php';
+        //
+        // Instead, we read in both bootstrapping files and run them through `eval` with one
+        // important change. We add in a `configOverride($config)` function/hook that we can
+        // call to adjust the initial config in test. Most importantly, we're using it to subclass
+        // the web\Application to our own Application that we have more control over.
+        //
+        // This will break on _every_ single Craft version and need constant tweaking. Until
+        // there's a better way to override the Application component, this is what we're left
+        // with.
+        //
+        // Note: I'm only okay with this because we're doing it in Test. I would _never_ do this
+        // in a production environment with code that serves content to users.
+        $app = (function () {
+            $configOverride = function ($config) {
+                $config['class'] = \markhuot\craftpest\web\Application::class;
+
+                return $config;
+            };
+            $override = '$config = $configOverride($config);'."\n";
+
+            $webBootstrapSrc = file_get_contents(CRAFT_VENDOR_PATH . '/craftcms/cms/bootstrap/web.php');
+            $webBootstrapSrc = preg_replace('/^<\?php/', '', $webBootstrapSrc);
+            $webBootstrapSrc = preg_replace('/^return.*$/m', '', $webBootstrapSrc);
+            $bootstrapSrc = file_get_contents(CRAFT_VENDOR_PATH . '/craftcms/cms/bootstrap/bootstrap.php');
+            $bootstrapSrc = preg_replace('/^<\?php/', '', $bootstrapSrc);
+            $bootstrapSrc = preg_replace('/^(\$app = )/m', $override. '$1', $bootstrapSrc);
+            eval($webBootstrapSrc . "\n" . $bootstrapSrc);
+
+            return $app;
+        })();
 
         $app->projectConfig->writeYamlAutomatically = false;
 

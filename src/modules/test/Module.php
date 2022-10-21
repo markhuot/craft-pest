@@ -8,12 +8,10 @@ class Module extends BaseModule
 {
     function init()
     {
-        $this->controllerNamespace = 'markhuot\craftpest\tests\module\test\controllers';
-        
-        // echo debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-        // die;
+        $this->controllerNamespace = 'markhuot\craftpest\modules\test\controllers';
+
         if (\Craft::$app->request->isConsoleRequest) {
-            $this->controllerNamespace = 'markhuot\craftpest\tests\module\test\console';
+            $this->controllerNamespace = 'markhuot\craftpest\modules\test\console';
         }
     }
 }

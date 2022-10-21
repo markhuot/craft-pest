@@ -64,6 +64,9 @@ it ('gets web requests in plugins', function () {
 });
 
 it ('gets web requests in modules', function () {
+    $user = User::factory()->admin(true)->create();
+    $this->actingAs($user);
+
     $actionTrigger = \Craft::$app->config->general->actionTrigger;
     $this->get($actionTrigger . '/pest-module-test/test/testable-web-response')
         ->assertOk();
