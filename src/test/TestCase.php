@@ -148,7 +148,9 @@ class TestCase extends \PHPUnit\Framework\TestCase {
             $bootstrapSrc = preg_replace('/^(\$app = )/m', $override. '$1', $bootstrapSrc);
             eval($webBootstrapSrc . "\n" . $bootstrapSrc);
 
-            return $app;
+            // This comes out of the eval. PHPStan has no chance of knowing what's happening
+            // here. I barely know what's happening here.
+            return $app; // @phpstan-ignore-line,
         })();
 
         $app->projectConfig->writeYamlAutomatically = false;
