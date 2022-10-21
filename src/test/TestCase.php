@@ -24,12 +24,13 @@ class TestCase extends \PHPUnit\Framework\TestCase {
 
     protected function callTraits($prefix)
     {
-        // Get traits added to the base TestCase, this actual file
-        $reflect = new \ReflectionClass($this);
-        $traits = $reflect->getParentClass()->getTraits();
+        $traits = [];
 
-        // Get traits added via Pest's `uses()` logic
-        $traits = array_merge($traits, $reflect->getTraits());
+        $reflect = new \ReflectionClass($this);
+        while ($reflect) {
+            $traits = array_merge($traits, $reflect->getTraits());
+            $reflect = $reflect->getParentClass();
+        }
 
         foreach ($traits as $trait) {
             $method = $prefix . $trait->getShortName();
