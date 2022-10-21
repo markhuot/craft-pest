@@ -53,3 +53,12 @@ it('supports non-standard cpTrigger', function () {
         ->get($entry->cpEditUrl)
         ->assertOk();
 });
+
+it ('gets web requests', function () {
+    $user = User::factory()->admin(true)->create();
+    $this->actingAs($user);
+
+    $actionTrigger = \Craft::$app->config->general->actionTrigger;
+    $this->get($actionTrigger . '/pest/test/testable-web-response')
+        ->assertOk();
+})->only();
