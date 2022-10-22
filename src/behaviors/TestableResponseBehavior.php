@@ -610,11 +610,12 @@ class TestableResponseBehavior extends Behavior
 
     protected function seeInOrder(string $haystack, array $needles)
     {
-        $lastPos = -1;
+        $lastPos = false;
         foreach ($needles as $needle) {
             $lastPos = strpos($haystack, $needle, $lastPos);
-            if ($lastPos === -1) {
+            if ($lastPos === false) {
                 test()->fail('The text `' . $needle . '` was not found in order');
+                return;
             }
         }
         expect(true)->toBe(true);
