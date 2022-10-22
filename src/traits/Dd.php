@@ -11,7 +11,14 @@ trait Dd
      */
     public function dd($var=null): void
     {
-        VarDumper::dump($var ?? $this);
+        if (is_callable($var)) {
+            $var = $var($this);
+        }
+        else {
+            $var = $var ?? $this;
+        }
+
+        VarDumper::dump($var);
         exit(1);
     }
 }
