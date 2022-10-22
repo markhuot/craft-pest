@@ -65,15 +65,19 @@ it('asserts flash data by key')
     ->get('/responses/flash')
     ->assertFlash('You\'re not allowed to go there.', 'error');
 
-it('redirects match path')
+it('asserts redirect')
+    ->get('/responses/302')
+    ->assertRedirect();
+
+it('asserts redirect to')
     ->get('/responses/302')
     ->assertRedirectTo('/');
 
-it('redirects match hostname')
+it('asserts redirect matching hostname')
     ->get('/responses/302')
     ->assertRedirectTo('http://localhost:8080/');
 
-it('redirects match offsite')
+it('asserts redirect matching offsite hostname')
     ->get('/responses/302-offsite')
     ->assertRedirectTo('https://www.example.com/');
 
@@ -95,3 +99,31 @@ it('follows multiple redirects in one call')
     ->followRedirects()
     ->assertOk()
     ->assertSee('Hello World!');
+
+it('asserts no content')
+    ->get('/responses/204')
+    ->assertNoContent();
+
+it('asserts not found')
+    ->get('/responses/404')
+    ->assertNotFound();
+
+it('asserts seeing a string')
+    ->get('/responses/text')
+    ->assertSee('five');
+
+it('asserts seeing strings in order')
+    ->get('/responses/text')
+    ->assertSeeInOrder(['five', 'six']);
+
+it('asserts seeing a string without tags')
+    ->get('/responses/text')
+    ->assertSeeText('five.5');
+
+it('asserts seeing strings without tags in order')
+    ->get('/responses/text')
+    ->assertSeeTextInOrder(['five.5', 'six.6']);
+
+it('asserts status')
+    ->get('/responses/404')
+    ->assertStatus(404);
