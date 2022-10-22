@@ -17,7 +17,11 @@ class Pest extends Plugin {
 
     function init()
     {
-        $this->controllerNamespace = 'markhuot\\craftpest\\console';
+        $this->controllerNamespace = 'markhuot\\craftpest\\controllers';
+
+        if (\Craft::$app->request->isConsoleRequest) {
+            $this->controllerNamespace = 'markhuot\\craftpest\\console';
+        }
 
         parent::init();
 
