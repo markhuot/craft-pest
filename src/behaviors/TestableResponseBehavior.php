@@ -608,6 +608,18 @@ class TestableResponseBehavior extends Behavior
         return $this->response;
     }
 
+    protected function seeInOrder(string $haystack, array $needles)
+    {
+        $lastPos = -1;
+        foreach ($needles as $needle) {
+            $lastPos = strpos($haystack, $needle, $lastPos);
+            if ($lastPos === -1) {
+                test()->fail('The text `' . $needle . '` was not found in order');
+            }
+        }
+        expect(true)->toBe(true);
+    }
+
     /**
      * Checks that the response contains the given text, in successive order
      *
@@ -616,14 +628,8 @@ class TestableResponseBehavior extends Behavior
      * ```
      */
     function assertSeeInOrder(array $texts) {
-        $lastPos = -1;
-        foreach ($texts as $text) {
-            $lastPost = strpos($this->response->content, $text, $lastPos);
-            if ($lastPos === false) {
-                test()->fail('The text `' . $text . '` was not found in order');
-            }
-        }
-        expect(true)->toBe(true);
+        $this->seeInOrder($this->response->content, $texts);
+
         return $this->response;
     }
 
@@ -648,9 +654,7 @@ class TestableResponseBehavior extends Behavior
      * ```
      */
     function assertSeeTextInOrder(array $texts) {
-        foreach ($texts as $text) {
-            test()->assertStringContainsString($text, preg_replace('/\s+/', ' ', strip_tags($this->response->content)));
-        }
+        $this->seeInOrder(preg_replace('/\s+/', ' ', strip_tags($this->response->content)), $texts);
 
         return $this->response;
     }
