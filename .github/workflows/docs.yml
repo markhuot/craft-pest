@@ -14,8 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          persist-credentials: false
-          fetch-depth: 0
+          ref: ${{ github.head_ref }}
 
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
@@ -39,14 +38,13 @@ jobs:
           php src/bin/generate-docs.php src/factories/Asset.php docs/factories/asset.md
           php src/bin/generate-docs.php src/behaviors/TestableResponseBehavior.php docs/assertions/response.md
           php src/bin/generate-docs.php src/traits/DatabaseAssertions.php docs/assertions/database.md
+      
       - name: Add files
         run: git add -A docs/
 
       - name: Commit & Push changes
-        uses: actions-js/push@master
+        uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          author_email: docbot@markhuot.com
-          author_name: docbot
-          message: GitHub action updating docs
-          branch: ${{ github.ref_name }}
+          commit_user_email: docbot@markhuot.com
+          commit_user_name: docbot
+          commit_message: GitHub action updating docs
