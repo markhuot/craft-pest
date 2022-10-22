@@ -1,7 +1,9 @@
 <?php
 
-it('asserts database content')
-    ->assertDatabaseCount(\craft\db\Table::SITES, 1);
+it('asserts database content', function () {
+    $count = count(\Craft::$app->sites->getAllSites());
+    $this->assertDatabaseCount(\craft\db\Table::SITES, $count);
+});
 
 it('asserts database content on condition', function () {
     $section = \markhuot\craftpest\factories\Section::factory()->create();
