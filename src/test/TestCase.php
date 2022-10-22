@@ -2,13 +2,12 @@
 
 namespace markhuot\craftpest\test;
 
-use markhuot\craftpest\http\RequestBuilder;
 use markhuot\craftpest\traits\DatabaseAssertions;
-use markhuot\craftpest\web\TestableResponse;
+use markhuot\craftpest\traits\RequestBuilders;
 
 class TestCase extends \PHPUnit\Framework\TestCase {
 
-    use ActingAs, DatabaseAssertions;
+    use ActingAs, DatabaseAssertions, RequestBuilders;
 
     protected function setUp(): void
     {
@@ -57,22 +56,6 @@ class TestCase extends \PHPUnit\Framework\TestCase {
     protected function requireCraft()
     {
         require './src/bootstrap/bootstrap.php';
-    }
-
-    function get(...$args): TestableResponse
-    {
-        //return Pest::getInstance()->http->get(...$args);
-        return (new RequestBuilder('get', ...$args))->send();
-    }
-
-    function post(...$args): TestableResponse
-    {
-        return (new RequestBuilder('post', ...$args))->send();
-    }
-
-    function http(string $method, string $uri): RequestBuilder
-    {
-        return new RequestBuilder($method, $uri);
     }
 
     public function factory(string $class)

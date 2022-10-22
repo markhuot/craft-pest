@@ -70,4 +70,12 @@ it ('gets web requests in modules', function () {
     $actionTrigger = \Craft::$app->config->general->actionTrigger;
     $this->get($actionTrigger . '/pest-module-test/test/testable-web-response')
         ->assertOk();
+    });
+    
+it ('posts action requests', function () {
+    $user = User::factory()->admin(true)->create();
+    $this->actingAs($user);
+
+    $this->action('pest-module-test/test/testable-web-action')
+        ->assertOk();
 });

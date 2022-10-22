@@ -10,4 +10,11 @@ class TestController extends Controller
     {
         return $this->asJson(['foo' => 'bar']);
     }
+
+    function actionTestableWebAction()
+    {
+        $this->requirePostRequest();
+
+        return $this->asJson(['foo' => 'bar']);
+    }
 }
