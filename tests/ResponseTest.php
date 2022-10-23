@@ -127,3 +127,9 @@ it('asserts seeing strings without tags in order')
 it('asserts status')
     ->get('/responses/404')
     ->assertStatus(404);
+
+it('asserts titles')
+    ->get('/responses/title')
+    ->assertOk()
+    ->assertTitle('The Title');
+

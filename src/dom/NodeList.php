@@ -86,11 +86,30 @@ class NodeList implements \Countable
      * ```
      */
     public function getNodeOrNodes(callable $callback) {
-        if ($this->crawler->count() === 1) {
-            return $callback($this->crawler->eq(0));
-        }
+        // if ($this->crawler->count() === 1) {
+        //     return $callback($this->crawler->eq(0));
+        // }
 
+        // $result = [];
+        // for ($i=0; $i<$this->crawler->count(); $i++) {
+        //     $node = $this->crawler->eq($i);
+        //     $result[] = $callback($node);
+        // }
+
+        $count = $this->crawler->count();
+        $results = $this->each($callback);
+
+        return $count <=1 ? (isset($results[0]) ? $results[0] : null) : $results;
+    }
+
+    /**
+     * Loop over each matched node and apply the callback to the node. Returns
+     * an array of results for eatch matched node.
+     */
+    function each(callable $callback)
+    {
         $result = [];
+
         for ($i=0; $i<$this->crawler->count(); $i++) {
             $node = $this->crawler->eq($i);
             $result[] = $callback($node);
@@ -150,6 +169,22 @@ class NodeList implements \Countable
         }
 
         throw new \Exception('Not able to interact with `' . $nodeName . '` elements.');
+    }
+
+    function assertAttribute(string $key, string $value)
+    {
+        if ($this->crawler->count() === 0) {
+            test()->fail('No matching elements to assert against attribute `' . $key . '`');
+        }
+
+        $this->each(function ($node) use ($key, $value) {
+            $keys = [];
+            foreach ($node->getNode(0)->attributes as $attr) {
+                $keys[] = $attr->name;
+            }
+            test()->assertContains($key, $keys);
+            test()->assertSame($value, $node->attr($key));
+        });
     }
 
     /**
