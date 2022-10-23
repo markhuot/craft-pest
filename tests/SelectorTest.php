@@ -60,9 +60,3 @@ it('clicks links')
     ->click()
     ->assertOk()
     ->assertSee('Hello World');
-
-it('clicks buttons')
-    ->get('/page-with-basic-form')
-    ->querySelector('button')
-    ->click()
-    ->assertOk();
