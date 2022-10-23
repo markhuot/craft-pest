@@ -23,6 +23,18 @@ class NodeList implements \Countable
     }
 
     /**
+     * Further filter the NodeList to a subset of matching elements
+     * 
+     * ```php
+     * $response->querySelector('ul')->querySelector('li');
+     * ```
+     */
+    function querySelector(string $selector)
+    {
+        return new self($this->crawler->filter($selector));
+    }
+
+    /**
      * You can turn any `NodeList` in to an expectation API by calling `->expect()` on it. From there
      * you are free to use the expectation API to assert the DOM matches your expectations.
      * 
