@@ -61,7 +61,7 @@ it('clicks links')
     ->assertOk()
     ->assertSee('Hello World');
 
-it('asserts arrtibutes')
+it('asserts attributes')
     ->get('/selectors')
     ->assertOk()
     ->querySelector('#first')
