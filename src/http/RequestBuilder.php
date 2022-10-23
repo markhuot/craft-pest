@@ -18,7 +18,7 @@ class RequestBuilder
     /** @var RequestHandler */
     private $handler;
     protected string $method;
-    protected array $body;
+    protected array $body = [];
     protected array $originalGlobals;
 
     /**
@@ -42,14 +42,24 @@ class RequestBuilder
 
     public function addCookie(string $key, $value): self
     {
-        // TODO
-        //$this->request->cookies->add(new Cookie());
+        $this->request->cookies->add(new Cookie([
+            'name' => $key,
+            'value' => $value,
+        ]));
+
         return $this;
     }
 
     public function setBody(array $body): self
     {
-        $this->body = $body;
+        $this->body = array_merge($this->body, $body);
+
+        return $this;
+    }
+
+    public function withCsrfToken(): self
+    {
+        $this->body['CRAFT_CSRF_TOKEN'] = $this->request->getCsrfToken();
 
         return $this;
     }
@@ -101,6 +111,9 @@ class RequestBuilder
 
             $this->request->setBody(
                 $isJson ? json_encode($body) : http_build_query($body)
+            );
+            $this->request->headers->add('content-type', 
+                $isJson ? 'application/json' : 'multipart/form-data'
             );
         }
     }

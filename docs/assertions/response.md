@@ -173,12 +173,43 @@ $response->assertRedirectTo('/foo/bar');
 For a 300 class response with a `Location` header, trigger a new
 request for the redirected page.
 
+```php
+$response->assertRedirect()->followRedirect()->assertOk();
+```
+
 ## followRedirects()
 For a 300 class response with a `Location` header, trigger a new
-request for the redirected page.
+request for the redirected page. If the redirected page also contains
+a redirect, follow the resulting redirects until you reach a non-300
+response code.
+
+
+```php
+$response->assertRedirect()->followRedirects()->assertOk();
+```
 
 ## assertSee(string $text)
 Checks that the response contains the given text
 ```php
 $response->assertSee('foo bar');
+```
+
+## assertSeeInOrder(array $texts)
+Checks that the response contains the given text, in successive order
+```php
+$response->assertSee(['first', 'second', 'third']);
+```
+
+## assertSeeText(string $text)
+Checks that the response contains the given text stripping tags. This would
+pass against source code of `<b>foo</b> bar`
+```php
+$response->assertSeeText('foo bar');
+```
+
+## assertSeeTextInOrder(array $texts)
+Checks that the response contains the given text, in successive order
+while stripping tags.
+```php
+$response->assertSeeTextInOrder(['first', 'second', 'third']);
 ```

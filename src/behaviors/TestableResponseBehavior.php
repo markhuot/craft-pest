@@ -530,11 +530,6 @@ class TestableResponseBehavior extends Behavior
         return $this->assertStatus(200);
     }
 
-    function assertPlainCookie() {
-        // TODO
-        return $this->response;
-    }
-
     /**
      * Check that the response returns a 300 status code
      *
@@ -567,6 +562,10 @@ class TestableResponseBehavior extends Behavior
     /**
      * For a 300 class response with a `Location` header, trigger a new
      * request for the redirected page.
+     * 
+     * ```php
+     * $response->assertRedirect()->followRedirect()->assertOk();
+     * ```
      */
     function followRedirect()
     {
@@ -577,7 +576,14 @@ class TestableResponseBehavior extends Behavior
 
     /**
      * For a 300 class response with a `Location` header, trigger a new
-     * request for the redirected page.
+     * request for the redirected page. If the redirected page also contains
+     * a redirect, follow the resulting redirects until you reach a non-300
+     * response code.
+     * 
+     * 
+     * ```php
+     * $response->assertRedirect()->followRedirects()->assertOk();
+     * ```
      */
     function followRedirects()
     {
@@ -604,17 +610,54 @@ class TestableResponseBehavior extends Behavior
         return $this->response;
     }
 
-    function assertSeeInOrder(array $text) {
-        // TODO
+    protected function seeInOrder(string $haystack, array $needles)
+    {
+        $lastPos = false;
+        foreach ($needles as $needle) {
+            $lastPos = strpos($haystack, $needle, $lastPos);
+            if ($lastPos === false) {
+                test()->fail('The text `' . $needle . '` was not found in order');
+                return;
+            }
+        }
+        expect(true)->toBe(true);
+    }
+
+    /**
+     * Checks that the response contains the given text, in successive order
+     *
+     * ```php
+     * $response->assertSee(['first', 'second', 'third']);
+     * ```
+     */
+    function assertSeeInOrder(array $texts) {
+        $this->seeInOrder($this->response->content, $texts);
+
         return $this->response;
     }
 
+    /**
+     * Checks that the response contains the given text stripping tags. This would
+     * pass against source code of `<b>foo</b> bar`
+     *
+     * ```php
+     * $response->assertSeeText('foo bar');
+     * ```
+     */
     function assertSeeText(string $text) {
-        return $this->assertSeeTextInOrder($text);
+        return $this->assertSeeTextInOrder([$text]);
     }
 
-    function assertSeeTextInOrder(string $text) {
-        test()->assertStringContainsString($text, preg_replace('/\s+/', ' ', strip_tags($this->response->data)));
+    /**
+     * Checks that the response contains the given text, in successive order
+     * while stripping tags.
+     *
+     * ```php
+     * $response->assertSeeTextInOrder(['first', 'second', 'third']);
+     * ```
+     */
+    function assertSeeTextInOrder(array $texts) {
+        $this->seeInOrder(preg_replace('/\s+/', ' ', strip_tags($this->response->content)), $texts);
 
         return $this->response;
     }
@@ -659,6 +702,9 @@ class TestableResponseBehavior extends Behavior
         return $this->response;
     }
 
+    /**
+     * 
+     */
     function assertStatus($code) {
         test()->assertSame($code, $this->response->getStatusCode());
         return $this->response;

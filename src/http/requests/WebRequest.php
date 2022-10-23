@@ -17,7 +17,6 @@ abstract class WebRequest extends \craft\web\Request
     {
         $config = App::webRequestConfig();
         $config['class'] = static::class;
-
         
         /** @var self $request */
         $request = \Craft::createObject($config);

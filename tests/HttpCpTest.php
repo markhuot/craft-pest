@@ -53,3 +53,29 @@ it('supports non-standard cpTrigger', function () {
         ->get($entry->cpEditUrl)
         ->assertOk();
 });
+
+it ('gets web requests in plugins', function () {
+    $user = User::factory()->admin(true)->create();
+    $this->actingAs($user);
+
+    $actionTrigger = \Craft::$app->config->general->actionTrigger;
+    $this->get($actionTrigger . '/pest/test/testable-web-response')
+        ->assertOk();
+});
+
+it ('gets web requests in modules', function () {
+    $user = User::factory()->admin(true)->create();
+    $this->actingAs($user);
+
+    $actionTrigger = \Craft::$app->config->general->actionTrigger;
+    $this->get($actionTrigger . '/pest-module-test/test/testable-web-response')
+        ->assertOk();
+    });
+    
+it ('posts action requests', function () {
+    $user = User::factory()->admin(true)->create();
+    $this->actingAs($user);
+
+    $this->action('pest-module-test/test/testable-web-action')
+        ->assertOk();
+});
