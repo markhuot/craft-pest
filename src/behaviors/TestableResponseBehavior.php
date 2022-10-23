@@ -715,6 +715,21 @@ class TestableResponseBehavior extends Behavior
         return $this->response;
     }
 
+    /**
+     * Assert the given title matches the title of the page.
+     * 
+     * ```php
+     * $response->assertTitle('The Title');
+     * ```
+     */
+    function assertTitle(string $title)
+    {
+        $actualTitle = $this->querySelector('title')->text;
+        test()->assertSame($title, $actualTitle, 'The given title did not match `' . $actualTitle . '`');
+
+        return $this->response;
+    }
+
     function assertUnauthorized() {
         return $this->assertStatus(401);
     }

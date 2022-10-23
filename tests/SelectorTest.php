@@ -55,8 +55,14 @@ it('queries a nodelist', function () {
 });
 
 it('clicks links')
-    ->get('links')
+    ->get('/links')
     ->querySelector('a')
     ->click()
     ->assertOk()
     ->assertSee('Hello World');
+
+it('asserts attributes')
+    ->get('/selectors')
+    ->assertOk()
+    ->querySelector('#first')
+    ->assertAttribute('id', 'first');

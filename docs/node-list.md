@@ -34,6 +34,10 @@ containing the text content of each node.
 $textContent = $nodeList->getNodeOrNodes(fn ($node) => $node->text()); // array
 ```
 
+## each(callable $callback)
+Loop over each matched node and apply the callback to the node. Returns
+an array of results for each matched node.
+
 ## getText()
 Available as a method or a magic property of `->text`. Gets the text content of the node or nodes. This
 will only return the text content of the node as well as any child nodes. Any non-text content such as
@@ -51,6 +55,14 @@ Click the matched element and follow a link.
 
 ```php
 $response->querySelector('a')->click();
+```
+
+## assertAttribute(string $key, string $value)
+Assert all matched nodes have the given attribute. If you have matched multiple nodes
+all nodes must matched.
+
+```php
+$response->querySelector('form')->assertAttribute('method', 'post');
 ```
 
 ## assertText($expected)

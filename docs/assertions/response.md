@@ -213,3 +213,10 @@ while stripping tags.
 ```php
 $response->assertSeeTextInOrder(['first', 'second', 'third']);
 ```
+
+## assertTitle(string $title)
+Assert the given title matches the title of the page.
+
+```php
+$response->assertTitle('The Title');
+```
