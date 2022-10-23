@@ -96,16 +96,24 @@ trait RefreshesDatabase {
         // Fields are autocommitted so we'll track those for removal later
         if ($isFieldFactory) {
             $this->autoCommittedModels[] = $event->model;
+            $transaction = \Craft::$app->db->getTransaction();
+            $transaction->commit();
+            $this->beginTransaction();
         }
 
         // If Yii thinks we're in a transaction but the transaction isn't
         // active any more (probably because it was autocommitted) then we'll
         // reset the internal state and re-start the transaction
-        $transaction = \Craft::$app->db->getTransaction();
-        if ($transaction && !\Craft::$app->db->pdo->inTransaction()) {
-            $transaction->commit();
-            $this->beginTransaction();
-        }
+        // $transaction = \Craft::$app->db->getTransaction();
+        // @TODO this doesn't work in Craft 3.5. The DB/PDO still reports
+        //       true for ->inTransaction() even though the transaction
+        //       has been autocommitted. This has been moved up to the
+        //       $isFieldFactory for now. Once 3.5 support is dropped
+        //       we can move it back down here.
+        // if ($transaction && !\Craft::$app->db->pdo->inTransaction()) {
+        //     $transaction->commit();
+        //     $this->beginTransaction();
+        // }
     }
 
     function refreshDatabase()

@@ -1,0 +1,18 @@
+contentColumnType: text
+fieldGroup: 166f0a69-50b4-4e70-85b4-70ee4ab52e5a
+handle: plainTextField
+instructions: ''
+name: 'Plain Text Field'
+searchable: false
+settings:
+  byteLimit: null
+  charLimit: null
+  code: ''
+  columnType: null
+  initialRows: '4'
+  multiline: ''
+  placeholder: ''
+  uiMode: normal
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\PlainText

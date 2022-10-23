@@ -23,7 +23,7 @@ $response->querySelector('h1')->text; // returns the string contents of the h1 e
 $response->querySelector('li')->text; // returns a collection containing the text of all list items
 ```
 
-## form(?string $selector = NULL)
+## form($selector = NULL)
 The entry point for interactions with forms. This returns a testable
 implementaion of the [Symfony DomCrawler's Form](#) class.
 

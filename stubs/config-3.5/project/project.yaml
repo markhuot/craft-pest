@@ -1,0 +1,22 @@
+dateModified: 1666268924
+email:
+  fromEmail: michael@bluth.com
+  fromName: pest
+  transportType: craft\mail\transportadapters\Sendmail
+plugins:
+  pest:
+    edition: standard
+    enabled: true
+    schemaVersion: 1.0.0
+system:
+  edition: solo
+  live: true
+  name: pest
+  schemaVersion: 3.5.13
+  timeZone: America/Los_Angeles
+users:
+  allowPublicRegistration: false
+  defaultGroup: null
+  photoSubpath: null
+  photoVolumeUid: null
+  requireEmailVerification: true

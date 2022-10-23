@@ -2,12 +2,15 @@
 
 namespace markhuot\craftpest\test;
 
-use craft\web\User;
+use craft\elements\User;
 
 trait ActingAs
 {
 
-    function actingAs(User|string $userOrName = null): self
+    /**
+     * @param User|string $userOrName
+     */
+    function actingAs($userOrName = null): self
     {
         if (is_string($userOrName)) {
             $user = \Craft::$app->getUsers()->getUserByUsernameOrEmail($userOrName);

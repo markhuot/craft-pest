@@ -52,8 +52,10 @@ class Entry extends Element
     /**
      * Set the post date by passing a `DateTime`, a string representing the date like
      * "2022-04-25 04:00:00", or a unix timestamp as an integer.
+     *
+     * @param \DateTime|string|int $value
      */
-    function postDate(\DateTime|string|int $value)
+    function postDate($value)
     {
         $this->setDateField('postDate', $value);
         
@@ -63,8 +65,9 @@ class Entry extends Element
     /**
      * Set the expiration date by passing a `DateTime`, a string representing the date like
      * "2022-04-25 04:00:00", or a unix timestamp as an integer.
+     * @param \DateTime|string|int $value
      */
-    function expiryDate(\DateTime|string|int $value)
+    function expiryDate($value)
     {
         $this->setDateField('expiryDate', $value);
 
@@ -95,8 +98,10 @@ class Entry extends Element
     /**
      * Set the author of the entry. You may pass a full user object, a user ID,
      * a username, email, or a user ID.
+     *
+     * @param \craft\web\User|string|int $user
      */
-    function author(\craft\web\User|string|int $user)
+    function author($user)
     {
         if (is_numeric($user)) {
             $user = \Craft::$app->users->getUserById($user);

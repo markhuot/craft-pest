@@ -141,8 +141,10 @@ class TestableResponseBehavior extends Behavior
      * one form then you must pass in a selector matching a specific form.
      * 
      * To submit the form use `->submit()` or `->click('.button-selector')`.
+     *
+     * @param string|null $selector
      */
-    public function form(string|null $selector=null): Form
+    public function form($selector=null): Form
     {
         if ($selector === null) {
             if ($this->form) {

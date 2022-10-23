@@ -39,8 +39,10 @@ final class Form
 
     /**
      * Fills input or textarea
+     *
+     * @param mixed $value
      */
-    public function fill(string $fieldNameOrSelector, mixed $value): self
+    public function fill(string $fieldNameOrSelector, $value): self
     {
         $this->form[$fieldNameOrSelector]->setValue((string) $value);
 
@@ -77,8 +79,10 @@ final class Form
 
     /**
      * Selects one or many options from select
+     *
+     * @param string|array|bool $value
      */
-    public function select(string $fieldNameOrSelector, string|array|bool $value): self
+    public function select(string $fieldNameOrSelector, $value): self
     {
         if (!($this->form[$fieldNameOrSelector] instanceof ChoiceFormField)) {
             throw new \InvalidArgumentException("Field '$fieldNameOrSelector' is not a select, unable to select()");
@@ -86,7 +90,7 @@ final class Form
 
         try {
             $this->form[$fieldNameOrSelector]->select($value);
-        } catch (\InvalidArgumentException) {
+        } catch (\InvalidArgumentException $e) {
             $optionByName = $this->crawler
                 ->filterXPath(sprintf("//select[@name='%s']", $fieldNameOrSelector))
                 ->filterXPath(sprintf("//option[contains(.,'%s')]", $value))->attr('value');

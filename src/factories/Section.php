@@ -101,7 +101,7 @@ class Section extends Factory {
      */
     function store($element) {
         \Craft::$app->sections->saveSection($element);
-        $this->storeFields($element->entryTypes[0]->fieldLayout);
+        $this->storeFields($element->entryTypes[0]->fieldLayout); // @phpstan-ignore-line because ->fieldLayout is not typed in Craft 3.5 even though it exists via magic method
     }
 
 }

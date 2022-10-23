@@ -11,19 +11,23 @@ use yii\web\Cookie;
 
 class RequestBuilder
 {
-    private WebRequest $request;
-    private \craft\web\Application $app;
-    private RequestHandler $handler;
+    /** @var WebRequest */
+    private $request;
+    /** @var \craft\web\Application */
+    private $app;
+    /** @var RequestHandler */
+    private $handler;
     protected string $method;
     protected array $body = [];
     protected array $originalGlobals;
 
-    public function __construct(
-        string         $method,
-        string         $uri,
-        \craft\web\Application    $app = null,
-        RequestHandler $handler = null,
-    ) {
+    /**
+     * @param string $method
+     * @param string $uri
+     * @param \craft\web\Application|null $app
+     * @param RequestHandler|null $handler
+     */
+    public function __construct(string $method, string $uri, $app = null, $handler = null) {
         $this->method = $method;
         $this->app = $app ?? \Craft::$app;
         $this->handler = $handler ?? new RequestHandler($this->app);
@@ -60,13 +64,19 @@ class RequestBuilder
         return $this;
     }
 
-    public function setReferrer(?string $value): self
+    /**
+     * @param string|null $value
+     */
+    public function setReferrer($value): self
     {
        $this->request->headers->set('Referer', $value);
        return $this;
     }
 
-    public function asUser(User|string $user): self
+    /**
+     * @param User|string $user
+     */
+    public function asUser($user): self
     {
         // TODO
         return $this;
@@ -120,10 +130,10 @@ class RequestBuilder
      */
     private function prepareRequest(string $method, string $uri): WebRequest
     {
-        $request = match (strtolower($method)) {
-            'get' => GetRequest::make($uri),
-            'post' => PostRequest::make($uri),
-            default => throw new \InvalidArgumentException("Unable to build request. Unknown method '$method'"),
+        switch (strtolower($method)) {
+            case 'get': $request = GetRequest::make($uri); break;
+            case 'post': $request = PostRequest::make($uri); break;
+            default: throw new \InvalidArgumentException("Unable to build request. Unknown method '$method'");
         };
 
         return $request;
