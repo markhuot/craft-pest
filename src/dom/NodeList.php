@@ -86,16 +86,6 @@ class NodeList implements \Countable
      * ```
      */
     public function getNodeOrNodes(callable $callback) {
-        // if ($this->crawler->count() === 1) {
-        //     return $callback($this->crawler->eq(0));
-        // }
-
-        // $result = [];
-        // for ($i=0; $i<$this->crawler->count(); $i++) {
-        //     $node = $this->crawler->eq($i);
-        //     $result[] = $callback($node);
-        // }
-
         $count = $this->crawler->count();
         $results = $this->each($callback);
 
@@ -104,7 +94,7 @@ class NodeList implements \Countable
 
     /**
      * Loop over each matched node and apply the callback to the node. Returns
-     * an array of results for eatch matched node.
+     * an array of results for each matched node.
      */
     function each(callable $callback)
     {
@@ -171,6 +161,14 @@ class NodeList implements \Countable
         throw new \Exception('Not able to interact with `' . $nodeName . '` elements.');
     }
 
+    /**
+     * Assert all matched nodes have the given attribute. If you have matched multiple nodes
+     * all nodes must matched.
+     * 
+     * ```php
+     * $response->querySelector('form')->assertAttribute('method', 'post');
+     * ```
+     */
     function assertAttribute(string $key, string $value)
     {
         if ($this->crawler->count() === 0) {
