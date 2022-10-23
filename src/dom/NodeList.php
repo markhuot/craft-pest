@@ -119,6 +119,26 @@ class NodeList implements \Countable
     }
 
     /**
+     * Click the matched element and follow a link.
+     * 
+     * ```php
+     * $response->querySelector('a')->click();
+     * ```
+     */
+    function click()
+    {
+        $node = $this->crawler->first();
+        $nodeName = $node->nodeName();
+
+        if ($nodeName === 'a') {
+            $href = $node->attr('href');
+            return (new RequestBuilder('get', $href))->send();
+        }
+
+        throw new \Exception('Not able to interact with `' . $nodeName . '` elements.');
+    }
+
+    /**
      * Asserts that the given string matches the text content of the node list.
      *
      * Caution: if the node list contains multiple nodes then the assertion

@@ -28,14 +28,14 @@ it('throws on unexpected property', function () {
 
 it('selects multiple matching nodes via expectation API', function () {
     get('/selectors')
-        ->querySelector('ul li')->expect()
+        ->querySelector('#first ul li')->expect()
         ->count->toBe(3)
         ->text->toBe(['one', 'two', 'three']);
 });
 
 it ('selects multiple matching nodes via assertion API', function () {
     get('/selectors')
-        ->querySelector('ul li')
+        ->querySelector('#first ul li')
         ->assertCount(3)
         ->assertText(['one', 'two', 'three']);
 });
@@ -45,3 +45,24 @@ it('asserts containing string', function () {
         ->querySelector('h1')
         ->assertContainsString('heading text');
 });
+
+it('queries a nodelist', function () {
+    get('/selectors')
+        ->querySelector('#first')
+        ->querySelector('li')
+        ->assertCount(3)
+        ->assertText(['one', 'two', 'three']);
+});
+
+it('clicks links')
+    ->get('links')
+    ->querySelector('a')
+    ->click()
+    ->assertOk()
+    ->assertSee('Hello World');
+
+it('clicks buttons')
+    ->get('/page-with-basic-form')
+    ->querySelector('button')
+    ->click()
+    ->assertOk();
