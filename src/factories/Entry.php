@@ -7,6 +7,7 @@ use craft\models\EntryType;
 use craft\models\Section;
 use Faker\Factory as Faker;
 use Illuminate\Support\Collection;
+use markhuot\craftpest\factories\Section as FactoriesSection;
 
 /**
  * Entry Factory
@@ -136,9 +137,10 @@ class Entry extends Element
         }
 
 
-        if (empty($section)) {
-            throw new \Exception("A section could not be inferred from this factory. Make sure you set a ::factory()->section(\"handle\") in your test. Tried to find `{$this->sectionIdentifier}");
-        }
+        $section = FactoriesSection::factory()->create();
+        // if (empty($section)) {
+        //     throw new \Exception("A section could not be inferred from this factory. Make sure you set a ::factory()->section(\"handle\") in your test. Tried to find `{$this->sectionIdentifier}");
+        // }
 
         return $section->id;
     }

@@ -14,6 +14,8 @@ use function markhuot\craftpest\helpers\base\array_wrap;
 
 abstract class Element extends Factory
 {
+    protected $silenced = false;
+
     /**
      * The faker definition
      *
@@ -26,11 +28,30 @@ abstract class Element extends Factory
     }
 
     /**
+     * Typically the `->create()` method throws exceptions when a validation error
+     * occurs. Calling `->slienceErrors()` will mute those exceptions and return
+     * the unsaved element with the `->errors` property filled out.
+     */
+    function silenceErrors(bool $silenced = true)
+    {
+        $this->silenced = $silenced;
+
+        return $this;
+    }
+
+    /**
      * Persist the entry to storage
      */
     function store($element) {
-        if (!\Craft::$app->elements->saveElement($element)) {
-            throw new ModelStoreException($element);
+        try {
+            if (!\Craft::$app->elements->saveElement($element)) {
+                throw new ModelStoreException($element);
+            }
+        }
+        catch (\Throwable $e) {
+            if (!$this->silenced) {
+                throw $e;
+            }
         }
     }
 

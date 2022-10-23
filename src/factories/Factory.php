@@ -308,9 +308,9 @@ abstract class Factory {
             }
 
             $this->store($element);
-            if (!empty($element->errors)) {
-                throw new \Exception(json_encode($element->errors));
-            }
+            // if (!empty($element->errors)) {
+            //     throw new \Exception(json_encode($element->errors));
+            // }
 
             $afterStoreEvent = new FactoryStoreEvent;
             $afterStoreEvent->sender = $this;
