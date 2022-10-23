@@ -39,6 +39,13 @@ Available as a method or a magic property of `->innerHTML`. Gets the inner HTML 
 Available via the method or a magic property of `->count` returns
 the number of nodes in the node list.
 
+## click()
+Click the matched element and follow a link.
+
+```php
+$response->querySelector('a')->click();
+```
+
 ## assertText($expected)
 Asserts that the given string matches the text content of the node list.
 Caution: if the node list contains multiple nodes then the assertion
