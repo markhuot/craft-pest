@@ -4,6 +4,13 @@ of a single h1 element via `$response->querySelector('h1')->text === "string"` w
 contents of that node. However, if the `NodeList` contains multiple nodes the return
 will be an array such as when you get back multiple list items, `$response->querySelector('li')->text === ["list", "text", "items"]`
 
+## querySelector(string $selector)
+Further filter the NodeList to a subset of matching elements
+
+```php
+$response->querySelector('ul')->querySelector('li');
+```
+
 ## expect()
 You can turn any `NodeList` in to an expectation API by calling `->expect()` on it. From there
 you are free to use the expectation API to assert the DOM matches your expectations.
