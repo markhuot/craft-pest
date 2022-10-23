@@ -4,6 +4,13 @@ of a single h1 element via `$response->querySelector('h1')->text === "string"` w
 contents of that node. However, if the `NodeList` contains multiple nodes the return
 will be an array such as when you get back multiple list items, `$response->querySelector('li')->text === ["list", "text", "items"]`
 
+## querySelector(string $selector)
+Further filter the NodeList to a subset of matching elements
+
+```php
+$response->querySelector('ul')->querySelector('li');
+```
+
 ## expect()
 You can turn any `NodeList` in to an expectation API by calling `->expect()` on it. From there
 you are free to use the expectation API to assert the DOM matches your expectations.
@@ -38,6 +45,13 @@ Available as a method or a magic property of `->innerHTML`. Gets the inner HTML 
 ## getCount()
 Available via the method or a magic property of `->count` returns
 the number of nodes in the node list.
+
+## click()
+Click the matched element and follow a link.
+
+```php
+$response->querySelector('a')->click();
+```
 
 ## assertText($expected)
 Asserts that the given string matches the text content of the node list.

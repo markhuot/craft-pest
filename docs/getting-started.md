@@ -43,6 +43,23 @@ Writing tests this way is a bit more complex because there is no closure providi
 
 For testing a seeded database that already contains your site content, though, this can greatly simplify test writing.
 
+## Navigating
+
+You can make multiple requests to Craft in a single test. One way is to write multiple `->get()` calls passing a new page each time.
+
+Alternatively, Pest encourages method chaining to create a fluent interface expressing multiple steps in a sentence like structure. The most used methods to do this are `->querySelector` and `->click`/`->submit`.
+
+With a response you may query down to a link, click that link, fill a form, and submit the form.
+
+```php
+$this->get('/')
+  ->querySelector('.buy_now_btn')
+  ->click()
+  ->fill('qty', 10)
+  ->submit()
+  ->assertSee('Thank you');
+```
+
 ## What to Test
 
 If you're just getting started with testing or just getting started with a new project one of the easiest places to start is to add a single test ensuring the homepage loads without errors.

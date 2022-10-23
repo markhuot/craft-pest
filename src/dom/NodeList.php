@@ -2,6 +2,8 @@
 
 namespace markhuot\craftpest\dom;
 
+use markhuot\craftpest\http\RequestBuilder;
+
 /**
  * A `NodeList` represents a fragment of HTML. It can contain one or more nodes and
  * the return values of its methods vary based on the count. For example getting the text
@@ -18,6 +20,18 @@ class NodeList implements \Countable
 
     function __construct(\Symfony\Component\DomCrawler\Crawler $crawler) {
         $this->crawler = $crawler;
+    }
+
+    /**
+     * Further filter the NodeList to a subset of matching elements
+     * 
+     * ```php
+     * $response->querySelector('ul')->querySelector('li');
+     * ```
+     */
+    function querySelector(string $selector)
+    {
+        return new self($this->crawler->filter($selector));
     }
 
     /**
@@ -116,6 +130,26 @@ class NodeList implements \Countable
      */
     public function getCount(): int {
         return $this->count();
+    }
+
+    /**
+     * Click the matched element and follow a link.
+     * 
+     * ```php
+     * $response->querySelector('a')->click();
+     * ```
+     */
+    function click()
+    {
+        $node = $this->crawler->first();
+        $nodeName = $node->nodeName();
+
+        if ($nodeName === 'a') {
+            $href = $node->attr('href');
+            return (new RequestBuilder('get', $href))->send();
+        }
+
+        throw new \Exception('Not able to interact with `' . $nodeName . '` elements.');
     }
 
     /**
