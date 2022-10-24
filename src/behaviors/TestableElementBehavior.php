@@ -11,11 +11,11 @@ class TestableElementBehavior extends Behavior
 {
     function assertValid(array $keys = [])
     {
-        expect($this->owner->errors)->toHaveCount(0);
+        test()->assertCount(0, $this->owner->errors);
     }
 
     function assertInvalid(array $keys = [])
     {
-        expect(count($this->owner->errors))->toBeGreaterThanOrEqual(1);
+        test()->assertGreaterThanOrEqual(1, count($this->owner->errors));
     }
 }
