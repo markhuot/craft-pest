@@ -23,3 +23,19 @@ Entry::factory()
   ->create(['title' => null])
   ->assertInvalid();
 ```
+
+## assertTrashed()
+Check that the element has its `dateDeleted` flag set
+
+```php
+$entry = Entry::factory()->create();
+\Craft::$app->elements->deleteElement($entry);
+$entry->assertTrashed();
+```
+
+## assertNotTrashed()
+Check that the element does not have its `dateDeleted` flag set
+
+```php
+Entry::factory()->create()->assertNotTrashed();
+```
