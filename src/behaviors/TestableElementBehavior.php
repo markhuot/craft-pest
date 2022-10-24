@@ -4,6 +4,9 @@ namespace markhuot\craftpest\behaviors;
 
 use yii\base\Behavior;
 
+/**
+ * @property \craft\base\Element $owner
+ */
 class TestableElementBehavior extends Behavior
 {
     function assertValid(array $keys = [])
