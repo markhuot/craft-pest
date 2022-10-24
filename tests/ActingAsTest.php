@@ -1,5 +1,16 @@
 <?php
 
+use markhuot\craftpest\factories\User;
+
+it('logs in users by factory', function () {
+    $userFactory = User::factory();
+
+    $this->actingAs($userFactory);
+
+    expect(\Craft::$app->user->identity->email)
+        ->toBe($userFactory->getMadeModels()->first()->email);
+});
+
 it('logs in users by email address', function () {
     $user = \markhuot\craftpest\factories\User::factory()->create();
 
