@@ -133,3 +133,6 @@ it('asserts titles')
     ->assertOk()
     ->assertTitle('The Title');
 
+it('asserts unauthorized')
+    ->get('/responses/401')
+    ->assertUnauthorized();

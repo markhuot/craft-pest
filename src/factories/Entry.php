@@ -7,6 +7,7 @@ use craft\models\EntryType;
 use craft\models\Section;
 use Faker\Factory as Faker;
 use Illuminate\Support\Collection;
+use markhuot\craftpest\factories\Section as FactoriesSection;
 
 /**
  * Entry Factory
@@ -35,6 +36,8 @@ class Entry extends Element
      * 1. a section object (typically after creating one via the `Section` factory)
      * 2. a section id
      * 3. a section handle
+     * 
+     * If you do not pass a section, one will be created automatically.
      */
     function section($identifier) {
         $this->sectionIdentifier = $identifier;
@@ -135,9 +138,9 @@ class Entry extends Element
             $section = \Craft::$app->sections->getSectionByHandle($sectionHandle);
         }
 
-
-        if (empty($section)) {
-            throw new \Exception("A section could not be inferred from this factory. Make sure you set a ::factory()->section(\"handle\") in your test. Tried to find `{$this->sectionIdentifier}");
+        if (empty($section))
+        {
+            $section = FactoriesSection::factory()->create();
         }
 
         return $section->id;

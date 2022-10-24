@@ -10,6 +10,8 @@ in three ways,
 2. a section id
 3. a section handle
 
+If you do not pass a section, one will be created automatically.
+
 ## type($handle)
 Set the entry type
 

@@ -8,6 +8,7 @@ use craft\events\DefineBehaviorsEvent;
 use craft\events\PluginEvent;
 use craft\services\Plugins;
 use markhuot\craftpest\behaviors\ExpectableBehavior;
+use markhuot\craftpest\behaviors\TestableElementBehavior;
 use yii\base\Event;
 
 /**
@@ -49,6 +50,7 @@ class Pest extends Plugin {
             Entry::EVENT_DEFINE_BEHAVIORS,
             function (DefineBehaviorsEvent $event) {
                 $event->behaviors[] = ExpectableBehavior::class;
+                $event->behaviors[] = TestableElementBehavior::class;
             }
         );
     }

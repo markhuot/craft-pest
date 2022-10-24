@@ -701,13 +701,20 @@ class TestableResponseBehavior extends Behavior
     }
 
     /**
+     * Asserts the given status code matches the response status code.
      * 
+     * ```php
+     * $response->assertStatus(404);
+     * ```
      */
     function assertStatus($code) {
         test()->assertSame($code, $this->response->getStatusCode());
         return $this->response;
     }
 
+    /**
+     * Asserts a successfull (200-class) response code.
+     */
     function assertSuccessful() {
         test()->assertGreaterThanOrEqual(200, $this->response->getStatusCode());
         test()->assertLessThan(300, $this->response->getStatusCode());
@@ -730,38 +737,10 @@ class TestableResponseBehavior extends Behavior
         return $this->response;
     }
 
+    /**
+     * Asserts that the response's status code is 401
+     */
     function assertUnauthorized() {
         return $this->assertStatus(401);
     }
-
-    function assertValid() {
-        // TODO
-        return $this->response;
-    }
-
-    function assertInvalid() {
-        // TODO
-        return $this->response;
-    }
-
-    function assertViewHas() {
-        // TODO
-        return $this->response;
-    }
-
-    function assertViewHasAll() {
-        // TODO
-        return $this->response;
-    }
-
-    function assertViewIs() {
-        // TODO
-        return $this->response;
-    }
-
-    function assertViewMissing() {
-        // TODO
-        return $this->response;
-    }
-
 }
