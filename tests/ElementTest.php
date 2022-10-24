@@ -9,6 +9,6 @@ it('asserts valid')
 
 it('asserts invalid')
     ->factory(Entry::class)
-    ->silenceErrors()
+    ->muteValidationErrors()
     ->create(['title' => null])
     ->assertInvalid();

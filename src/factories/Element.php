@@ -14,7 +14,7 @@ use function markhuot\craftpest\helpers\base\array_wrap;
 
 abstract class Element extends Factory
 {
-    protected $silenced = false;
+    protected $muted = false;
 
     /**
      * The faker definition
@@ -29,12 +29,12 @@ abstract class Element extends Factory
 
     /**
      * Typically the `->create()` method throws exceptions when a validation error
-     * occurs. Calling `->slienceErrors()` will mute those exceptions and return
+     * occurs. Calling `->muteValidationErrors()` will mute those exceptions and return
      * the unsaved element with the `->errors` property filled out.
      */
-    function silenceErrors(bool $silenced = true)
+    function muteValidationErrors(bool $muted = true)
     {
-        $this->silenced = $silenced;
+        $this->muted = $muted;
 
         return $this;
     }
@@ -49,7 +49,7 @@ abstract class Element extends Factory
             }
         }
         catch (\Throwable $e) {
-            if (!$this->silenced) {
+            if (!$this->muted) {
                 throw $e;
             }
         }
