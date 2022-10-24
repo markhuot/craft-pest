@@ -5,6 +5,8 @@ namespace markhuot\craftpest\dom;
 use markhuot\craftpest\http\RequestBuilder;
 
 /**
+ * # Node list
+ * 
  * A `NodeList` represents a fragment of HTML. It can contain one or more nodes and
  * the return values of its methods vary based on the count. For example getting the text
  * of a single h1 element via `$response->querySelector('h1')->text === "string"` will return the string
