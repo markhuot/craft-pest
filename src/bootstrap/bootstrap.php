@@ -73,7 +73,7 @@ $originalConfig = file_get_contents(CRAFT_VENDOR_PATH . '/craftcms/cms/src/servi
 $originalConfig = preg_replace('/^<\?php/', '', $originalConfig);
 $originalConfig = preg_replace('/^namespace.*$/m', 'namespace markhuot\\craftpest\\overrides;', $originalConfig);
 eval($originalConfig);
-include './src/services/Config.php';
+include __DIR__ . '/../services/Config.php';
 $app = require CRAFT_VENDOR_PATH . '/craftcms/cms/bootstrap/web.php';
 
 $app->projectConfig->writeYamlAutomatically = false;
