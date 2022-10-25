@@ -37,6 +37,7 @@ jobs:
           php src/bin/generate-docs.php src/factories/Entry.php docs/factories/entry.md
           php src/bin/generate-docs.php src/factories/Asset.php docs/factories/asset.md
           php src/bin/generate-docs.php src/behaviors/TestableResponseBehavior.php docs/assertions/response.md
+          php src/bin/generate-docs.php src/behaviors/TestableElementBehavior.php docs/assertions/element.md
           php src/bin/generate-docs.php src/traits/DatabaseAssertions.php docs/assertions/database.md
           php src/bin/generate-docs.php src/traits/RequestBuilders.php docs/making-requests.md
       

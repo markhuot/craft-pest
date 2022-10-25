@@ -213,3 +213,23 @@ while stripping tags.
 ```php
 $response->assertSeeTextInOrder(['first', 'second', 'third']);
 ```
+
+## assertStatus($code)
+Asserts the given status code matches the response status code.
+
+```php
+$response->assertStatus(404);
+```
+
+## assertSuccessful()
+Asserts a successfull (200-class) response code.
+
+## assertTitle(string $title)
+Assert the given title matches the title of the page.
+
+```php
+$response->assertTitle('The Title');
+```
+
+## assertUnauthorized()
+Asserts that the response's status code is 401
