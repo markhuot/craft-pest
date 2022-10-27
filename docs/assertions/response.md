@@ -233,3 +233,36 @@ $response->assertTitle('The Title');
 
 ## assertUnauthorized()
 Asserts that the response's status code is 401
+
+## get(string $uri)
+Makes a `GET` request to Craft.
+
+## post(string $uri, array $body = array ())
+Makes a `POST` request to Craft.
+
+```php
+$this->post('/comments', [
+  'author' => '...',
+  'body' => '...',
+])->assertOk();
+```
+
+Because _many_ `POST` requests need to send the CSRF token along with the
+request it is handled automatically within the `->post()` method. If
+you would prefer to handle this yourself you may use the raw `->http()` method
+insetad. The above `/comments` example is functionally similar to,
+
+```php
+$this->http('post', '/comments')
+  ->withCsrfToken()
+  ->setBody(['author' => '...', 'body' => '...'])
+  ->send()
+  ->assertOk();
+```
+
+## action(string $action, array $body = array ())
+Maes a `POST` request to Craft with the `action` param filled in to the
+passed value.
+
+## http(string $method, string $uri)
+Generate a raw HTTP request without any conventions applied.
