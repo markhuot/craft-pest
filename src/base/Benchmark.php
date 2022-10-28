@@ -146,7 +146,7 @@ class Benchmark
      *   $entry = Entry::factory()->section('articles')->create();
      * 
      *   $this->beginBenchmark()
-     *     ->get($entry->uri);
+     *     ->get($entry->uri)
      *     ->endBenchmark()
      *     ->assertLoadTimeLessThan(2);
      * });
