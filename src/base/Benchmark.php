@@ -23,11 +23,22 @@ use yii\debug\Module;
  */
 class Benchmark
 {
-    /** @var Collection<int, array{
+    /**
+     * The messages. Have the following keys,
      *   0: string // message
      *   1: int // level
      *   2: string // category
      *   3: float // time
+     *   4: array
+     *   5: int
+     * 
+     * 
+     * @internal
+     * @var Collection<int, array{
+     *   0: string
+     *   1: int
+     *   2: string
+     *   3: float
      *   4: array
      *   5: int
      * }> */
