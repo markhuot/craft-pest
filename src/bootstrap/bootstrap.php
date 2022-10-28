@@ -7,6 +7,9 @@ define('CRAFT_BASE_PATH', getcwd());
 define('CRAFT_VENDOR_PATH', CRAFT_BASE_PATH . '/vendor');
 define('YII_ENABLE_ERROR_HANDLER', false);
 
+putenv('DEV_MODE=true');
+putenv('CRAFT_DEV_MODE=true');
+
 // Load dotenv? 5.x vs 3.x vs 2.x
 if (file_exists(CRAFT_BASE_PATH . '/.env')) {
     if (method_exists('\Dotenv\Dotenv', 'createUnsafeImmutable')) {
