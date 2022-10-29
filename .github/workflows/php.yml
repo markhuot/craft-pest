@@ -55,9 +55,11 @@ jobs:
 
     - name: Create dynamic cache key
       id: cache-key
+      env:
+        CRAFT_VERSION: ${{ matrix.craftVersion }}
       run: |
         <?php
-        echo "::set-output name=cacheKey::$(" . "${{ matrix.craftVersion }}" != "3.7" ? time() : "" . ")\n"
+        echo "::set-output name=cacheKey::$(" . getenv("CRAFT_VERSION") != "3.7" ? time() : "" . ")\n";
       shell: php -f {0}
 
     - name: Cache Composer packages
