@@ -59,7 +59,8 @@ jobs:
         CRAFT_VERSION: ${{ matrix.craftVersion }}
       run: |
         <?php
-        echo "::set-output name=cacheKey::$(" . (getenv("CRAFT_VERSION") != "3.7" ? time() : "") . ")\n";
+        $env = "DYNAMIC_CACHE_KEY=" . (getenv("CRAFT_VERSION") != "3.7" ? time() : "");
+        file_put_contents(getenv('GITHUB_OUTPUT'), $env, FILE_APPEND);
       shell: php -f {0}
 
     - name: Cache Composer packages
@@ -69,7 +70,7 @@ jobs:
         path: |
           composer.lock
           vendor
-        key: ${{ runner.os }}-craft-vendor-${{ matrix.craftVersion }}-${{ steps.cache-key.outputs.cacheKey }}-${{ hashFiles('composer.json') }}
+        key: ${{ runner.os }}-craft-vendor-${{ matrix.craftVersion }}-${{ steps.cache-key.outputs.DYNAMIC_CACHE_KEY }}-${{ hashFiles('composer.json') }}
         restore-keys: |
           ${{ runner.os }}-craft-vendor-^3.7-
 
