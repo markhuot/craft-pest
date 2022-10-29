@@ -20,6 +20,8 @@ use yii\debug\Module;
  *   ->endBenchmark()
  *   ->assertNoDuplicateQueries();
  * ```
+ * 
+ * @see \markhuot\craftpest\traits\Benchmark
  */
 class Benchmark
 {
@@ -35,12 +37,12 @@ class Benchmark
      * 
      * @internal
      * @var Collection<int, array{
-     *   0: string
-     *   1: int
-     *   2: string
-     *   3: float
-     *   4: array
-     *   5: int
+     *   0: string,
+     *   1: int,
+     *   2: string,
+     *   3: float,
+     *   4: array,
+     *   5: int,
      * }> */
     protected Collection $messages;
 
