@@ -12,6 +12,14 @@ it('checks for duplicate queries')
   ->assertNoDuplicateQueries();
 ```
 
+
+ 
+## beginBenchmark()
+You can start a benchmark at any time. It does not have to come first in your
+test.
+## endBenchmark()
+Ending a benchmark returns a testable Benchmark class
+
 ## assertNoDuplicateQueries()
 Ensures there are no duplicate queries since the benchmark began.
 
