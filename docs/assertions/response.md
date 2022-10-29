@@ -233,3 +233,10 @@ $response->assertTitle('The Title');
 
 ## assertUnauthorized()
 Asserts that the response's status code is 401
+
+## beginBenchmark()
+You can start a benchmark at any time. It does not have to come first in your
+test.
+
+## endBenchmark()
+Ending a benchmark returns a testable Benchmark class
