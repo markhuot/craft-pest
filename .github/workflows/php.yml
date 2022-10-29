@@ -26,8 +26,6 @@ jobs:
             ${{ runner.os }}-php-
       - name: Install dependencies
         run: composer require "craftcms/cms:^3.7" --prefer-dist --no-progress
-      - name: Copy config files
-        run: mkdir -p ./storage && cp -r ./stubs/config ./config
 
   test:
     runs-on: ubuntu-latest
@@ -79,6 +77,9 @@ jobs:
         key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
           ${{ runner.os }}-php-
+
+    - name: Copy config files
+      run: mkdir -p ./storage && cp -r ./stubs/config ./config
 
     - name: Install Craft
       run: ./src/bin/craft install --username=michael@bluth.com --email=michael@bluth.com --password=secret --siteName=Pest --siteUrl=http://localhost:8080 --language=en-US
