@@ -31,7 +31,7 @@ use yii\base\Behavior;
  */
 class TestableResponseBehavior extends Behavior
 {
-    use Benchmark, /*RequestBuilders*/;
+    use Benchmark/*, RequestBuilders*/;
 
     /**
      * The request that 
