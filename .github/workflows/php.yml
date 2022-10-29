@@ -58,9 +58,9 @@ jobs:
       uses: actions/cache@v3
       with:
         path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        key: ${{ runner.os }}-craft-vendor-${{ matrix.craftVersion }}-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
-          ${{ runner.os }}-php-
+          ${{ runner.os }}-craft-vendor-${{ matrix.craftVersion }}-
 
     - name: Install dependencies
       run: composer update --with "craftcms/cms:^3.7" --prefer-dist --no-progress
