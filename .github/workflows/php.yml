@@ -13,9 +13,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    needs:
-      - build
-
     env:
       CRAFT_APP_ID: pest
       CRAFT_ENVIRONMENT: dev
