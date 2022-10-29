@@ -144,15 +144,7 @@ trait RefreshesDatabase {
     {
         $diff = ProjectConfig::diff();
 
-        if ($diff !== '') {
-            echo "====================\n";
-            echo "Dirty diff\n";
-            echo $diff;
-            echo "====================\n";
-            return true;
-        }
-
-        return false;
+        return $diff !== '';
     }
 
     protected function projectConfigApply()
