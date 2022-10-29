@@ -61,6 +61,12 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-php-
 
+    - name: Install dependencies
+      run: composer update --with "craftcms/cms:^3.7" --prefer-dist --no-progress
+
+    - name: Copy config files
+      run: mkdir -p ./storage && cp -r ./stubs/config ./config
+
     - name: Cache database seed
       id: seed-cache
       uses: actions/cache@v3
@@ -69,12 +75,6 @@ jobs:
         key: ${{ runner.os }}-seed-${{ matrix.craftVersion }}-${{ hashFiles('**/config/project/**/*') }}
         restore-keys: |
           ${{ runner.os }}-php-
-
-    - name: Install dependencies
-      run: composer update --with "craftcms/cms:^3.7" --prefer-dist --no-progress
-
-    - name: Copy config files
-      run: mkdir -p ./storage && cp -r ./stubs/config ./config
 
     - name: Install Craft
       if: steps.seed-cache.outputs.cache-hit != 'true'
