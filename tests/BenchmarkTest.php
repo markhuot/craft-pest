@@ -3,13 +3,19 @@
 use markhuot\craftpest\factories\Entry;
 use markhuot\craftpest\factories\Section;
 
-it('benchmarks queries', function () {
-    $this->beginBenchmark();
-    $this->get('/')->assertOk();
-    $this->get('/')->assertOk();
-    $this->endBenchmark()
-        ->assertNoDuplicateQueries();
-})->skip();
+it('benchmarks duplicate queries')
+    ->beginBenchmark()
+    ->get('/')
+    ->assertOk()
+    ->endBenchmark()
+    ->assertNoDuplicateQueries();
+
+it('benchmarks load time')
+    ->beginBenchmark()
+    ->get('/')
+    ->assertOk()
+    ->endBenchmark()
+    ->assertLoadTimeLessThan(2);
 
 it('benchmarks', function () {
     $section = Section::factory()->template('entry')->create();

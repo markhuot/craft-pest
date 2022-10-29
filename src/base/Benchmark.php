@@ -168,6 +168,7 @@ class Benchmark
     function assertLoadTimeLessThan(float $expectedLoadTime)
     {
         $actualLoadTime = $this->getPanels()['profiling']->data['time'];
+        dd($actualLoadTime);
 
         test()->assertLessThan($expectedLoadTime, $actualLoadTime);
 
