@@ -74,8 +74,6 @@ jobs:
       with:
         path: seed.sql
         key: ${{ runner.os }}-seed-${{ matrix.craftVersion }}-${{ hashFiles('**/config/project/**/*') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
 
     - name: Install Craft
       if: steps.seed-cache.outputs.cache-hit != 'true'
