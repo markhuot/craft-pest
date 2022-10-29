@@ -142,12 +142,23 @@ trait RefreshesDatabase {
 
     protected function isProjectConfigDirty()
     {
-        return ProjectConfig::diff() !== '';
+        $diff = ProjectConfig::diff();
+
+        if ($diff !== '') {
+            echo "====================\n";
+            echo "Dirty diff\n";
+            echo $diff;
+            echo "====================\n";
+            return true;
+        }
+
+        return false;
     }
 
     protected function projectConfigApply()
     {
-        $process = new Process(['./craft', 'project-config/apply'], null, $_SERVER);
+        $craftExePath = getenv('CRAFT_EXE_PATH') ?: './craft';
+        $process = new Process([$craftExePath, 'project-config/apply'], null, $_SERVER);
         $process->setTty(Process::isTtySupported());
         $process->setTimeout(null);
         $process->start();
