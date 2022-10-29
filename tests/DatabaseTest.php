@@ -3,7 +3,7 @@
 use markhuot\craftpest\factories\Entry;
 
 it('asserts database content', function () {
-    $count = count(\Craft::$app->sites->getAllSites());
+    $count = (new \craft\db\Query)->from(\craft\db\Table::SITES)->count();
     $this->assertDatabaseCount(\craft\db\Table::SITES, $count);
 });
 
