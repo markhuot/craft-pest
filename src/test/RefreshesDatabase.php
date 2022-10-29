@@ -142,9 +142,7 @@ trait RefreshesDatabase {
 
     protected function isProjectConfigDirty()
     {
-        $diff = ProjectConfig::diff();
-
-        return $diff !== '';
+        return ProjectConfig::diff() !== '';
     }
 
     protected function projectConfigApply()
