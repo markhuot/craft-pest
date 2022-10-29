@@ -147,8 +147,9 @@ trait RefreshesDatabase {
 
     protected function projectConfigApply()
     {
-        $process = new Process(['./craft', 'project-config/apply'], null, $_SERVER);
-        $process->setTty(true);
+        $craftExePath = getenv('CRAFT_EXE_PATH') ?: './craft';
+        $process = new Process([$craftExePath, 'project-config/apply'], null, $_SERVER);
+        $process->setTty(Process::isTtySupported());
         $process->setTimeout(null);
         $process->start();
 

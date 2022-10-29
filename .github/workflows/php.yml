@@ -1,4 +1,4 @@
-name: PHP Composer
+name: Run Tests
 
 on:
   pull_request:
@@ -10,8 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
 
     env:
@@ -27,6 +26,7 @@ jobs:
       CRAFT_DB_TABLE_PREFIX: craft_
       CRAFT_TEMPLATES_PATH: ./tests/templates
       CRAFT_OMIT_SCRIPT_NAME_IN_URLS: true
+      CRAFT_EXE_PATH: ./src/bin/craft
 
     services:
       mysql:
@@ -53,17 +53,29 @@ jobs:
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
 
+    - name: Create dynamic cache key
+      id: cache-key
+      env:
+        CRAFT_VERSION: ${{ matrix.craftVersion }}
+      run: |
+        <?php
+        $env = "DYNAMIC_CACHE_KEY=" . (getenv("CRAFT_VERSION") != "3.7" ? time() : "");
+        file_put_contents(getenv('GITHUB_OUTPUT'), $env, FILE_APPEND);
+      shell: php -f {0}
+
     - name: Cache Composer packages
       id: composer-cache
       uses: actions/cache@v3
       with:
-        path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        path: |
+          composer.lock
+          vendor
+        key: ${{ runner.os }}-craft-vendor-${{ matrix.craftVersion }}-${{ steps.cache-key.outputs.DYNAMIC_CACHE_KEY }}-${{ hashFiles('composer.json') }}
         restore-keys: |
-          ${{ runner.os }}-php-
+          ${{ runner.os }}-craft-vendor-^3.7-
 
     - name: Install dependencies
-      run: composer require "craftcms/cms:^3.7" --prefer-dist --no-progress
+      run: composer update --with "craftcms/cms:^3.7" --prefer-dist --no-progress
 
     - name: Copy config files
       run: mkdir -p ./storage && cp -r ./stubs/config ./config
@@ -72,8 +84,8 @@ jobs:
       run: ./src/bin/craft install --username=michael@bluth.com --email=michael@bluth.com --password=secret --siteName=Pest --siteUrl=http://localhost:8080 --language=en-US
 
     - name: Update to Craft ${{ matrix.craftVersion }}
-      run: composer require "craftcms/cms:${{ matrix.craftVersion }}" -W && ./src/bin/craft migrate/all --no-backup=1 --interactive=0
-      if: ${{ matrix.craftVersion != '^3.7' }}
+      run: composer update --with "craftcms/cms:${{ matrix.craftVersion }}" -W && ./src/bin/craft migrate/all --no-backup=1 --interactive=0
+      if: matrix.craftVersion != '^3.7'
 
     - name: Run PHPStan
       run: ./vendor/bin/phpstan analyse src
