@@ -9,7 +9,7 @@ it('benchmarks queries', function () {
     $this->get('/')->assertOk();
     $this->endBenchmark()
         ->assertNoDuplicateQueries();
-});
+})->skip();
 
 it('benchmarks', function () {
     $section = Section::factory()->template('entry')->create();
@@ -23,4 +23,4 @@ it('benchmarks', function () {
         ->assertLoadTimeLessThan(1)
         ->assertMemoryLoadLessThan(2048)
         ->assertAllQueriesFasterThan(0.5);
-});
+})->skip();
