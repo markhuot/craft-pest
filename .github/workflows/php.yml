@@ -53,6 +53,13 @@ jobs:
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
 
+    - name: Create dynamic cache key
+      id: cache-key
+      run: |
+        <?php
+        echo "::set-output name=cacheKey::$(" . "${{ matrix.craftVersion }}" != "3.7" ? time() : "" . ")\n"
+      shell: php -f {0}
+
     - name: Cache Composer packages
       id: composer-cache
       uses: actions/cache@v3
@@ -60,7 +67,7 @@ jobs:
         path: |
           composer.lock
           vendor
-        key: ${{ runner.os }}-craft-vendor-${{ matrix.craftVersion }}-${{ hashFiles('composer.json') }}
+        key: ${{ runner.os }}-craft-vendor-${{ matrix.craftVersion }}-${{ steps.cache-key.outputs.cacheKey }}-${{ hashFiles('composer.json') }}
         restore-keys: |
           ${{ runner.os }}-craft-vendor-^3.7-
 
