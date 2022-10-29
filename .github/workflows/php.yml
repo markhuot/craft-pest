@@ -62,7 +62,7 @@ jobs:
           vendor
         key: ${{ runner.os }}-craft-vendor-${{ matrix.craftVersion }}-${{ hashFiles('composer.json') }}
         restore-keys: |
-          ${{ runner.os }}-craft-vendor-${{ matrix.craftVersion }}-
+          ${{ runner.os }}-craft-vendor-^3.7-
 
     - name: Install dependencies
       run: composer update --with "craftcms/cms:^3.7" --prefer-dist --no-progress
