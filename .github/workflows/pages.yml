@@ -1,4 +1,4 @@
-name: Pages Generation
+name: Build Pages
 
 on:
   push:
