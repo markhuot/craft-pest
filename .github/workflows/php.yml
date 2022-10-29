@@ -86,11 +86,11 @@ jobs:
 
     - name: Export database seed
       if: steps.seed-cache.outputs.cache-hit != 'true'
-      run: mysqldump -u root -proot pest > seed.sql
+      run: mysqldump -h mysql -u root -proot pest > seed.sql
 
     - name: Restore database seed
       if: steps.seed-cache.outputs.cache-hit == 'true'
-      run: mysql -u root -proot pest < seed.sql
+      run: mysql -h mysql -u root -proot pest < seed.sql
 
     - name: Run PHPStan
       run: ./vendor/bin/phpstan analyse src
