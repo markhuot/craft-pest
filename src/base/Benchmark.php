@@ -4,7 +4,7 @@ namespace markhuot\craftpest\base;
 
 use Illuminate\Support\Collection;
 use yii\db\Command;
-use yii\debug\Module;
+use craft\debug\Module;
 
 /**
  * # Benchmarks

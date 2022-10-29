@@ -10,6 +10,13 @@ it('benchmarks duplicate queries')
     ->endBenchmark()
     ->assertNoDuplicateQueries();
 
+it('benchmarks query speed')
+    ->beginBenchmark()
+    ->get('/')
+    ->assertOk()
+    ->endBenchmark()
+    ->assertAllQueriesFasterThan(0.5);
+
 it('benchmarks load time')
     ->beginBenchmark()
     ->get('/')
@@ -17,16 +24,9 @@ it('benchmarks load time')
     ->endBenchmark()
     ->assertLoadTimeLessThan(2);
 
-it('benchmarks', function () {
-    $section = Section::factory()->template('entry')->create();
-    $entry = Entry::factory()->section($section)->create();
-
-    $this->beginBenchmark()
-        ->get($entry->uri)
-        ->assertOk()
-        ->endBenchmark()
-        ->assertNoDuplicateQueries()
-        ->assertLoadTimeLessThan(1)
-        ->assertMemoryLoadLessThan(2048)
-        ->assertAllQueriesFasterThan(0.5);
-})->skip();
+it('benchmarks memory usage')
+    ->beginBenchmark()
+    ->get('/')
+    ->assertOk()
+    ->endBenchmark()
+    ->assertMemoryLoadLessThan(256);

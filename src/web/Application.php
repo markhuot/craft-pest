@@ -7,6 +7,7 @@ class Application extends \craft\web\Application
     public function bootstrap(): void
     {
         $this->request->setIsConsoleRequest(false);
+        $this->request->headers->add('X-Debug', 'enable');
 
         parent::bootstrap();
     }

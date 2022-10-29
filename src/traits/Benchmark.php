@@ -16,13 +16,13 @@ trait Benchmark
         \Craft::getLogger()->flush();
 
         // It would be nice to conditionally enable the debug bar when this is called
-        // but theres a lot of setup in \craft\web\Application::bootstrapSebug() that
+        // but theres a lot of setup in \craft\web\Application::bootstrapDebug() that
         // we don't want to take ownership of right now.
         // \Craft::$app->db->enableLogging = true;
         // \Craft::$app->db->enableProfiling = true;
         // \Craft::createObject(['class' => 'yiisoft\\debug\\Module']);
 
-        // Because we can't dynamically load the sebug bar we'll require DEV_MODE be
+        // Because we can't dynamically load the debug bar we'll require DEV_MODE be
         // enabled by the user if they get here.
         if (!\Craft::$app->config->getGeneral()->devMode) {
             throw new \Exception('You must enable devMode to use benchmarking.');
