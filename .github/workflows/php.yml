@@ -91,7 +91,7 @@ jobs:
 
     - name: Restore database seed
       if: steps.seed-cache.outputs.cache-hit == 'true'
-      run: mysql -h 127.0.0.1 -u root -proot pest < seed.sql
+      run: mysql -h 127.0.0.1 -u root -proot pest < seed.sql && ./src/bin/craft project-config/write
 
     - name: Run PHPStan
       run: ./vendor/bin/phpstan analyse src
