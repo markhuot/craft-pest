@@ -26,10 +26,11 @@ trait Benchmark
             throw new \Exception('You must enable devMode to use benchmarking.');
         }
 
+        // Normally each request bootstraps its own logTarget with a unique tag each
+        // time. However, because we're running multiple requests through a single
+        // logTarget we need to manually update thentag (triggering independant log)
+        // files to be written.
         \craft\debug\Module::getInstance()->logTarget->tag = uniqid();
-
-        // Clear any messages so our benchmark starts empty
-        \Craft::getLogger()->flush();
 
         return $this;
     }
