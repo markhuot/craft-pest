@@ -4,7 +4,7 @@ import path from 'path';
 const getSidebarItems = (dir, currentRoot, root, options) => {
 	return dir.filter(e => e.endsWith('.md') || fs.statSync(path.resolve(currentRoot, e)).isDirectory()).map((e) => {
     const childDir = path.resolve(currentRoot, e);
-    if (path.basename(childDir).substr(0,1) != '.' && fs.statSync(childDir).isDirectory() && options.showGroups) {
+    if (path.basename(childDir).substr(0,1) != '.' && fs.statSync(childDir).isDirectory() && e !== 'public' && options.showGroups) {
       return {
         text: (e.charAt(0).toUpperCase() + e.slice(1)).replaceAll('-', ' '),
         collapsible: options.collapsible,
