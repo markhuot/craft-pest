@@ -51,7 +51,7 @@ function parseComment(string $comment)
 {
     preg_match_all('/@see\s+(.+)$/m', $comment, $sees);
     foreach (($sees[1] ?? []) as $otherClass) {
-        $comment .= implode("\n", parseClass($otherClass));
+        $comment .= implode("\n\n", parseClass($otherClass));
     }
     
     $comment = preg_replace('/^\/\*\*/', '', $comment);
