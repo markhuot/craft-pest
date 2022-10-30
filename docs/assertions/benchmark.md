@@ -14,6 +14,7 @@ it('checks for duplicate queries')
 
 
  
+
 ## beginBenchmark()
 Benchmarks are started on your test case by calling `->beginBenchmark()`. You are
 free to start as many benchmarks as needed, however, note that starting a new
@@ -21,6 +22,7 @@ benchmark will clear out any existing benchmarks already in progress.
 
 > *Warning* In order to use a benchmark you must enable Craft's `devMode` (which
 will enable the Yii Debug Bar).
+
 ## endBenchmark()
 Ending a benchmark returns a testable Benchmark class. You can end a benchmark
 by calling `->endBenchmark()` on the test case or on a response. Either of the
