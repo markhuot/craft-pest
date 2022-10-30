@@ -25,34 +25,7 @@ use craft\debug\Module;
  */
 class Benchmark
 {
-    /**
-     * The messages. Have the following keys,
-     *   0: string // message
-     *   1: int // level
-     *   2: string // category
-     *   3: float // time
-     *   4: array
-     *   5: int
-     * 
-     * 
-     * @internal
-     * @var Collection<int, array{
-     *   0: string,
-     *   1: int,
-     *   2: string,
-     *   3: float,
-     *   4: array,
-     *   5: int,
-     * }> */
-    protected Collection $messages;
-
-    protected $dbQueryCache;
-    protected $dbQueryTimingCache;
     protected $manifestCache;
-
-    function __construct(array $messages) {
-        $this->messages = collect($messages);
-    }
 
     function summary()
     {
@@ -71,32 +44,9 @@ class Benchmark
         return $this;
     }
 
-    function __get($key)
-    {
-
-    }
-
-    function getQueries()
-    {
-        if ($this->dbQueryCache !== null) {
-            return $this->dbQueryCache;
-        }
-
-        // dd($this->getPanels()['profiling']->data);
-
-        return $this->dbQueryCache = $this->messages->filter(function($message) {
-            return $message[2] === Command::class . '::query';
-        });
-    }
-
     function getQueryTiming()
     {
-        if ($this->dbQueryTimingCache !== null) {
-            return $this->dbQueryTimingCache;
-        }
-
-        return $this->dbQueryTimingCache = collect(\Craft::getLogger()->calculateTimings($this->getQueries()))
-            ->sortByDesc('duration');
+        return collect($this->getPanels()['db']->calculateTimings());
     }
 
     function getDuplicateQueries()
@@ -123,7 +73,7 @@ class Benchmark
         $tag = reset($tags);
 
         $logTarget->loadTagToPanels($tag);
-        
+
         return Module::getInstance()->panels;
     }
 
