@@ -27,22 +27,18 @@ class Benchmark
 {
     protected $manifestCache;
 
-    function summary()
-    {
-        $dbQueries = $this->messages->filter(function($message) {
-            return $message[2] === Command::class . '::query';
-        });
-
-        $timings = collect(\Craft::getLogger()->calculateTimings($dbQueries))
-            ->sortByDesc('duration');
-
-
-        echo 'There were ' . $dbQueries->count() . ' queries'."\n";
-        echo 'Slowest Query ' . $timings->first()['duration'] . ' seconds: ' . $timings->first()['info']."\n";
-        echo 'Duplicate queries ' . $timings->duplicates('info')->count()."\n";
-
-        return $this;
-    }
+    // function summary()
+    // {
+    //     $dbQueries = $this->messages->filter(function($message) {
+    //         return $message[2] === Command::class . '::query';
+    //     });
+    //     $timings = collect(\Craft::getLogger()->calculateTimings($dbQueries))
+    //         ->sortByDesc('duration');
+    //     echo 'There were ' . $dbQueries->count() . ' queries'."\n";
+    //     echo 'Slowest Query ' . $timings->first()['duration'] . ' seconds: ' . $timings->first()['info']."\n";
+    //     echo 'Duplicate queries ' . $timings->duplicates('info')->count()."\n";
+    //     return $this;
+    // }
 
     function getQueryTiming()
     {
