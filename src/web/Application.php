@@ -8,6 +8,10 @@ class Application extends \craft\web\Application
     {
         $this->request->setIsConsoleRequest(false);
 
+        if (\Craft::$app->config->getGeneral()->devMode) {
+            $this->request->headers->add('X-Debug', 'enable');
+        }
+
         parent::bootstrap();
     }
 }

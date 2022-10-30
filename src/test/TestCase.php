@@ -2,12 +2,16 @@
 
 namespace markhuot\craftpest\test;
 
+use markhuot\craftpest\traits\Benchmark;
 use markhuot\craftpest\traits\DatabaseAssertions;
 use markhuot\craftpest\traits\RequestBuilders;
 
 class TestCase extends \PHPUnit\Framework\TestCase {
 
-    use ActingAs, DatabaseAssertions, RequestBuilders;
+    use ActingAs,
+        DatabaseAssertions,
+        RequestBuilders,
+        Benchmark;
 
     protected function setUp(): void
     {

@@ -15,32 +15,45 @@ $className = $info['filename'];
 $namespace = str_replace('/', '\\', preg_replace('/^(.\/)?src\//', '', $info['dirname']));
 
 require $input;
-$reflection = new ReflectionClass('markhuot\\craftpest\\' . $namespace . '\\' . $className);
+$contents = parseClass('markhuot\\craftpest\\' . $namespace . '\\' . $className);
 
-$contents = [];
-$contents[] = parseComment($reflection->getDocComment());
+function parseClass(string $className)
+{
+    $reflection = new ReflectionClass($className);
+    $classComment = $reflection->getDocComment();
 
-foreach ($reflection->getMethods() as $method) {
-    if ($method->getDeclaringClass()->getName() === $reflection->getName() &&
-        $comment = $method->getDocComment() &&
-        $method->isPublic() &&
-        substr($method->getName(), 0, 2) !== '__' &&
-        strpos($method->getDocComment(), '@internal') === false
-    ) {
-        $comment = parseComment($method->getDocComment());
-        if (!empty($comment)) {
-            $params = array_map(function (ReflectionParameter $param) {
-                return ($param->getType() ? (string)$param->getType() . ' ' : '') . // @phpstan-ignore-line for some reason PHP stan doesn't like ->getName on a type
-                    '$' . $param->getName() .
-                    ($param->isDefaultValueAvailable() ? ' = ' . preg_replace('/[\r\n]+/', '', var_export($param->getDefaultValue(), true)) : '');
-            }, $method->getParameters());
-            $contents[] = '## ' . $method->getName() . "(" . implode(', ', $params) . ")\n" . $comment;
+    $contents = [];
+    $contents[] = parseComment($classComment);
+
+    foreach ($reflection->getMethods() as $method) {
+        if ($method->getDeclaringClass()->getName() === $reflection->getName() &&
+            $comment = $method->getDocComment() &&
+            $method->isPublic() &&
+            substr($method->getName(), 0, 2) !== '__' &&
+            strpos($method->getDocComment(), '@internal') === false
+        ) {
+            $comment = parseComment($method->getDocComment());
+            if (!empty($comment)) {
+                $params = array_map(function (ReflectionParameter $param) {
+                    return ($param->getType() ? (string)$param->getType() . ' ' : '') . // @phpstan-ignore-line for some reason PHP stan doesn't like ->getName on a type
+                        '$' . $param->getName() .
+                        ($param->isDefaultValueAvailable() ? ' = ' . preg_replace('/[\r\n]+/', '', var_export($param->getDefaultValue(), true)) : '');
+                }, $method->getParameters());
+                $contents[] = '## ' . $method->getName() . "(" . implode(', ', $params) . ")\n" . $comment;
+            }
         }
     }
+
+    return $contents;
 }
 
 function parseComment(string $comment)
 {
+    preg_match_all('/@see\s+(.+)$/m', $comment, $sees);
+    foreach (($sees[1] ?? []) as $otherClass) {
+        $comment .= implode("\n\n", parseClass($otherClass));
+    }
+    
     $comment = preg_replace('/^\/\*\*/', '', $comment);
     $comment = preg_replace('/^\s*\*\s@\w+.*$/m', '', $comment);
     $comment = preg_replace('/^\s*\*\s/m', '', $comment);
