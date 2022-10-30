@@ -15,14 +15,14 @@ it('benchmarks query speed')
     ->get('/')
     ->assertOk()
     ->endBenchmark()
-    ->assertAllQueriesFasterThan(0.5);
+    ->assertAllQueriesFasterThan(2);
 
 it('benchmarks load time')
     ->beginBenchmark()
     ->get('/')
     ->assertOk()
     ->endBenchmark()
-    ->assertLoadTimeLessThan(2);
+    ->assertLoadTimeLessThan(10);
 
 it('benchmarks memory usage')
     ->beginBenchmark()
