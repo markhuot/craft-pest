@@ -89,7 +89,11 @@ class RequestBuilder
         $this->originalGlobals['_SERVER'] = array_merge($_SERVER);
         $_SERVER['HTTP_METHOD'] = $this->method;
         $this->request->headers->add('X-Http-Method-Override', $this->method);
-        $this->request->headers->add('X-Debug', 'enable');
+
+        if (\Craft::$app->config->getGeneral()->devMode) {
+            $this->request->headers->add('X-Debug', 'enable');
+        }
+        
         $_POST = $body = $this->body ?? [];
 
         if (!empty($body)) {
