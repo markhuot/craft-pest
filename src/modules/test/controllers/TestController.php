@@ -23,11 +23,11 @@ class TestController extends Controller
     {
         $this->requirePostRequest();
 
-        if ($cookie = \Craft::$app->getRequest()->getCookies()->get('c')) {
+        if ($cookie = \Craft::$app->getRequest()->getCookies()->get('foo')) {
             $cookie->value++;
         } else {
             $cookie = new Cookie([
-                'name' => 'c',
+                'name' => 'foo',
                 'value'=> 0,
                 'expire' => 100
             ]);
@@ -36,5 +36,17 @@ class TestController extends Controller
         \Craft::$app->getResponse()->getCookies()->add($cookie);
 
         return $this->asJson(['counter' => $cookie->value]);
+    }
+
+    function actionSession()
+    {
+        $this->requirePostRequest();
+
+        $session = \Craft::$app->getSession()->get('foo', 0);
+        $session++;
+
+        \Craft::$app->getSession()->set('foo', $session);
+
+        return $this->asJson([$session]);
     }
 }

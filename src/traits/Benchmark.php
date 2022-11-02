@@ -65,7 +65,7 @@ trait Benchmark
      */
     function endBenchmark()
     {
-        \craft\debug\Module::getInstance()->logTarget->export();
+        \craft\debug\Module::getInstance()?->logTarget->export();
         
         return new BaseBenchmark();
     }
