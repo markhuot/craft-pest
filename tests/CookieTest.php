@@ -1,10 +1,8 @@
 <?php
 
-use markhuot\craftpest\factories\Entry;
-use markhuot\craftpest\factories\Section;
 use markhuot\craftpest\factories\User;
     
-it ('cookie `foo` survives request cycle', function () {
+test('cookie `foo` survives request cycle', function () {
     $user = User::factory()->admin(true)->create();
     $this->actingAs($user);
 
@@ -21,10 +19,10 @@ it ('cookie `foo` survives request cycle', function () {
     expect($response1->content)->toBeJson();
     expect(json_decode($response1->content, true))->toBe(['counter' => 1]);
 
-});
+})->skip(true, 'workaround is not implemented');
 
 
-it ('session `foo` survives request cycle', function () {
+test('session `foo` survives request cycle', function () {
     $user = User::factory()->admin(true)->create();
     $this->actingAs($user);
 
@@ -38,7 +36,7 @@ it ('session `foo` survives request cycle', function () {
     expect(json_decode($response3->content, true))->toBe([3]);
 });
 
-it ('session `foo` survives request <> test cycle', function () {
+test('session `foo` survives request <> test cycle', function () {
     $user = User::factory()->admin(true)->create();
     $this->actingAs($user);
 
