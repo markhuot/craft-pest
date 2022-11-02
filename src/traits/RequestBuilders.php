@@ -91,6 +91,7 @@ trait RequestBuilders
     function action(string $action, array $body=[]): TestableResponse
     {
         return (new RequestBuilder('post', ''))
+            //->addCookie('c', 100)
             ->withCsrfToken()
             ->setBody([
                 'action' => $action,
