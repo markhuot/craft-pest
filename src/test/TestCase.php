@@ -10,7 +10,8 @@ class TestCase extends \PHPUnit\Framework\TestCase {
 
     use ActingAs,
         DatabaseAssertions,
-        RequestBuilders;
+        RequestBuilders,
+        Benchmark;
 
     protected function setUp(): void
     {
