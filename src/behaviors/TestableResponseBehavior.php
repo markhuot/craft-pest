@@ -216,7 +216,7 @@ class TestableResponseBehavior extends Behavior
 
         // Then check the expiration of it
         $cookie = $this->response->cookies->get($name);
-        if ($cookie->expire >= 0) {
+        if ($cookie->expire === 0 || $cookie->expire >= time()) {
             test()->fail('Cookie `' . $name . '` does not have an expiration in the past.');
         }
 
@@ -236,7 +236,7 @@ class TestableResponseBehavior extends Behavior
 
         // Then check the expiration of it
         $cookie = $this->response->cookies->get($name);
-        if ($cookie->expire < 0) {
+        if ($cookie->expire !== 0 && $cookie->expire < time()) {
             test()->fail('Cookie `' . $name . '` does not have an expiration in the future.');
         }
 
