@@ -2,11 +2,12 @@
 
 namespace markhuot\craftpest\traits;
 
+use yii\web\Cookie;
 use yii\web\CookieCollection;
 
 trait CookieState
 {
-    protected $cookies = [];
+    protected CookieCollection $cookies;
 
     function setUpCookieState()
     {
