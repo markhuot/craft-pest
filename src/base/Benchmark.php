@@ -97,7 +97,8 @@ class Benchmark
      * Assert that the execution timing of the benchmark is less than the given timing
      * in seconds.
      * 
-     * Note: Benchmarks must begin and end in your test. That allows you to do any necessary
+     * > **Note**
+     * > Benchmarks must begin and end in your test. That allows you to do any necessary
      * setup before the benchmark begins so your test preamble doesn't affect your assertion.
      * 
      * ```php

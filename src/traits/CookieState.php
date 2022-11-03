@@ -28,8 +28,9 @@ use yii\web\CookieCollection;
  * });
  * ```
  * 
- * Note: this is a verbose and slow way to manage login. It's better to use the
- * `->actingAs()` method on a test to log a user in.
+ * > **Note**
+ * > This is a verbose and slow way to manage login. It's better to use the
+ * > `->actingAs()` method on a test to log a user in.
  */
 trait CookieState
 {
