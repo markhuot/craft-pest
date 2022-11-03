@@ -48,6 +48,25 @@ final class Form
     }
 
     /**
+     * Creates and fills a virtual field
+     * This is useful to emulate DOM manipulation that actually happens via javascript
+     */
+    public function fake(string $fieldNameOrSelector, mixed $value): self
+    {
+        $virtual = new FormFakeField(new \DOMElement('input'));
+        $virtual->setName($fieldNameOrSelector);
+        $virtual->setValue((string) $value);
+
+        $this->form->set($virtual);
+
+        $this->form->setValues([$fieldNameOrSelector => $value]);
+
+        return $this;
+    }
+
+
+
+    /**
      * Checks checkbox
      */
     public function tick(string $fieldNameOrSelector): self
