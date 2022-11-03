@@ -114,6 +114,14 @@ class TestableResponseBehavior extends Behavior
         throw new \Exception('Unknown method ' . $method . ' called.');
     }
 
+    /**
+     * Fetch the response body as a JSON array. This can be run through the expectation API
+     * as well for a fluent chain,
+     * 
+     * ```php
+     * $response->expect()->jsonContent->toBe(['foo' => 'bar']);
+     * ```
+     */
     function getJsonContent()
     {
         if ($this->response->headers->get('content-type') !== 'application/json') {
