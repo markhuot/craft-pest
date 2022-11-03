@@ -9,6 +9,14 @@ status code was 200.
 ## getRequest()
 Get the requesr that triggered this reaponse.
 
+## getJsonContent()
+Fetch the response body as a JSON array. This can be run through the expectation API
+as well for a fluent chain,
+
+```php
+$response->expect()->jsonContent->toBe(['foo' => 'bar']);
+```
+
 ## querySelector(string $selector)
 If the response returns HTML you can `querySelector()` to inspect the
 HTML for specific content. The `querySelector()` method takes a

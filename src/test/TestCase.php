@@ -3,6 +3,7 @@
 namespace markhuot\craftpest\test;
 
 use markhuot\craftpest\traits\Benchmark;
+use markhuot\craftpest\traits\CookieState;
 use markhuot\craftpest\traits\DatabaseAssertions;
 use markhuot\craftpest\traits\RequestBuilders;
 
@@ -11,7 +12,8 @@ class TestCase extends \PHPUnit\Framework\TestCase {
     use ActingAs,
         DatabaseAssertions,
         RequestBuilders,
-        Benchmark;
+        Benchmark,
+        CookieState;
 
     protected function setUp(): void
     {

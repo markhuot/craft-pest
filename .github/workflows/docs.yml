@@ -32,6 +32,7 @@ jobs:
 
       - name: Generate docs
         run: |
+          cat src/bin/generate-docs.php
           php src/bin/generate-docs.php src/dom/NodeList.php docs/node-list.md
           php src/bin/generate-docs.php src/factories/Factory.php docs/factories.md
           php src/bin/generate-docs.php src/factories/Entry.php docs/factories/entry.md
@@ -41,7 +42,8 @@ jobs:
           php src/bin/generate-docs.php src/traits/DatabaseAssertions.php docs/assertions/database.md
           php src/bin/generate-docs.php src/traits/RequestBuilders.php docs/making-requests.md
           php src/bin/generate-docs.php src/base/Benchmark.php docs/assertions/benchmark.md
-      
+          php src/bin/generate-docs.php src/traits/CookieState.php docs/cookies.md
+
       - name: Add files
         run: git add -A docs/
 

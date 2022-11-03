@@ -115,6 +115,23 @@ class TestableResponseBehavior extends Behavior
     }
 
     /**
+     * Fetch the response body as a JSON array. This can be run through the expectation API
+     * as well for a fluent chain,
+     * 
+     * ```php
+     * $response->expect()->jsonContent->toBe(['foo' => 'bar']);
+     * ```
+     */
+    function getJsonContent()
+    {
+        if ($this->response->headers->get('content-type') !== 'application/json') {
+            throw new \Exception('The response does not have a JSON content-type to get JSON data from');
+        }
+
+        return json_decode($this->response->content, true);
+    }
+
+    /**
      * If the response returns HTML you can `querySelector()` to inspect the
      * HTML for specific content. The `querySelector()` method takes a
      * CSS selector to look for (just like in Javascript).
@@ -207,7 +224,7 @@ class TestableResponseBehavior extends Behavior
 
         // Then check the expiration of it
         $cookie = $this->response->cookies->get($name);
-        if ($cookie->expire >= 0) {
+        if ($cookie->expire === 0 || $cookie->expire >= time()) {
             test()->fail('Cookie `' . $name . '` does not have an expiration in the past.');
         }
 
@@ -227,7 +244,7 @@ class TestableResponseBehavior extends Behavior
 
         // Then check the expiration of it
         $cookie = $this->response->cookies->get($name);
-        if ($cookie->expire < 0) {
+        if ($cookie->expire !== 0 && $cookie->expire < time()) {
             test()->fail('Cookie `' . $name . '` does not have an expiration in the future.');
         }
 
