@@ -9,6 +9,8 @@ if (empty($input) || empty($output) || !file_exists($input)) {
     throw new \Exception('Could not find source ['.$input.']');
 }
 
+echo "Transforming [$input] to [$output]\n";
+
 $basename = basename($input);
 $info = pathinfo($input);
 $className = $info['filename'];
