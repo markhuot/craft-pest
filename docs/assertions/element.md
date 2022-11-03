@@ -6,8 +6,8 @@ Elements, like entries, and be tested in Craft via the following assertions.
 Asserts that the element is valid (contains no errors from validation).
 
 > **Note**
-Since validation errors throw Exceptions in Pest, by default, you must
-silence those exceptions to continue the test.
+> Since validation errors throw Exceptions in Pest, by default, you must
+> silence those exceptions to continue the test.
 
 ```php
 Entry::factory()
