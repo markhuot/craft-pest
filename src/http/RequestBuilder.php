@@ -38,7 +38,6 @@ class RequestBuilder
 
     public function addCookie(string $key, $value): self
     {
-        $this->request->cookies->readOnly = false;
         $this->request->cookies->add(new Cookie([
             'name' => $key,
             'value' => $value,
