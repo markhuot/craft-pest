@@ -4,7 +4,8 @@ ready to be inserted in to Craft's asset library.
 $volume = Volume::factory()->create();
 Asset::factory()->volume($volume->handle)->create();
 ```
-Note: any assets created during a test will be cleaned up and deleted after the test.
+> **Note**
+> Any assets created during a test will be cleaned up and deleted after the test.
 
 ## volume(string $handle)
 Set the volume of the asset. Note: if you point this to a live volume that is in use in
