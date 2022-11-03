@@ -53,7 +53,7 @@ final class Form
      */
     public function fake(string $fieldNameOrSelector, mixed $value): self
     {
-        $virtual = new FormFakeField(new \DOMElement('input'));
+        $virtual = new FormFakeField(new \DOMElement('virual'));
         $virtual->setName($fieldNameOrSelector);
         $virtual->setValue((string) $value);
 
