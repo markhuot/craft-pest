@@ -30,6 +30,8 @@ class RequestHandler
             $response->setRequest($request);
             $response->prepare();
 
+            test()->storeCookieCollection($response->cookies);
+
             $this->app->trigger(\craft\web\Application::EVENT_AFTER_REQUEST);
 
             return $response;

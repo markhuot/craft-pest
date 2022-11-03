@@ -114,6 +114,15 @@ class TestableResponseBehavior extends Behavior
         throw new \Exception('Unknown method ' . $method . ' called.');
     }
 
+    function getJsonContent()
+    {
+        if ($this->response->headers->get('content-type') !== 'application/json') {
+            throw new \Exception('The response does not have a JSON content-type to get JSON data from');
+        }
+
+        return json_decode($this->response->content, true);
+    }
+
     /**
      * If the response returns HTML you can `querySelector()` to inspect the
      * HTML for specific content. The `querySelector()` method takes a

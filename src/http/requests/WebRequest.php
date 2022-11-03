@@ -143,6 +143,7 @@ abstract class WebRequest extends \craft\web\Request
             '_url' => "/{$uri}?{$queryString}",
             '_port' => 8080,
             '_isCpRequest' => $isCpRequest,
+            '_cookies' => test()->getCookieCollection(),
         ]);
     }
 

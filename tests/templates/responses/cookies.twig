@@ -1,0 +1,6 @@
+{% do craft.app.response.headers.set('content-type', 'application/json') %}
+{% set cookies = {} %}
+{% for cookie in craft.app.request.cookies %}
+    {% set cookies = cookies|merge({(cookie.name): cookie.value}) %}
+{% endfor %}
+{{ cookies|json_encode|raw }}
