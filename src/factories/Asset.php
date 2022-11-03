@@ -18,7 +18,8 @@ use function markhuot\craftpest\helpers\craft\volumeDeleteFileAtPath;
  * Asset::factory()->volume($volume->handle)->create();
  * ```
  *
- * Note: any assets created during a test will be cleaned up and deleted after the test.
+ * > **Note**
+ * > Any assets created during a test will be cleaned up and deleted after the test.
  */
 class Asset extends Element {
 
