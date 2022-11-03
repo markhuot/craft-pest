@@ -59,8 +59,6 @@ final class Form
 
         $this->form->set($virtual);
 
-        $this->form->setValues([$fieldNameOrSelector => $value]);
-
         return $this;
     }
 
