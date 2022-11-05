@@ -51,6 +51,12 @@ class MatrixField extends Field
             
         // Store the field, which also saves the block types
         $result = parent::store($element);
+
+        // If we have an error, stop here because it will be impossible to save
+        // block types on an unsaved/errored matrix field
+        if ($result === false) {
+            return $result;
+        }
         
         // Add the fields in to the block types
         collect($this->blockTypes)
