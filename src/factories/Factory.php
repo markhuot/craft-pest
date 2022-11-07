@@ -104,20 +104,21 @@ abstract class Factory {
      */
     function __call(string $method, array $args)
     {
-        // $reflect = new \ReflectionClass($this);
-        // $traits = $reflect->getTraits();
-        // while($reflect=$reflect->getParentClass()) {
-        //     $traits = array_merge($traits, $reflect->getTraits());
-        // }
-        // foreach ($traits as $trait) {
-        //     $methodName = 'handlesMagic' . $trait->getShortName() . 'Call';
-        //     if ($trait->hasMethod($methodName)) {
-        //         $method = $trait->getMethod($methodName);
-        //         if ($method->invoke($this, $method, $args)) {
-        //             dd('yes');
-        //         }
-        //     }
-        // }
+        $reflect = new \ReflectionClass($this);
+        $traits = $reflect->getTraits();
+        while($reflect=$reflect->getParentClass()) {
+            $traits = array_merge($traits, $reflect->getTraits());
+        }
+        foreach ($traits as $trait) {
+            $handlesMethodName = 'handlesMagic' . $trait->getShortName() . 'Call';
+            $callsMethodName = 'callMagic' . $trait->getShortName() . 'Call';
+            if ($trait->hasMethod($handlesMethodName)) {
+                if ($this->$handlesMethodName($method, $args)) {
+                    $this->$callsMethodName($method, $args);
+                    return $this;
+                }
+            }
+        }
 
         if (count($args) > 1) {
             $this->attributes[$method] = array_merge($this->attributes[$method] ?? [], $args);

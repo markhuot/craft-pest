@@ -12,12 +12,17 @@ trait AddsMatrixBlocks
 {
     function handlesMagicAddsMatrixBlocksCall($key, $args)
     {
-
+        return true;
     }
 
     function callMagicAddsMatrixBlocksCall($key, $args)
     {
-
+        preg_match('/^add(.+)Block$/', $key, $matches);
+        if (empty($matches[1])) {
+            throw new \Exception('Could not determine a field name from the method name [' . $key . ']');
+        }
+        $fieldName = lcfirst($matches[1]);
+        return $this->addBlockTo($fieldName, ...$args);
     }
 
     function addBlockTo(Matrix|string $fieldOrHandle, ...$args)
@@ -29,8 +34,9 @@ trait AddsMatrixBlocks
         else if (is_a($fieldOrHandle, Matrix::class)) {
             $field = $fieldOrHandle;
         }
-        else {
-            throw new \Exception('Could not determine a field');
+
+        if (empty($field)) {
+            throw new \Exception('Could not determine a field to add to from key [' . $fieldOrHandle . ']');
         }
 
         if (!empty($args[0]) && is_string($args[0])) {

@@ -67,7 +67,7 @@ class VolumeFolder extends Factory {
      * @param \craft\models\VolumeFolder $element
      */
     function store($element) {
-        \Craft::$app->assets->createFolder($element);
+        return \Craft::$app->assets->createFolder($element);
     }
 
 }

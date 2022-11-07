@@ -47,7 +47,7 @@ class Volume extends Factory {
      * Craft 4 expects a \craft\models\Volume
      */
     function store($element) {
-        \Craft::$app->getVolumes()->saveVolume($element);
+        return \Craft::$app->getVolumes()->saveVolume($element);
     }
 
     /**

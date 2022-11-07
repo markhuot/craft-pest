@@ -100,22 +100,22 @@ it('can fill matrix blocks with a magic shorthand', function () {
     $plainTextOne = FieldFactory::factory()->type(PlainTextField::class)->name('Plain Text One');
     $plainTextTwo = FieldFactory::factory()->type(PlainTextField::class)->name('Plain Text Two');
     $blockType = BlockTypeFactory::factory()->fields($plainTextOne, $plainTextTwo);
-    $matrix = MatrixFieldFactory::factory()->name('Page Content')->blockTypes($blockType)->create();
+    $matrix = MatrixFieldFactory::factory()->blockTypes($blockType)->create();
     $section = SectionFactory::factory()->fields($matrix)->create();
 
-    $blockTypeHandle = $blockType->getMadeModels()->first()->handle;
     $plainTextOneHandle = $plainTextOne->getMadeModels()->first()->handle;
     $plainTextTwoHandle = $plainTextTwo->getMadeModels()->first()->handle;
+    $matrixFieldMethod = 'add' . ucfirst($matrix->handle).'Block';
 
     $entry = EntryFactory::factory()
         ->section($section)
-        // ->addPageContentBlock(
-        //     plainTextOneHandle: 'foo',
-        //     plainTextTwoHandle: 'bar',
-        // )
+        ->$matrixFieldMethod(
+            plainTextOne: 'foo',
+            plainTextTwo: 'bar',
+        )
         ->create();
 
     $block = $entry->{$matrix->handle}->all()[0];
     expect($block->{$plainTextOneHandle})->toBe('foo');
     expect($block->{$plainTextTwoHandle})->toBe('bar');
-})->only();
+});
