@@ -31,6 +31,7 @@ class FieldTypeHintBehavior extends Behavior
             case Date::class:
                 return 'int|string|\DateTime $value';
         }
+
         return 'mixed $value';
     }
 }
