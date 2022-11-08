@@ -352,20 +352,26 @@ abstract class Factory {
                 return $element;
             }
 
+            // Try to save our model and if we get back a bad response, convert the
+            // response in to an exception. We don't do anything with the exception here
+            // because sometimes an exception will be thrown inside of `->store` and
+            // other times it won't. Regardless somewhere in this `try` block an exception
+            // will be thrown and the next `catch` block will determine what to do
+            // with it.
             try {
                 if (!$this->store($element)) {
                     throw new ModelStoreException($element);
                 }
             }
+
+            // If the store method threw an exception and exceptions are muted then ignore
+            // the error and allow code to continue processing. You would want to do
+            // this if you're expecting a validation exception.
             catch (\Throwable $e) {
                 if (!$this->muted) {
                     throw $e;
                 }
             }
-
-            // if (!empty($element->errors)) {
-            //     throw new \Exception(json_encode($element->errors));
-            // }
 
             $afterStoreEvent = new FactoryStoreEvent;
             $afterStoreEvent->sender = $this;
