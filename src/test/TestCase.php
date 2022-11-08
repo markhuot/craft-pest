@@ -2,6 +2,7 @@
 
 namespace markhuot\craftpest\test;
 
+use markhuot\craftpest\actions\RenderCompiledClasses;
 use markhuot\craftpest\traits\Benchmark;
 use markhuot\craftpest\traits\CookieState;
 use markhuot\craftpest\traits\DatabaseAssertions;
@@ -57,11 +58,7 @@ class TestCase extends \PHPUnit\Framework\TestCase {
 
     public function renderCompiledClasses()
     {
-        $template = file_get_contents(__DIR__ . '/../../stubs/compiled_classes/FactoryFields.twig');
-        $compiledClass = \Craft::$app->view->renderString($template, [
-            'fields' => \Craft::$app->fields->getAllFields(),
-        ]);
-        file_put_contents(\Craft::getAlias('@storage') . '/runtime/compiled_classes/FactoryFields.php', $compiledClass);
+        (new RenderCompiledClasses)->handle();
     }
 
     protected function needsRequireStatements()

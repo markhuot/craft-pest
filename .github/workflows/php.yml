@@ -89,6 +89,9 @@ jobs:
       run: composer update --with "craftcms/cms:${{ matrix.craftVersion }}" -W && ./src/bin/craft migrate/all --no-backup=1 --interactive=0
       if: matrix.craftVersion != '^3.7'
 
+    - name: Generate compiled classes
+      run: ./src/bin/craft pest/ide/generate-mixins
+
     - name: Run PHPStan
       run: ./vendor/bin/phpstan analyse src
 
