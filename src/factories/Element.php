@@ -110,6 +110,11 @@ abstract class Element extends Factory
                 unset($attributes[$key]);
             }
         }
+        
+        // No need to progress further if the element doesn't support content or has no field layout
+        if (!$element::hasContent() || !$element->getFieldLayout()) {
+            return $element;
+        }
 
         // render out any nested factories while setting the custom field values
         foreach ($attributes as $key => &$value) {
