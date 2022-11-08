@@ -26,5 +26,18 @@ class Category extends Element {
             'groupId' => $group->id,
         ]);
     }
+    
+    /**
+     * @inheritdoc
+     */
+    protected function setAttributes($attributes, $element)
+    {
+        // Set `groupId` early on the element so that it does break when trying to retrieve the field layout
+        if (isset($attributes['groupId'])) {
+            $element->groupId = $attributes['groupId'];
+            unset($attributes['groupId']);
+        }
 
+        return parent::setAttributes($attributes, $element);
+    }
 }
