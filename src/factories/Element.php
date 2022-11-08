@@ -2,16 +2,17 @@
 
 namespace markhuot\craftpest\factories;
 
-use craft\base\ElementInterface;
 use craft\fields\Matrix;
 use craft\fields\Assets;
 use craft\fields\Categories;
 use craft\fields\Entries;
 use Illuminate\Support\Collection;
-use markhuot\craftpest\exceptions\ModelStoreException;
-use function markhuot\craftpest\helpers\base\collection_wrap;
+use markhuot\craftpest\traits\FactoryFields;
 use function markhuot\craftpest\helpers\base\array_wrap;
 
+/**
+ * @mixin FactoryFields
+ */
 abstract class Element extends Factory
 {
     use AddsMatrixBlocks;

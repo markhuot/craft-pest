@@ -103,12 +103,18 @@ it('can fill matrix blocks with a magic shorthand', function () {
     $matrix = MatrixFieldFactory::factory()->blockTypes($blockType)->create();
     $section = SectionFactory::factory()->fields($matrix)->create();
 
+    $blockTypeHandle = $blockType->getMadeModels()->first()->handle;
     $plainTextOneHandle = $plainTextOne->getMadeModels()->first()->handle;
     $plainTextTwoHandle = $plainTextTwo->getMadeModels()->first()->handle;
-    $matrixFieldMethod = 'add' . ucfirst($matrix->handle).'Block';
+    $matrixBlockMethod = 'add' . ucfirst($blockTypeHandle) . 'To' . ucfirst($matrix->handle);
+    $matrixFieldMethod = 'addBlockTo' . ucfirst($matrix->handle);
 
     $entry = EntryFactory::factory()
         ->section($section)
+        ->$matrixBlockMethod(
+            fieldOne: 'foo',
+            fieldTwo: 'bar',
+        )
         ->$matrixFieldMethod(
             plainTextOne: 'foo',
             plainTextTwo: 'bar',
@@ -118,4 +124,4 @@ it('can fill matrix blocks with a magic shorthand', function () {
     $block = $entry->{$matrix->handle}->all()[0];
     expect($block->{$plainTextOneHandle})->toBe('foo');
     expect($block->{$plainTextTwoHandle})->toBe('bar');
-});
+})->only();

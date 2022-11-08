@@ -5,9 +5,6 @@ namespace markhuot\craftpest\factories;
 use craft\fields\Matrix;
 use craft\models\MatrixBlockType;
 
-/**
- * @mixin
- */
 trait AddsMatrixBlocks
 {
     function handlesMagicAddsMatrixBlocksCall($key, $args)
@@ -17,14 +14,25 @@ trait AddsMatrixBlocks
 
     function callMagicAddsMatrixBlocksCall($key, $args)
     {
-        preg_match('/^add(.+)Block$/', $key, $matches);
-        if (empty($matches[1])) {
-            throw new \Exception('Could not determine a field name from the method name [' . $key . ']');
+        preg_match('/^addBlockTo(.*)$/', $key, $fieldMatches);
+        if (!empty($fieldMatches)) {
+            $fieldName = lcfirst($fieldMatches[1]);
+            return $this->addBlockTo($fieldName, ...$args);
         }
-        $fieldName = lcfirst($matches[1]);
-        return $this->addBlockTo($fieldName, ...$args);
+
+        preg_match('/^add(.+)To(.*)$/', $key, $blockTypeMatches);
+        if (!empty($blockTypeMatches)) {
+            $blockType = lcfirst($blockTypeMatches[1]);
+            $fieldName = lcfirst($blockTypeMatches[2]);
+            return $this->addBlockTo($fieldName, $blockType, ...$args);
+        }
+
+        throw new \Exception('Could not determine a matrix field based on [' . $key . ']');
     }
 
+    /**
+     * Adds a block to the given matrix field.
+     */
     function addBlockTo(Matrix|string $fieldOrHandle, ...$args)
     {
         if (is_string($fieldOrHandle)) {

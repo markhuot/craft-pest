@@ -18,6 +18,7 @@ class TestCase extends \PHPUnit\Framework\TestCase {
     protected function setUp(): void
     {
         $this->createApplication();
+        $this->renderCompiledClasses();
 
         $this->callTraits('setUp');
     }
@@ -54,6 +55,15 @@ class TestCase extends \PHPUnit\Framework\TestCase {
         return \Craft::$app;
     }
 
+    public function renderCompiledClasses()
+    {
+        $template = file_get_contents(__DIR__ . '/../../stubs/compiled_classes/FactoryFields.twig');
+        $compiledClass = \Craft::$app->view->renderString($template, [
+            'fields' => \Craft::$app->fields->getAllFields(),
+        ]);
+        file_put_contents(\Craft::getAlias('@storage') . '/runtime/compiled_classes/FactoryFields.php', $compiledClass);
+    }
+
     protected function needsRequireStatements()
     {
         return !defined('CRAFT_BASE_PATH');
@@ -64,6 +74,11 @@ class TestCase extends \PHPUnit\Framework\TestCase {
         require __DIR__ . '/../bootstrap/bootstrap.php';
     }
 
+    /**
+     * @template TClass
+     * @param class-string<TClass> $class
+     * @return TClass
+     */
     public function factory(string $class)
     {
         return $class::factory();
