@@ -7,7 +7,9 @@ use craft\base\Plugin;
 use craft\elements\Entry;
 use craft\events\DefineBehaviorsEvent;
 use craft\events\PluginEvent;
+use craft\services\Fields;
 use craft\services\Plugins;
+use markhuot\craftpest\actions\RenderCompiledClasses;
 use markhuot\craftpest\behaviors\ExpectableBehavior;
 use markhuot\craftpest\behaviors\FieldTypeHintBehavior;
 use markhuot\craftpest\behaviors\TestableElementBehavior;
@@ -61,6 +63,14 @@ class Pest extends Plugin {
             Field::EVENT_DEFINE_BEHAVIORS,
             function (DefineBehaviorsEvent $event) {
                 $event->behaviors[] = FieldTypeHintBehavior::class;
+            }
+        );
+
+        Event::on(
+            Fields::class,
+            Fields::EVENT_AFTER_SAVE_FIELD,
+            function () {
+                (new RenderCompiledClasses)->handle();
             }
         );
     }

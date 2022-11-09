@@ -11,14 +11,28 @@ use function markhuot\craftpest\helpers\base\version_greater_than_or_equal_to;
 
 class IdeController extends Controller
 {
+    public bool $force = false;
+
+    function options($actionID): array
+    {
+        return [
+            'force',
+        ];
+    }
+
     /**
      * Run the Pest tests
      */
     function actionGenerateMixins()
     {
-        (new RenderCompiledClasses)->handle();
+        $result = (new RenderCompiledClasses)->handle($this->force);
 
-        echo "Mixins successfully generated!\n";
+        if ($result) {
+            echo "Mixins successfully generated!\n";
+        }
+        else {
+            echo "Mixins already exist, skipping.\n";
+        }
 
         return ExitCode::OK;
     }

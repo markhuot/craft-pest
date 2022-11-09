@@ -10,9 +10,6 @@ use Illuminate\Support\Collection;
 use markhuot\craftpest\traits\FactoryFields;
 use function markhuot\craftpest\helpers\base\array_wrap;
 
-/**
- * @mixin FactoryFields
- */
 abstract class Element extends Factory
 {
     use AddsMatrixBlocks;
