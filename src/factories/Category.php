@@ -32,6 +32,7 @@ class Category extends Element {
      */
     protected function setAttributes($attributes, $element)
     {
+        /** @var \craft\elements\Category $element */
         // Set `groupId` early on the element so that it does break when trying to retrieve the field layout
         if (isset($attributes['groupId'])) {
             $element->groupId = $attributes['groupId'];
