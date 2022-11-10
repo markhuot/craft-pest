@@ -8,7 +8,7 @@ parameters:
     ignoreErrors:
       - '#Constant CRAFT_BASE_PATH not found.#'
     scanFiles:
-      - %currentWorkingDirectory%/storage/runtime/compiled_classes/FactoryFields.php
+      - %currentWorkingDirectory%/storage/runtime/compiled_classes/FactoryFields_*.php
       - %currentWorkingDirectory%/vendor/yiisoft/yii2/Yii.php
       - %currentWorkingDirectory%/vendor/craftcms/cms/src/Craft.php
       - %currentWorkingDirectory%/vendor/craftcms/cms/src/behaviors/CustomFieldBehavior.php.template
