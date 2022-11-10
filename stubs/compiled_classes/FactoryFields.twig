@@ -9,7 +9,7 @@ namespace markhuot\craftpest\traits;
  *
  {% for field in fields %}
  {% if field.valueType == 'craft\\elements\\db\\MatrixBlockQuery' %}
- * @method $this addBlockTo{{ field.handle|ucfirst }}({{ field.blockTypes[0].fieldLayout.getCustomFieldElements()|map(f => f.getField().typeHintFactory|default('mixed $value'))|join(', ') }})
+ * @method $this addBlockTo{{ field.handle|ucfirst }}({{ field.blockTypes[0].fieldLayout.getCustomFieldElements()|default([])|map(f => f.getField().typeHintFactory|default('mixed $value'))|join(', ') }})
  {% for blockType in field.blockTypes %}
  * @method $this add{{ blockType.handle|ucfirst }}To{{ field.handle|ucfirst }}({{ blockType.fieldLayout.getCustomFieldElements()|map(f => f.getField().typeHintFactory|default('mixed $value'))|join(', ') }})
  {% endfor %}
