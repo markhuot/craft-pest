@@ -9,7 +9,8 @@ trait AddsMatrixBlocks
 {
     function handlesMagicAddsMatrixBlocksCall($key, $args)
     {
-        return true;
+        return preg_match('/^addBlockTo(.*)$/', $key, $fieldMatches) ||
+            preg_match('/^add(.+)To(.*)$/', $key, $blockTypeMatches);
     }
 
     function callMagicAddsMatrixBlocksCall($key, $args)
