@@ -124,4 +124,4 @@ it('can fill matrix blocks with a magic shorthand', function () {
     $block = $entry->{$matrix->handle}->all()[0];
     expect($block->{$plainTextOneHandle})->toBe('foo');
     expect($block->{$plainTextTwoHandle})->toBe('bar');
-})->only();
+});
