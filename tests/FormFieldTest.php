@@ -109,4 +109,4 @@ it('can create virtual fields', function() {
             'first' => 'prefilled',
             'does-not-exist' => 'theValue'
         ]);
-})->only();
+});
