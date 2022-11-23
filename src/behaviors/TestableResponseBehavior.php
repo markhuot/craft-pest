@@ -467,8 +467,18 @@ class TestableResponseBehavior extends Behavior
      * ```php
      * $response->assertLocation('/foo/bar');
      * ```
+     * 
+     * By default the full location will be checked including the path,
+     * host, port, etc... If you would like to check only a portion of
+     * the location you can pass in an array of keys in the second
+     * parameter. The keys take their names from PHP's [`parse_url`](https://www.php.net/parse_url)
+     * function.
+     * 
+     * ```php
+     * $response->assertLocation('/foo', ['host', 'path']);
+     * ```
      */
-    function assertLocation(string $location) {
+    function assertLocation(string $location, array $checkParts=null) {
         $header = $this->response->getHeaders()->get('Location');
         $headerParts = parse_url($header);
 
@@ -483,9 +493,28 @@ class TestableResponseBehavior extends Behavior
         $locationUrl = \craft\helpers\UrlHelper::url($locationUri);
         $locationParts = parse_url($locationUrl);
 
+        if ($checkParts !== null) {
+            $headerParts = collect($headerParts)->only($checkParts)->toArray();
+            $locationParts = collect($locationParts)->only($checkParts)->toArray();
+        }
+
         test()->assertSame($locationParts, $headerParts);
 
         return $this->response;
+    }
+
+    /**
+     * Assert that the given path marches the path of the returned
+     * `location` header. The other parts of the location, like the
+     * host name, are ignored.
+     * 
+     * ```php
+     * $response->assertLocationPath('/foo');
+     * ```
+     */
+    function assertLocationPath(string $uri)
+    {
+        return $this->assertLocation($uri, ['path']);
     }
 
     /**

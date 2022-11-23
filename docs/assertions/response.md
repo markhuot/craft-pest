@@ -133,10 +133,29 @@ Checks that the response headers do not contain the given header.
 $response->assertHeaderMissing('x-foo');
 ```
 
-## assertLocation(string $location)
+## assertLocation(string $location, ?array $checkParts = NULL)
 Checks that the location header matches the given location
 ```php
 $response->assertLocation('/foo/bar');
+```
+
+By default the full location will be checked including the path,
+host, port, etc... If you would like to check only a portion of
+the location you can pass in an array of keys in the second
+parameter. The keys take their names from PHP's [`parse_url`](https://www.php.net/parse_url)
+function.
+
+```php
+$response->assertLocation('/foo', ['host', 'path']);
+```
+
+## assertLocationPath(string $uri)
+Assert that the given path marches the path of the returned
+`location` header. The other parts of the location, like the
+host name, are ignored.
+
+```php
+$response->assertLocationPath('/foo');
 ```
 
 ## assertFlash(?string $message = NULL, ?string $key = NULL)

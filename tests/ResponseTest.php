@@ -136,3 +136,16 @@ it('asserts titles')
 it('asserts unauthorized')
     ->get('/responses/401')
     ->assertUnauthorized();
+
+it('asserts location')
+    ->get('/responses/302')
+    ->assertLocation('/');
+
+it('asserts location path')
+    ->get('/responses/302-query-string')
+    ->assertLocation('/', ['path']);
+
+it('asserts location path by shorthand')
+    ->get('/responses/302-query-string')
+    ->assertLocationPath('/');
+
