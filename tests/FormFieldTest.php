@@ -101,7 +101,7 @@ it('can create virtual fields', function() {
     $this->get('/page-with-basic-form')
         ->assertOk()
         ->form()
-        ->fake('does-not-exist', 'theValue')
+        ->addField('does-not-exist', 'theValue')
         ->submit()
         ->getRequest()
         ->expect()
@@ -109,4 +109,4 @@ it('can create virtual fields', function() {
             'first' => 'prefilled',
             'does-not-exist' => 'theValue'
         ]);
-});
+})->only();

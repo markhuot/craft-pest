@@ -7,6 +7,7 @@ use markhuot\craftpest\traits\Dd;
 use markhuot\craftpest\web\TestableResponse;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
+use Symfony\Component\DomCrawler\Field\InputFormField;
 
 final class Form
 {
@@ -51,13 +52,15 @@ final class Form
      * Creates and fills a virtual field
      * This is useful to emulate DOM manipulation that actually happens via javascript
      */
-    public function fake(string $fieldNameOrSelector, mixed $value): self
+    public function addField(string $fieldNameOrSelector, mixed $value): self
     {
-        $virtual = new FormFakeField(new \DOMElement('virtual'));
-        $virtual->setName($fieldNameOrSelector);
-        $virtual->setValue((string) $value);
+        $node = $this->form->getNode()->ownerDocument->createElement('input');
+        $node->setAttribute('name', $fieldNameOrSelector);
 
-        $this->form->set($virtual);
+        $field = new InputFormField($node);
+        $field->setValue((string) $value);
+
+        $this->form->set($field);
 
         return $this;
     }
