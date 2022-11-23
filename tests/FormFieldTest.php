@@ -94,3 +94,19 @@ it('works with select fields on single form pages', function () {
         ->expect()
         ->bodyParams->toMatchArray(['third' => 'baz']);
 });
+
+
+
+it('can create virtual fields', function() {
+    $this->get('/page-with-basic-form')
+        ->assertOk()
+        ->form()
+        ->addField('does-not-exist', 'theValue')
+        ->submit()
+        ->getRequest()
+        ->expect()
+        ->bodyParams->toMatchArray([
+            'first' => 'prefilled',
+            'does-not-exist' => 'theValue'
+        ]);
+});
