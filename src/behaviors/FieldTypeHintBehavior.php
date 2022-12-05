@@ -7,6 +7,7 @@ use craft\fields\Assets;
 use craft\fields\Categories;
 use craft\fields\Color;
 use craft\fields\Date;
+use craft\fields\Dropdown;
 use craft\fields\Lightswitch;
 use craft\fields\PlainText;
 use yii\base\Behavior;
@@ -16,7 +17,7 @@ use yii\base\Behavior;
  */
 class FieldTypeHintBehavior extends Behavior
 {
-    function getTypeHintFactory()
+    function getFactoryTypeHint()
     {
         $handle = $this->owner->handle;
 
@@ -36,6 +37,9 @@ class FieldTypeHintBehavior extends Behavior
 
             case Date::class:
                 return 'int|string|\DateTime $'.$handle;
+
+            case Dropdown::class:
+                return 'string $'.$handle;
         }
 
         return 'mixed $'.$handle;
