@@ -43,7 +43,8 @@ class MatrixField extends Field
     function store($element): bool
     {
         // Push the block types in to the field
-        $element->blockTypes = collect($this->blockTypes)
+        $element->setBlockTypes(
+            collect($this->blockTypes)
             ->map
             ->make()
             ->flatten()
@@ -51,7 +52,8 @@ class MatrixField extends Field
                 $blockType->fieldId = $element->id;
                 $blockType->sortOrder = $index;
             })
-            ->toArray();
+            ->toArray()
+        );
             
         // Store the field, which also saves the block types
         $result = parent::store($element);
@@ -64,7 +66,7 @@ class MatrixField extends Field
         
         // Add the fields in to the block types
         collect($this->blockTypes)
-            ->zip($element->blockTypes)
+            ->zip($element->getBlockTypes())
             ->each(function ($props) {
                 /** @var MatrixBlockType $blockType */
                 [$factory, $blockType] = $props;
@@ -85,7 +87,9 @@ class MatrixField extends Field
         // The following grabs the global \Craft::$app->fields->field reference to this matrix field
         // and updates the block types by pulling them fresh from the database. This ensures everything
         // is up to date and there are no null fieldLayoutId values.
-        \Craft::$app->fields->getFieldById($element->id)->setBlockTypes(\Craft::$app->matrix->getBlockTypesByFieldId($element->id));
+        /** @var Matrix $cachedMatrixField */
+        $cachedMatrixField = \Craft::$app->fields->getFieldById($element->id);
+        $cachedMatrixField->setBlockTypes(\Craft::$app->matrix->getBlockTypesByFieldId($element->id));
 
         return $result;
     }
