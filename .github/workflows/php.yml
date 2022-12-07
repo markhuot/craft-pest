@@ -83,7 +83,7 @@ jobs:
       run: mkdir -p ./storage && cp -r ./stubs/config ./config
 
     - name: Install Craft
-      run: ./src/bin/craft install --username=michael@bluth.com --email=michael@bluth.com --password=secret --siteName=Pest --siteUrl=http://localhost:8080 --language=en-US
+      run: ./src/bin/craft install --username=admin --email=michael@bluth.com --password=secret --siteName=Pest --siteUrl=http://localhost:8080 --language=en-US
 
     - name: Update to Craft ${{ matrix.craftVersion }}
       run: composer update --with "craftcms/cms:${{ matrix.craftVersion }}" -W && ./src/bin/craft migrate/all --no-backup=1 --interactive=0

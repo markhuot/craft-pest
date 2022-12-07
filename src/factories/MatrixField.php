@@ -2,6 +2,7 @@
 
 namespace markhuot\craftpest\factories;
 
+use craft\fields\Matrix;
 use craft\models\MatrixBlockType;
 use function markhuot\craftpest\helpers\base\version_greater_than_or_equal_to;
 
@@ -36,6 +37,9 @@ class MatrixField extends Field
         return new \craft\fields\Matrix;
     }
 
+    /**
+     * @param Matrix $element
+     */
     function store($element): bool
     {
         // Push the block types in to the field
@@ -71,6 +75,17 @@ class MatrixField extends Field
                     \Craft::$app->matrix->saveBlockType($blockType);
                 }
             });
+
+        // In Craft 3.7 the Matrix Field model stores a reference to the `_blockTypes` of the
+        // matrix. Inside that reference the block type stores a reference to its `fieldLayoutId`.
+        //
+        // The reference to the Matrix Field is cached in to \Craft::$app->fields->_fields when the
+        // field is created and it's cached without a valid `fieldLayoutId`.
+        //
+        // The following grabs the global \Craft::$app->fields->field reference to this matrix field
+        // and updates the block types by pulling them fresh from the database. This ensures everything
+        // is up to date and there are no null fieldLayoutId values.
+        \Craft::$app->fields->getFieldById($element->id)->setBlockTypes(\Craft::$app->matrix->getBlockTypesByFieldId($element->id));
 
         return $result;
     }
