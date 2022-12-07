@@ -2,12 +2,9 @@
 
 namespace markhuot\craftpest\factories;
 
-use craft\base\ElementInterface;
 use craft\models\EntryType;
-use craft\models\Section;
-use Faker\Factory as Faker;
-use Illuminate\Support\Collection;
 use markhuot\craftpest\factories\Section as FactoriesSection;
+use markhuot\craftpest\traits\FactoryFields;
 
 /**
  * Entry Factory
@@ -20,6 +17,7 @@ use markhuot\craftpest\factories\Section as FactoriesSection;
  * @method uri(string $uri)
  * @method enabled(bool $enabled)
  * @method parent(\craft\elements\Entry|Entry|string|int $parent)
+ * @mixin FactoryFields
  */
 class Entry extends Element
 {

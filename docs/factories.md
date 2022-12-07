@@ -35,7 +35,12 @@ That example uses most of the common factory methods.
 Create a new factory by calling `::factory()` on the type of element to be
 created, such as `Entry::factort()` or `Asset::factory()`.
 
-## set($key, $value)
+## muteValidationErrors(bool $muted = true)
+Typically the `->create()` method throws exceptions when a validation error
+occurs. Calling `->muteValidationErrors()` will mute those exceptions and return
+the unsaved element with the `->errors` property filled out.
+
+## set($key, $value = NULL)
 Set an attribute and return the factory so you can chain on multiple field
 in one call, for example,
 
@@ -45,16 +50,21 @@ Asset::factory()
   ->set('fooField', 'the value of fooField')
 ```
 
-The an attributes value can be set in two ways,
+The an attributes value can be set in three ways,
 
 1. a scalar value, like a steing or integer
 2. a callable that returns a scalar. In this case the callable will be
 passed an instance of faker
+3. an array containing either of the first two ways
 
 ```php
 Entry::factory()
   ->set('title, 'SOME GREAT TITLE')
   ->set('title', fn ($faker) => str_to_upper($faker->sentence))
+  ->set([
+    'title' => 'SOME GREAT TITLE',
+    'title' => fn ($faker) => str_to_upper($faker->sentence)
+  ])
 ```
 
 Sometimes you need to ensure an attribute is unset, not just null. If you

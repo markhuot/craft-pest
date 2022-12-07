@@ -2,6 +2,7 @@
 
 namespace markhuot\craftpest\test;
 
+use markhuot\craftpest\actions\RenderCompiledClasses;
 use markhuot\craftpest\traits\Benchmark;
 use markhuot\craftpest\traits\CookieState;
 use markhuot\craftpest\traits\DatabaseAssertions;
@@ -18,6 +19,7 @@ class TestCase extends \PHPUnit\Framework\TestCase {
     protected function setUp(): void
     {
         $this->createApplication();
+        $this->renderCompiledClasses();
 
         $this->callTraits('setUp');
     }
@@ -54,6 +56,11 @@ class TestCase extends \PHPUnit\Framework\TestCase {
         return \Craft::$app;
     }
 
+    public function renderCompiledClasses()
+    {
+        (new RenderCompiledClasses)->handle();
+    }
+
     protected function needsRequireStatements()
     {
         return !defined('CRAFT_BASE_PATH');
@@ -64,6 +71,11 @@ class TestCase extends \PHPUnit\Framework\TestCase {
         require __DIR__ . '/../bootstrap/bootstrap.php';
     }
 
+    /**
+     * @template TClass
+     * @param class-string<TClass> $class
+     * @return TClass
+     */
     public function factory(string $class)
     {
         return $class::factory();

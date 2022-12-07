@@ -1,0 +1,24 @@
+<?php
+
+namespace markhuot\craftpest\traits;
+
+/**
+ {% for field in fields %}
+ * @method $this {{ field.handle }}({{ field.factoryTypeHint|default('mixed $value') }}) Sets the {{ field.name }} custom field
+ {% endfor %}
+ *
+ {% for field in fields %}
+ {% if field.valueType == 'craft\\elements\\db\\MatrixBlockQuery' %}
+ {% for blockType in field.blockTypes %}
+ {% if loop.first %}
+ * @method $this addBlockTo{{ field.handle|ucfirst }}({{ blockType.fieldLayout.getCustomFieldElements()|map(f => f.getField().factoryTypeHint|default('mixed $value'))|join(', ') }})
+{% endif %}
+ * @method $this add{{ blockType.handle|ucfirst }}To{{ field.handle|ucfirst }}({{ blockType.fieldLayout.getCustomFieldElements()|map(f => f.getField().factoryTypeHint|default('mixed $value'))|join(', ') }})
+ {% endfor %}
+ {% endif %}
+ {% endfor %}
+ */
+class FactoryFields
+{
+
+}
