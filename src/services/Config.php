@@ -10,18 +10,12 @@ class Config extends \markhuot\craftpest\overrides\Config
 {
     public function getConfigFromFile(string $filename): array
     {
-        $overrides = [];
         $original = parent::getConfigFromFile($filename);
-        
-        // Convert fluent-style configs to an array
-        if ($original instanceof GeneralConfig) {
-            $original = collect($original)->toArray();
+
+        if (!is_array($original) || $filename !== 'app.web') {
+            return collect($original)->toArray();
         }
 
-        if ($filename === 'app.web') {
-            $overrides = require __DIR__ . '/../config/app.web.php';
-        }
-
-        return array_merge($original, $overrides);
+        return array_merge($original, require __DIR__ . '/../config/app.web.php');
     }
 }
