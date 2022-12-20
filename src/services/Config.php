@@ -3,7 +3,6 @@
 namespace craft\services;
 
 use craft\config\BaseConfig;
-use craft\config\GeneralConfig;
 use markhuot\craftpest\web\Application;
 
 class Config extends \markhuot\craftpest\overrides\Config
