@@ -3,19 +3,20 @@
 namespace craft\services;
 
 use craft\config\BaseConfig;
-use markhuot\craftpest\web\Application;
 
 class Config extends \markhuot\craftpest\overrides\Config
 {
+    /**
+     * @return array|BaseConfig
+     */
     public function getConfigFromFile(string $filename): array
     {
-        $overrides = [];
         $original = parent::getConfigFromFile($filename);
 
-        if ($filename === 'app.web') {
-            $overrides = require __DIR__ . '/../config/app.web.php';
+        if (!is_array($original) || $filename !== 'app.web') {
+            return $original;
         }
 
-        return array_merge($original, $overrides);
+        return array_merge($original, require __DIR__ . '/../config/app.web.php');
     }
 }
