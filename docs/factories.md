@@ -153,4 +153,4 @@ $entry = Entry::factory()
       ->set($plainText->getMadeModels()->first()->handle, 'foo')
       ->count(3)
   );
-``` 
+```
