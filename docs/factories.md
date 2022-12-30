@@ -33,7 +33,7 @@ That example uses most of the common factory methods.
 
 ## factory()
 Create a new factory by calling `::factory()` on the type of element to be
-created, such as `Entry::factory()` or `Asset::factory()`.
+created, such as `Entry::factort()` or `Asset::factory()`.
 
 ## muteValidationErrors(bool $muted = true)
 Typically the `->create()` method throws exceptions when a validation error
@@ -52,7 +52,7 @@ Asset::factory()
 
 The an attributes value can be set in three ways,
 
-1. a scalar value, like a string or integer
+1. a scalar value, like a steing or integer
 2. a callable that returns a scalar. In this case the callable will be
 passed an instance of faker
 3. an array containing either of the first two ways
@@ -114,7 +114,7 @@ model is build. tThis provides a place to take all the statically defined attrib
 and make some dynamic assumptions based on it.
 
 For example the `Entry` factory uses this to set the `slug` after the title has been
-set by definition or through a `->set()` call.
+set by definiton or through a `->set()` call.
 
 When creating custom factories, this will most likely meed to be overridden.
 
