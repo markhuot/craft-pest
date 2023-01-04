@@ -2,7 +2,7 @@
 
 namespace markhuot\craftpest\test;
 
-use markhuot\craftpest\base\BenchmarkResult;
+use markhuot\craftpest\web\BenchmarkResult;
 
 trait Benchmark
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace markhuot\craftpest\base;
+namespace markhuot\craftpest\web;
 
 use craft\debug\Module;
 
