@@ -3,7 +3,7 @@
 namespace markhuot\craftpest\test;
 
 /**
- * If you're using an older version of Craf that does not support swappable filesystems you can
+ * If you're using an older version of Craft that does not support swappable filesystems you can
  * use the `LocalVolumes` trait to convert any S3 volumes in to local folder volumes during
  * test.
  *
