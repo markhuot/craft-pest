@@ -13,7 +13,8 @@ Set the volume of the asset. Note: if you point this to a live volume that is in
 production then your test assets will go to your live volume that is in use in production.
 Commonly, you will want to set this to an a temporary volume, that is only used in tests.
 
-     */If you're using an older version of Craf that does not support swappable filesystems you can
+
+If you're using an older version of Craft that does not support swappable filesystems you can
 use the `LocalVolumes` trait to convert any S3 volumes in to local folder volumes during
 test.
 Add the `LocalVolumes` trait to your `Pest.php`'s `uses()` call like so,
