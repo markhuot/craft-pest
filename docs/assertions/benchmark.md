@@ -44,7 +44,8 @@ it('ends on the response', function () {
 });
 ```
 
-> *Tip* Unlike the traditional Craft request/response lifecycle you are
+> **Note**
+> Unlike the traditional Craft request/response lifecycle you are
 free to make multiple requests in a single benchmark.
 
 ## assertNoDuplicateQueries()
