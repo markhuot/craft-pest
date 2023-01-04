@@ -41,7 +41,7 @@ jobs:
           php src/bin/generate-docs.php src/behaviors/TestableElementBehavior.php docs/assertions/element.md
           php src/bin/generate-docs.php src/test/DatabaseAssertions.php docs/assertions/database.md
           php src/bin/generate-docs.php src/test/RequestBuilders.php docs/making-requests.md
-          php src/bin/generate-docs.php src/base/BenchmarkResult.php docs/assertions/benchmark.md
+          php src/bin/generate-docs.php src/web/BenchmarkResult.php docs/assertions/benchmark.md
           php src/bin/generate-docs.php src/test/CookieState.php docs/cookies.md
           php src/bin/generate-docs.php src/test/ActingAs.php docs/logging-in.md
           php src/bin/generate-docs.php src/test/LocalVolumes.php docs/volumes.md
