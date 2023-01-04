@@ -14,7 +14,7 @@ abstract class Element extends Factory
 {
     use AddsMatrixBlocks;
 
-    /** @var string */
+    /** @var ?string */
     protected $scenario;
 
     /**
@@ -44,7 +44,7 @@ abstract class Element extends Factory
     function store($element) {
         $element->setScenario($this->scenario ?? \craft\base\Element::SCENARIO_DEFAULT);
 
-        return parent::store($element);
+        return \Craft::$app->elements->saveElement($element);
     }
 
     /**
@@ -101,11 +101,6 @@ abstract class Element extends Factory
                 $element->{$key} = $value;
                 unset($attributes[$key]);
             }
-        }
-
-        // No need to progress further if the element doesn't support content or has no field layout
-        if (!$element::hasContent() || !$element->getFieldLayout()) {
-            return $element;
         }
 
         // No need to progress further if the element doesn't support content or has no field layout
