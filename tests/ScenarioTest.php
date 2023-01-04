@@ -9,7 +9,14 @@ it('fails on required fields', function () {
     $field = Field::factory()->type(\craft\fields\PlainText::class)->required(true)->create();
     $user = User::factory()->create();
     $section = Section::factory()->fields($field)->create();
-    $entry = Entry::factory()->muteValidationErrors()->section($section)->scenario(\craft\elements\Entry::SCENARIO_LIVE)->author($user)->create();
+
+    $this->expectException(\markhuot\craftpest\exceptions\ModelStoreException::class);
+
+    $entry = Entry::factory()
+        ->section($section)
+        ->scenario(\craft\elements\Entry::SCENARIO_LIVE)
+        ->author($user)
+        ->create();
 
     $entry->assertInvalid([$field->handle]);
 });
