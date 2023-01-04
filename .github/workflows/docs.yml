@@ -44,7 +44,6 @@ jobs:
           php src/bin/generate-docs.php src/web/BenchmarkResult.php docs/assertions/benchmark.md
           php src/bin/generate-docs.php src/test/CookieState.php docs/cookies.md
           php src/bin/generate-docs.php src/test/ActingAs.php docs/logging-in.md
-          php src/bin/generate-docs.php src/test/LocalVolumes.php docs/volumes.md
 
       - name: Add files
         run: git add -A docs/
