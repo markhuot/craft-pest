@@ -45,7 +45,21 @@ class TestableElementBehavior extends Behavior
      */
     function assertInvalid(array $keys = [])
     {
-        test()->assertGreaterThanOrEqual(1, count($this->owner->errors));
+        if (count($keys)) {
+            $errors = collect($keys)
+                ->mapWithKeys(fn ($key) => [$key => $this->owner->getErrors($key)])
+                ->filter(fn ($errors) => count($errors) === 0);
+            if ($errors->count()) {
+                test()->fail('The following keys were expected to be invalid but were not: '.implode(', ', $errors->keys()->all()));
+            }
+            else {
+                test()->assertTrue(true);
+            }
+        }
+        else {
+            test()->assertGreaterThanOrEqual(1, count($this->owner->errors));
+        }
+
 
         return $this->owner;
     }
