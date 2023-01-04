@@ -6,7 +6,9 @@ use markhuot\craftpest\actions\RenderCompiledClasses;
 use markhuot\craftpest\traits\Benchmark;
 use markhuot\craftpest\traits\CookieState;
 use markhuot\craftpest\traits\DatabaseAssertions;
+use markhuot\craftpest\traits\Playwright;
 use markhuot\craftpest\traits\RequestBuilders;
+use markhuot\craftpest\traits\Serve;
 
 class TestCase extends \PHPUnit\Framework\TestCase {
 
@@ -14,7 +16,9 @@ class TestCase extends \PHPUnit\Framework\TestCase {
         DatabaseAssertions,
         RequestBuilders,
         Benchmark,
-        CookieState;
+        CookieState,
+        Serve,
+        Playwright;
 
     protected function setUp(): void
     {

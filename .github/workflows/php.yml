@@ -76,6 +76,16 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-craft-vendor-^3.7-
 
+    - uses: actions/setup-node@v3
+      id: setup-node
+      with:
+        node-version: 16
+
+    - run: npm ci
+      if: steps.setup-node.outputs.cache-hit != 'true'
+
+    - run: npx playwright install --with-deps
+
     - name: Install dependencies
       run: composer update --with "craftcms/cms:^3.7" --prefer-dist --no-progress
 
