@@ -55,7 +55,7 @@ class TestCase extends \PHPUnit\Framework\TestCase {
 
     protected function requireCraft()
     {
-        require './src/bootstrap/bootstrap.php';
+        require __DIR__ . '/../bootstrap/bootstrap.php';
     }
 
     public function factory(string $class)
