@@ -20,7 +20,8 @@ Benchmarks are started on your test case by calling `->beginBenchmark()`. You ar
 free to start as many benchmarks as needed, however, note that starting a new
 benchmark will clear out any existing benchmarks already in progress.
 
-> *Warning* In order to use a benchmark you must enable Craft's `devMode` (which
+> **Warning**
+> In order to use a benchmark you must enable Craft's `devMode` (which
 will enable the Yii Debug Bar).
 
 ## endBenchmark()
