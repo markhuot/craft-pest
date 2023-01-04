@@ -45,7 +45,8 @@
         },
         "pest": {
             "plugins": [
-                "markhuot\\craftpest\\pest\\Coverage"
+                "markhuot\\craftpest\\pest\\Coverage",
+                "markhuot\\craftpest\\process\\PestOutput"
             ]
         }
     },

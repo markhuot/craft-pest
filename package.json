@@ -1,7 +1,9 @@
 {
   "devDependencies": {
+    "@playwright/test": "^1.29.1",
     "vitepress": "^1.0.0-alpha.21",
     "vitepress-plugin-auto-sidebar": "^1.0.5",
     "vue": "^3.2.41"
-  }
+  },
+  "scripts": {}
 }

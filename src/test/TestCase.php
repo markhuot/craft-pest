@@ -5,6 +5,7 @@ namespace markhuot\craftpest\test;
 use markhuot\craftpest\traits\Benchmark;
 use markhuot\craftpest\traits\CookieState;
 use markhuot\craftpest\traits\DatabaseAssertions;
+use markhuot\craftpest\traits\Playwright;
 use markhuot\craftpest\traits\RequestBuilders;
 use markhuot\craftpest\traits\Serve;
 
@@ -15,7 +16,8 @@ class TestCase extends \PHPUnit\Framework\TestCase {
         RequestBuilders,
         Benchmark,
         CookieState,
-        Serve;
+        Serve,
+        Playwright;
 
     protected function setUp(): void
     {
