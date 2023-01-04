@@ -63,7 +63,11 @@ trait Fieldable
             $fieldLayout->getTabs()[0]->setElements(           // @phpstan-ignore-line
                 collect($fields)->map(function ($field) {      // @phpstan-ignore-line
                     \Craft::$app->fields->saveField($field);   // @phpstan-ignore-line
-                    return new CustomField($field);            // @phpstan-ignore-line
+                    $fieldElement = new CustomField($field);   // @phpstan-ignore-line
+                    if ($field->required) {                    // @phpstan-ignore-line
+                        $fieldElement->required = true;        // @phpstan-ignore-line
+                    }                                          // @phpstan-ignore-line
+                    return $fieldElement;                      // @phpstan-ignore-line
                 })->toArray()                                  // @phpstan-ignore-line
             );                                                 // @phpstan-ignore-line
         }
