@@ -6,7 +6,7 @@ use markhuot\craftpest\dom\Form;
 use markhuot\craftpest\dom\NodeList;
 use markhuot\craftpest\http\RequestBuilder;
 use markhuot\craftpest\http\requests\WebRequest;
-use markhuot\craftpest\traits\Benchmark;
+use markhuot\craftpest\test\Benchmark;
 use markhuot\craftpest\web\TestableResponse;
 use Symfony\Component\DomCrawler\Crawler;
 use yii\base\Behavior;

@@ -52,17 +52,22 @@ function parseClass(string $className)
 function parseComment(string $comment)
 {
     preg_match_all('/@see\s+(.+)$/m', $comment, $sees);
-    foreach (($sees[1] ?? []) as $otherClass) {
-        $comment .= implode("\n\n", parseClass($otherClass));
+    foreach (($sees[1] ?? []) as $index => $otherClass) {
+        $comment = str_replace($sees[0][$index], 'SEE[' . $otherClass . ']', $comment);
     }
-    
+
     $comment = preg_replace('/^\/\*\*/', '', $comment);
     $comment = preg_replace('/^\s*\*\s@\w+.*$/m', '', $comment);
     $comment = preg_replace('/^\s*\*\s/m', '', $comment);
     $comment = preg_replace('/\*\/$/m', '', $comment);
     $comment = preg_replace('/(^\s+|\s+$)/', '', $comment);
 
-    return $comment;
+    preg_match_all('/^SEE\[(.+)\]$/m', $comment, $sees);
+    foreach (($sees[1] ?? []) as $index => $otherClass) {
+        $comment = str_replace($sees[0][$index], "\n\n".implode("\n\n", parseClass($otherClass))."\n\n", $comment);
+    }
+
+    return trim($comment);
 }
 
 if (!is_dir(dirname($output))) {

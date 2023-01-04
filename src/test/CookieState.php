@@ -1,6 +1,6 @@
 <?php
 
-namespace markhuot\craftpest\traits;
+namespace markhuot\craftpest\test;
 
 use yii\web\Cookie;
 use yii\web\CookieCollection;

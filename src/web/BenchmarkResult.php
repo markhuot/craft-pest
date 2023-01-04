@@ -1,9 +1,7 @@
 <?php
 
-namespace markhuot\craftpest\base;
+namespace markhuot\craftpest\web;
 
-use Illuminate\Support\Collection;
-use yii\db\Command;
 use craft\debug\Module;
 
 /**
@@ -21,9 +19,9 @@ use craft\debug\Module;
  *   ->assertNoDuplicateQueries();
  * ```
  * 
- * @see \markhuot\craftpest\traits\Benchmark
+ * @see \markhuot\craftpest\test\Benchmark
  */
-class Benchmark
+class BenchmarkResult
 {
     protected $manifestCache;
 

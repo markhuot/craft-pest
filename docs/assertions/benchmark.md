@@ -13,14 +13,16 @@ it('checks for duplicate queries')
 ```
 
 
- 
+
+
 
 ## beginBenchmark()
 Benchmarks are started on your test case by calling `->beginBenchmark()`. You are
 free to start as many benchmarks as needed, however, note that starting a new
 benchmark will clear out any existing benchmarks already in progress.
 
-> *Warning* In order to use a benchmark you must enable Craft's `devMode` (which
+> **Warning**
+> In order to use a benchmark you must enable Craft's `devMode` (which
 will enable the Yii Debug Bar).
 
 ## endBenchmark()
@@ -44,7 +46,8 @@ it('ends on the response', function () {
 });
 ```
 
-> *Tip* Unlike the traditional Craft request/response lifecycle you are
+> **Note**
+> Unlike the traditional Craft request/response lifecycle you are
 free to make multiple requests in a single benchmark.
 
 ## assertNoDuplicateQueries()

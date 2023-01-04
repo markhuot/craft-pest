@@ -4,12 +4,15 @@ namespace markhuot\craftpest\factories;
 
 use craft\models\VolumeFolder;
 use Illuminate\Support\Collection;
+use markhuot\craftpest\test\LocalVolumes;
 use markhuot\craftpest\test\RefreshesDatabase;
 use yii\base\Event;
 use function markhuot\craftpest\helpers\base\collection_wrap;
 use function markhuot\craftpest\helpers\craft\volumeDeleteFileAtPath;
 
 /**
+ * # Assets
+ *
  * Assets can be generated via the `Asset` factory. By only defining a volume you can create an entire asset that is
  * ready to be inserted in to Craft's asset library.
  *
@@ -37,6 +40,8 @@ class Asset extends Element {
      * production then your test assets will go to your live volume that is in use in production.
      *
      * Commonly, you will want to set this to an a temporary volume, that is only used in tests.
+     *
+     * @see \markhuot\craftpest\test\LocalVolumes
      */
     function volume(string $handle) {
         $this->volumeHandle = $handle;

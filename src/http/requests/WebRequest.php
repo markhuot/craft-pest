@@ -3,7 +3,7 @@
 namespace markhuot\craftpest\http\requests;
 
 use craft\helpers\App;
-use markhuot\craftpest\traits\Dd;
+use markhuot\craftpest\test\Dd;
 use yii\web\NotFoundHttpException;
 
 abstract class WebRequest extends \craft\web\Request
