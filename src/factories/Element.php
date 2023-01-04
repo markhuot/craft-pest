@@ -14,6 +14,9 @@ abstract class Element extends Factory
 {
     use AddsMatrixBlocks;
 
+    /** @var ?string */
+    protected $scenario;
+
     /**
      * The faker definition
      *
@@ -26,9 +29,21 @@ abstract class Element extends Factory
     }
 
     /**
+     * Set the scenario for the save of the element, typically either DEFAULT
+     * for quick saves or LIVE when testing validation.
+     */
+    function scenario(string $scenario) {
+        $this->scenario = $scenario;
+
+        return $this;
+    }
+
+    /**
      * Persist the entry to storage
      */
     function store($element) {
+        $element->setScenario($this->scenario ?? \craft\base\Element::SCENARIO_DEFAULT);
+
         return \Craft::$app->elements->saveElement($element);
     }
 
@@ -87,7 +102,7 @@ abstract class Element extends Factory
                 unset($attributes[$key]);
             }
         }
-        
+
         // No need to progress further if the element doesn't support content or has no field layout
         if (!$element::hasContent() || !$element->getFieldLayout()) {
             return $element;
