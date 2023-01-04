@@ -1,9 +1,8 @@
 <?php
 
-namespace markhuot\craftpest\traits;
+namespace markhuot\craftpest\test;
 
-use markhuot\craftpest\base\Benchmark as BaseBenchmark;
-use yii\debug\Module;
+use markhuot\craftpest\base\BenchmarkResult;
 
 trait Benchmark
 {
@@ -60,14 +59,15 @@ trait Benchmark
      * });
      * ```
      * 
-     * > *Tip* Unlike the traditional Craft request/response lifecycle you are
+     * > **Note**
+     * > Unlike the traditional Craft request/response lifecycle you are
      * free to make multiple requests in a single benchmark.
      */
     function endBenchmark()
     {
         \craft\debug\Module::getInstance()?->logTarget->export();
         
-        return new BaseBenchmark();
+        return new BenchmarkResult();
     }
 
     function tearDownBenchmark()

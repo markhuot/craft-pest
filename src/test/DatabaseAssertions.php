@@ -1,6 +1,6 @@
 <?php
 
-namespace markhuot\craftpest\traits;
+namespace markhuot\craftpest\test;
 
 use craft\base\ElementInterface;
 use craft\db\Query;

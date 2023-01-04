@@ -41,8 +41,10 @@ jobs:
           php src/bin/generate-docs.php src/behaviors/TestableElementBehavior.php docs/assertions/element.md
           php src/bin/generate-docs.php src/traits/DatabaseAssertions.php docs/assertions/database.md
           php src/bin/generate-docs.php src/traits/RequestBuilders.php docs/making-requests.md
-          php src/bin/generate-docs.php src/base/Benchmark.php docs/assertions/benchmark.md
+          php src/bin/generate-docs.php src/base/BenchmarkResult.php docs/assertions/benchmark.md
           php src/bin/generate-docs.php src/traits/CookieState.php docs/cookies.md
+          php src/bin/generate-docs.php src/traits/ActingAs.php docs/logging-in.md
+          php src/bin/generate-docs.php src/traits/LocalVolumes.php docs/volumes.md
 
       - name: Add files
         run: git add -A docs/

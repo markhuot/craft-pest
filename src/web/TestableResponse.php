@@ -4,7 +4,7 @@ namespace markhuot\craftpest\web;
 
 use markhuot\craftpest\behaviors\ExpectableBehavior;
 use markhuot\craftpest\behaviors\TestableResponseBehavior;
-use markhuot\craftpest\traits\Dd;
+use markhuot\craftpest\test\Dd;
 
 /**
  * @mixin ExpectableBehavior

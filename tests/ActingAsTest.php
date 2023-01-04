@@ -27,6 +27,11 @@ it('logs in user objects', function () {
     expect(\Craft::$app->user->identity->email)->toBe($user->email);
 });
 
+it('logs in admins via shorthand')
+    ->actingAsAdmin()
+    ->get('/admin/settings')
+    ->assertOk();
+
 it('throws on missing users', function () {
     $this->expectException(\Exception::class);
     $this->actingAs('foobar');
