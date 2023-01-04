@@ -2,19 +2,17 @@
 
 namespace markhuot\craftpest\factories;
 
-use craft\base\ElementInterface;
 use craft\fields\Matrix;
 use craft\fields\Assets;
 use craft\fields\Categories;
 use craft\fields\Entries;
 use Illuminate\Support\Collection;
-use markhuot\craftpest\exceptions\ModelStoreException;
-use function markhuot\craftpest\helpers\base\collection_wrap;
+use markhuot\craftpest\traits\FactoryFields;
 use function markhuot\craftpest\helpers\base\array_wrap;
 
 abstract class Element extends Factory
 {
-    protected $muted = false;
+    use AddsMatrixBlocks;
 
     /**
      * The faker definition
@@ -28,31 +26,10 @@ abstract class Element extends Factory
     }
 
     /**
-     * Typically the `->create()` method throws exceptions when a validation error
-     * occurs. Calling `->muteValidationErrors()` will mute those exceptions and return
-     * the unsaved element with the `->errors` property filled out.
-     */
-    function muteValidationErrors(bool $muted = true)
-    {
-        $this->muted = $muted;
-
-        return $this;
-    }
-
-    /**
      * Persist the entry to storage
      */
     function store($element) {
-        try {
-            if (!\Craft::$app->elements->saveElement($element)) {
-                throw new ModelStoreException($element);
-            }
-        }
-        catch (\Throwable $e) {
-            if (!$this->muted) {
-                throw $e;
-            }
-        }
+        return \Craft::$app->elements->saveElement($element);
     }
 
     /**

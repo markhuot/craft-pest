@@ -100,8 +100,10 @@ class Section extends Factory {
      * @param \craft\models\Section $element
      */
     function store($element) {
-        \Craft::$app->sections->saveSection($element);
+        $result = \Craft::$app->sections->saveSection($element);
         $this->storeFields($element->entryTypes[0]->fieldLayout);
+
+        return $result;
     }
 
 }

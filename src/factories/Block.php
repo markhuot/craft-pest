@@ -47,5 +47,7 @@ class Block extends Element
     {
         // no-op, blocks can't be stored directly, they are returned
         // as arrays for their parent element/field to store.
+
+        return true;
     }
 }

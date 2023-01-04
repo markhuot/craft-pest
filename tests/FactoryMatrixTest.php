@@ -71,3 +71,57 @@ it('can create matrix fields', function () {
     expect($firstBlock->{$plainTextOneHandle})->toBe('foo');
     expect($firstBlock->{$plainTextTwoHandle})->toBe('bar');
 });
+
+it('can fill matrix blocks with a shorthand', function () {
+    $plainTextOne = FieldFactory::factory()->type(PlainTextField::class);
+    $plainTextTwo = FieldFactory::factory()->type(PlainTextField::class);
+    $blockType = BlockTypeFactory::factory()->fields($plainTextOne, $plainTextTwo);
+    $matrix = MatrixFieldFactory::factory()->blockTypes($blockType)->create();
+    $section = SectionFactory::factory()->fields($matrix)->create();
+
+    $blockTypeHandle = $blockType->getMadeModels()->first()->handle;
+    $plainTextOneHandle = $plainTextOne->getMadeModels()->first()->handle;
+    $plainTextTwoHandle = $plainTextTwo->getMadeModels()->first()->handle;
+
+    $entry = EntryFactory::factory()
+        ->section($section)
+        ->addBlockTo($matrix, [
+            $plainTextOneHandle => 'foo',
+            $plainTextTwoHandle => 'bar',
+        ])
+        ->create();
+
+    $block = $entry->{$matrix->handle}->all()[0];
+    expect($block->{$plainTextOneHandle})->toBe('foo');
+    expect($block->{$plainTextTwoHandle})->toBe('bar');
+});
+
+it('can fill matrix blocks with a magic shorthand', function () {
+    $plainTextOne = FieldFactory::factory()->type(PlainTextField::class)->name('Plain Text One');
+    $plainTextTwo = FieldFactory::factory()->type(PlainTextField::class)->name('Plain Text Two');
+    $blockType = BlockTypeFactory::factory()->fields($plainTextOne, $plainTextTwo);
+    $matrix = MatrixFieldFactory::factory()->blockTypes($blockType)->create();
+    $section = SectionFactory::factory()->fields($matrix)->create();
+
+    $blockTypeHandle = $blockType->getMadeModels()->first()->handle;
+    $plainTextOneHandle = $plainTextOne->getMadeModels()->first()->handle;
+    $plainTextTwoHandle = $plainTextTwo->getMadeModels()->first()->handle;
+    $matrixBlockMethod = 'add' . ucfirst($blockTypeHandle) . 'To' . ucfirst($matrix->handle);
+    $matrixFieldMethod = 'addBlockTo' . ucfirst($matrix->handle);
+
+    $entry = EntryFactory::factory()
+        ->section($section)
+        ->$matrixBlockMethod(
+            fieldOne: 'foo',
+            fieldTwo: 'bar',
+        )
+        ->$matrixFieldMethod(
+            plainTextOne: 'foo',
+            plainTextTwo: 'bar',
+        )
+        ->create();
+
+    $block = $entry->{$matrix->handle}->all()[0];
+    expect($block->{$plainTextOneHandle})->toBe('foo');
+    expect($block->{$plainTextTwoHandle})->toBe('bar');
+});

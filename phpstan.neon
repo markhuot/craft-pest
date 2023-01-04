@@ -7,6 +7,8 @@ parameters:
     level: 4
     ignoreErrors:
       - '#Constant CRAFT_BASE_PATH not found.#'
+    scanDirectories:
+      - %currentWorkingDirectory%/storage/runtime/compiled_classes/
     scanFiles:
       - %currentWorkingDirectory%/vendor/yiisoft/yii2/Yii.php
       - %currentWorkingDirectory%/vendor/craftcms/cms/src/Craft.php

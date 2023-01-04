@@ -68,6 +68,8 @@ class VolumeFolder extends Factory {
      */
     function store($element) {
         \Craft::$app->assets->createFolder($element);
+
+        return true;
     }
 
 }

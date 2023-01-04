@@ -5,6 +5,7 @@ namespace markhuot\craftpest\factories;
 use Faker\Factory as Faker;
 use Illuminate\Support\Collection;
 use markhuot\craftpest\events\FactoryStoreEvent;
+use markhuot\craftpest\exceptions\ModelStoreException;
 use yii\base\BaseObject;
 use yii\base\Event;
 use function markhuot\craftpest\helpers\base\collection_wrap;
@@ -76,6 +77,9 @@ abstract class Factory {
     /** @var int */
     protected $count = 1;
 
+    /** @var bool */
+    protected $muted = false;
+
     /**
      * Any models this factory eventually ends up making. Stored in the factory
      * so you can pull them back out if you only have reference to the factory
@@ -100,6 +104,22 @@ abstract class Factory {
      */
     function __call(string $method, array $args)
     {
+        $reflect = new \ReflectionClass($this);
+        $traits = $reflect->getTraits();
+        while($reflect=$reflect->getParentClass()) {
+            $traits = array_merge($traits, $reflect->getTraits());
+        }
+        foreach ($traits as $trait) {
+            $handlesMethodName = 'handlesMagic' . $trait->getShortName() . 'Call';
+            $callsMethodName = 'callMagic' . $trait->getShortName() . 'Call';
+            if ($trait->hasMethod($handlesMethodName)) {
+                if ($this->$handlesMethodName($method, $args)) {
+                    $this->$callsMethodName($method, $args);
+                    return $this;
+                }
+            }
+        }
+
         if (count($args) > 1) {
             $this->attributes[$method] = array_merge($this->attributes[$method] ?? [], $args);
         }
@@ -128,6 +148,18 @@ abstract class Factory {
     }
 
     /**
+     * Typically the `->create()` method throws exceptions when a validation error
+     * occurs. Calling `->muteValidationErrors()` will mute those exceptions and return
+     * the unsaved element with the `->errors` property filled out.
+     */
+    function muteValidationErrors(bool $muted = true)
+    {
+        $this->muted = $muted;
+
+        return $this;
+    }
+
+    /**
      * Set an attribute and return the factory so you can chain on multiple field
      * in one call, for example,
      * 
@@ -137,25 +169,38 @@ abstract class Factory {
      *   ->set('fooField', 'the value of fooField')
      * ```
      * 
-     * The an attributes value can be set in two ways,
+     * The an attributes value can be set in three ways,
      * 
      * 1. a scalar value, like a steing or integer
      * 2. a callable that returns a scalar. In this case the callable will be
      * passed an instance of faker
+     * 3. an array containing either of the first two ways
      * 
      * ```php
      * Entry::factory()
      *   ->set('title, 'SOME GREAT TITLE')
      *   ->set('title', fn ($faker) => str_to_upper($faker->sentence))
+     *   ->set([
+     *     'title' => 'SOME GREAT TITLE',
+     *     'title' => fn ($faker) => str_to_upper($faker->sentence)
+     *   ])
      * ```
      * 
      * Sometimes you need to ensure an attribute is unset, not just null. If you
      * set an attribute's value to `Factory::NULL` it will be removed from the
      * model before it is made.
      */
-    function set($key, $value)
+    function set($key, $value=null)
     {
-        $this->attributes[$key] = $value;
+        if (is_array($key)) {
+            foreach ($key as $k => $v) {
+                $this->set($k, $v);
+            }
+        }
+        else {
+            $this->attributes[$key] = $value;
+        }
+
 
         return $this;
     }
@@ -307,10 +352,26 @@ abstract class Factory {
                 return $element;
             }
 
-            $this->store($element);
-            // if (!empty($element->errors)) {
-            //     throw new \Exception(json_encode($element->errors));
-            // }
+            // Try to save our model and if we get back a bad response, convert the
+            // response in to an exception. We don't do anything with the exception here
+            // because sometimes an exception will be thrown inside of `->store` and
+            // other times it won't. Regardless somewhere in this `try` block an exception
+            // will be thrown and the next `catch` block will determine what to do
+            // with it.
+            try {
+                if (!$this->store($element)) {
+                    throw new ModelStoreException($element);
+                }
+            }
+
+            // If the store method threw an exception and exceptions are muted then ignore
+            // the error and allow code to continue processing. You would want to do
+            // this if you're expecting a validation exception.
+            catch (\Throwable $e) {
+                if (!$this->muted) {
+                    throw $e;
+                }
+            }
 
             $afterStoreEvent = new FactoryStoreEvent;
             $afterStoreEvent->sender = $this;
