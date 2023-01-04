@@ -8,7 +8,6 @@ it('executes commands')
     ->assertDontSee('foo bar');
 
 it('runs playwright via any available port')
-    ->only()
     ->playwright()
     ->assertOk();
 

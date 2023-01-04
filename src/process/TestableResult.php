@@ -6,6 +6,8 @@ class TestableResult
 {
     protected ?int $exitCode;
     protected ?string $stdout;
+    protected ?string $stderr;
+    protected ?string $output;
 
     function setExitCode(int $exitCode)
     {
@@ -31,6 +33,30 @@ class TestableResult
         return $this->stdout;
     }
 
+    function setStderr(string $stderr)
+    {
+        $this->stderr = $stderr;
+
+        return $this;
+    }
+
+    function getStderr()
+    {
+        return $this->stderr;
+    }
+
+    function setOutput(string $output)
+    {
+        $this->output = $output;
+
+        return $this;
+    }
+
+    function getOutput()
+    {
+        return $this->output;
+    }
+
     function assertOk()
     {
         return $this->assertExitCode(0);
@@ -52,7 +78,7 @@ class TestableResult
 
     function assertSee(string $text)
     {
-        expect($this->stdout)->toContain($text);
+        expect($this->output)->toContain($text);
 
         return $this;
     }

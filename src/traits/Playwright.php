@@ -12,16 +12,23 @@ trait Playwright
 {
     protected $processes = [];
 
-    function exec($cmd, $cwd=null, $env=[])
+    function exec(array $cmd, $cwd=null, $env=[])
     {
         $loop = Loop::get();
 
-        $process = new Process($cmd, $cwd, array_merge(getenv(), $env));
-        $process->start();
+        $process = new Process(implode(' ', $cmd), $cwd, array_merge(getenv(), $env));
+        $process->start($loop);
 
+        $output = '';
         $stdout = '';
-        $process->stdout->on('data', function($chunk) use (&$stdout) {
+        $process->stdout->on('data', function($chunk) use (&$stdout, &$output) {
             $stdout .= $chunk;
+            $output .= $chunk;
+        });
+        $stderr = '';
+        $process->stderr->on('data', function ($chunk) use (&$stderr, &$output) {
+            $stderr .= $chunk;
+            $output .= $chunk;
         });
 
         $exitCode = null;
@@ -35,6 +42,8 @@ trait Playwright
         $result = new TestableResult();
         $result->setExitCode($exitCode);
         $result->setStdout($stdout);
+        $result->setStderr($stderr);
+        $result->setOutput($output);
 
         $this->processes[] = ['process' => $process, 'result' => $result];
         Container::getInstance()->add('processes', $this->processes);

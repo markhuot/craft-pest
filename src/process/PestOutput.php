@@ -32,8 +32,9 @@ class PestOutput implements AddsOutput
 
             if ($exitCode !== 0) {
                 $this->output->writeln(['', '  ---', '']);
-                $this->output->writeln('  <fg=red>• ' . $cmd . '</>');
-                $this->output->write(preg_replace('/^/m', '  ', $process['result']->getStdout()));
+                $this->output->writeln('  <fg=white;bg=red;options=bold> exec </> <fg=red>• ' . $cmd . '</>');
+                $this->output->write(preg_replace('/^/m', '  ', $process['result']->getOutput()));
+                $this->output->writeln('');
             }
         }
 
