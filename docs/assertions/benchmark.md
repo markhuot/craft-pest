@@ -13,7 +13,8 @@ it('checks for duplicate queries')
 ```
 
 
- 
+
+
 
 ## beginBenchmark()
 Benchmarks are started on your test case by calling `->beginBenchmark()`. You are
