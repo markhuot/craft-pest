@@ -41,6 +41,7 @@ define('YII_ENV_TEST', true);
 // a whole new `Request` object manually within the `http\requests\WebRequest` class.
 // You probably don't want to change these. You should probably be looking in `WebRequest`
 // instead.
+$_SERVER['SERVER_NAME'] = 'http://localhost:8080';
 $_SERVER['REQUEST_URI'] = '/';
 $_SERVER['SCRIPT_NAME'] = '/index.php';
 $_SERVER['SCRIPT_FILENAME'] = 'index.php';
