@@ -185,6 +185,8 @@ class NodeList implements \Countable
             test()->assertContains($key, $keys);
             test()->assertSame($value, $node->attr($key));
         });
+        
+        return $this;
     }
 
     /**
