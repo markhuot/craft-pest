@@ -50,6 +50,16 @@ This allows you to use Pest's expectation API against the found nodes.
 $response->expectSelector('h1')->text->toBe('Hello World!');
 ```
 
+## assertCacheTag(string $tags)
+Check that a response contains the given cache tag header. This is commonly used on
+edge-side CDNs to "tag" pages with a unique identifier so that they can be purged
+from the cache by that unique tag later. In Craft this will usually be something like
+the element ID of any entries being rendered.
+```php
+$response->assertCacheTag('my-tag');
+$response->assertCacheTag('el1234');
+```
+
 ## assertCookie(string $name, ?string $value = NULL)
 Checks that the response contains the given cookie. When not passed a value
 the assertion only checks the presence of the cookie. When passed a value the
