@@ -189,17 +189,23 @@ class TestableResponseBehavior extends Behavior
     }
 
     /**
-     * Check that a response contains the given tag.
+     * Check that a response contains the given cache tag header. This is commonly used on
+     * edge-side CDNs to "tag" pages with a unique identifier so that they can be purged
+     * from the cache by that unique tag later. In Craft this will usually be something like
+     * the element ID of any entries being rendered.
      *
      * ```php
      * $response->assertCacheTag('my-tag');
+     * $response->assertCacheTag('el1234');
      * ```
      */
-    function assertCacheTag(string $tag)
+    function assertCacheTag(string ...$tags)
     {
         $cacheTags = $this->response->headers->get('cache-tags');
 
-        expect($cacheTags ?? [])->toContain($tag);
+        foreach ($tags as $tag) {
+            expect($cacheTags ?? [])->toContain($tag);
+        }
 
         return $this;
     }
