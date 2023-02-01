@@ -110,7 +110,7 @@ class Post extends \markhuot\craftpest\factories\Entry
 
 ## inferences(array $definition = array ())
 When building a model's definition the inferences are the last step before the
-model is build. tThis provides a place to take all the statically defined attributes
+model is built. This provides a place to take all the statically defined attributes
 and make some dynamic assumptions based on it.
 
 For example the `Entry` factory uses this to set the `slug` after the title has been
