@@ -4,6 +4,7 @@ namespace markhuot\craftpest;
 
 use craft\base\Field;
 use craft\base\Plugin;
+use craft\elements\db\ElementQuery;
 use craft\elements\Entry;
 use craft\events\DefineBehaviorsEvent;
 use craft\events\PluginEvent;
@@ -13,6 +14,7 @@ use markhuot\craftpest\actions\RenderCompiledClasses;
 use markhuot\craftpest\behaviors\ExpectableBehavior;
 use markhuot\craftpest\behaviors\FieldTypeHintBehavior;
 use markhuot\craftpest\behaviors\TestableElementBehavior;
+use markhuot\craftpest\behaviors\TestableElementQueryBehavior;
 use yii\base\Event;
 
 /**
@@ -55,6 +57,14 @@ class Pest extends Plugin {
             function (DefineBehaviorsEvent $event) {
                 $event->behaviors[] = ExpectableBehavior::class;
                 $event->behaviors[] = TestableElementBehavior::class;
+            }
+        );
+
+        Event::on(
+            ElementQuery::class,
+            ElementQuery::EVENT_DEFINE_BEHAVIORS,
+            function (DefineBehaviorsEvent $event) {
+                $event->behaviors[] = TestableElementQueryBehavior::class;
             }
         );
 

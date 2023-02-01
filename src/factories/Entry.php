@@ -27,6 +27,8 @@ class Entry extends Element
     /** @var string|\craft\models\Section */
     protected $sectionIdentifier;
 
+    protected $priorityAttributes = ['sectionId', 'typeId'];
+
     /**
      * Set the section for the entry to be created. You may pass a section
      * in three ways,

@@ -189,6 +189,22 @@ class TestableResponseBehavior extends Behavior
     }
 
     /**
+     * Check that a response contains the given tag.
+     *
+     * ```php
+     * $response->assertCacheTag('my-tag');
+     * ```
+     */
+    function assertCacheTag(string $tag)
+    {
+        $cacheTags = $this->response->headers->get('cache-tags');
+
+        expect($cacheTags ?? [])->toContain($tag);
+
+        return $this;
+    }
+
+    /**
      * Checks that the response contains the given cookie. When not passed a value
      * the assertion only checks the presence of the cookie. When passed a value the
      * value will be checked for strict equality.
