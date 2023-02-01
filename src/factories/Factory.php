@@ -483,10 +483,13 @@ abstract class Factory {
 
         $attributes = $this->getAttributes($definition);
 
-        $element = $this->setPriorityAttributes($attributes, $element);
+        [$priorityAttributes, $attributes] = collect($attributes)
+            ->partition(function ($_, $key) {
+                return in_array($key, $this->priorityAttributes, true);
+            });
 
-        $attributes = collect($attributes)->filter(fn ($value, $key) => !in_array($key, $this->priorityAttributes, true))->toArray();
-        $element = $this->setAttributes($attributes, $element);
+        $element = $this->setPriorityAttributes($priorityAttributes->toArray(), $element);
+        $element = $this->setAttributes($attributes->toArray(), $element);
 
         return $element;
     }
