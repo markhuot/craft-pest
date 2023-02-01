@@ -95,9 +95,9 @@ abstract class Element extends Factory
     protected function setAttributes($attributes, $element)
     {
         // Set the element native fields first (ignoring any custom fields)
-        $modelKeys = array_keys($element->fields());
         foreach ($attributes as $key => $value) {
-            if (in_array($key, $modelKeys)) {
+            $fieldLayout = $element->getFieldLayout();
+            if (!$fieldLayout || !$fieldLayout->getFieldByHandle($key)) {
                 $element->{$key} = $value;
                 unset($attributes[$key]);
             }

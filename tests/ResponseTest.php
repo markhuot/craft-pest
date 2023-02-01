@@ -1,7 +1,6 @@
 <?php
 
 it('asserts cache tag')
-    ->only()
     ->get('/responses/cache-tags')
     ->assertOk()
     ->assertCacheTag('foo', 'baz');

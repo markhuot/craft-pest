@@ -90,6 +90,15 @@ abstract class Factory {
     protected $models;
 
     /**
+     * Attributes that should be set before any others so that they may inform
+     * future processing. For example, set the `sectionId` before you set any
+     * custom fields so that you can get the field layout for the section.
+     *
+     * @var array<int, string>
+     */
+    protected $priorityAttributes = [];
+
+    /**
      * Insert deps
      * @internal
      */
@@ -293,7 +302,7 @@ abstract class Factory {
 
     /**
      * When building a model's definition the inferences are the last step before the
-     * model is build. tThis provides a place to take all the statically defined attributes
+     * model is built. This provides a place to take all the statically defined attributes
      * and make some dynamic assumptions based on it.
      * 
      * For example the `Entry` factory uses this to set the `slug` after the title has been
@@ -454,6 +463,17 @@ abstract class Factory {
         return $element;
     }
 
+    protected function setPriorityAttributes($attributes, $element)
+    {
+        foreach ($this->priorityAttributes as $key) {
+            if (isset($attributes[$key])) {
+                $element->{$key} = $attributes[$key];
+            }
+        }
+
+        return $element;
+    }
+
     /**
      * Generate the element
      */
@@ -463,7 +483,13 @@ abstract class Factory {
 
         $attributes = $this->getAttributes($definition);
 
-        $element = $this->setAttributes($attributes, $element);
+        [$priorityAttributes, $attributes] = collect($attributes)
+            ->partition(function ($_, $key) {
+                return in_array($key, $this->priorityAttributes, true);
+            });
+
+        $element = $this->setPriorityAttributes($priorityAttributes->toArray(), $element);
+        $element = $this->setAttributes($attributes->toArray(), $element);
 
         return $element;
     }
