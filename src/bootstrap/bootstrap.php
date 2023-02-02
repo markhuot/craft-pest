@@ -25,14 +25,6 @@ if (file_exists(CRAFT_BASE_PATH . '/.env')) {
 // (see https://craftcms.com/docs/3.x/config/#php-constants)
 define('CRAFT_ENVIRONMENT', getenv('ENVIRONMENT') ?: 'production');
 
-// Make Craft think it is in an ephemeral environment so that it doesn't try to write out
-// any custom yaml config or storage files that may affect existing config/data.
-//
-// This is really just a hack for Craft 4.3+ where manual project-config yaml generation needs
-// to be done in the config.
-// https://craftcms.com/docs/4.x/project-config.html#manual-yaml-file-generation
-define('CRAFT_EPHEMERAL', true);
-
 // Setting this causes Yii to skip calls to `exit()` and instead throw a catchable exception
 // in place of `exit()`. Setting this allows us to handle the response from a `->get()` call
 // uniquely in testing. We don't actually want to write to the screen and `exit()` in test.
