@@ -10,7 +10,7 @@ class RenderCompiledClasses
     function handle($forceRecreate=false)
     {
         $storedFieldVersion = \Craft::$app->fields->getFieldVersion();
-        $compiledClassesPath = \Craft::$app->getPath()->getVendorPath() . '/markhuot/craft-pest/src/storage/';
+        $compiledClassesPath = __DIR__ . '/../storage/';
         $fieldVersionExists = $storedFieldVersion !== null;
         if (!$fieldVersionExists) {
             $storedFieldVersion = StringHelper::randomString(12);
@@ -37,7 +37,7 @@ class RenderCompiledClasses
 
     protected function cleanupOldMixins(string $except=null)
     {
-        $compiledClassesPath = \Craft::$app->getPath()->getVendorPath() . '/markhuot/craft-pest/src/storage/';
+        $compiledClassesPath = __DIR__ . '/../storage/';
 
         FileHelper::clearDirectory($compiledClassesPath, [
             'filter' => function(string $path) use ($except): bool {
