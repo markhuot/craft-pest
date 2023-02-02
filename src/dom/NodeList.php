@@ -3,7 +3,6 @@
 namespace markhuot\craftpest\dom;
 
 use markhuot\craftpest\http\RequestBuilder;
-use Twig\Markup;
 
 /**
  * # Node list
