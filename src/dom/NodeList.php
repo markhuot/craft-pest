@@ -200,7 +200,7 @@ class NodeList implements \Countable
      * ```
      */
     public function assertText($expected) {
-        test()->assertSame($expected, $this->getText());
+        test()->assertSame((string)$expected, $this->getText());
 
         return $this;
     }
