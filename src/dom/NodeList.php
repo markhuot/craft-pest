@@ -3,6 +3,7 @@
 namespace markhuot\craftpest\dom;
 
 use markhuot\craftpest\http\RequestBuilder;
+use Twig\Markup;
 
 /**
  * # Node list
@@ -200,7 +201,7 @@ class NodeList implements \Countable
      * ```
      */
     public function assertText($expected) {
-        test()->assertSame((string)$expected, $this->getText());
+        test()->assertSame($expected, $this->getText());
 
         return $this;
     }
