@@ -4,7 +4,7 @@ namespace markhuot\craftpest\factories;
 
 use craft\models\EntryType;
 use markhuot\craftpest\factories\Section as FactoriesSection;
-use markhuot\craftpest\traits\FactoryFields;
+use markhuot\craftpest\storage\FactoryFields;
 
 /**
  * Entry Factory

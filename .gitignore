@@ -11,7 +11,7 @@ bootstrap.php
 craft
 src/bin/cpresources
 !src/bin/craft
-storage/*
-!storage/.gitkeep
+/storage/*
+!/storage/.gitkeep
 node_modules
 /docs/.vitepress/dist

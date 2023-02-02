@@ -1,14 +1,14 @@
 <?php
 
-namespace markhuot\craftpest\traits;
+namespace markhuot\craftpest\storage;
 
 /**
  {% for field in fields %}
- * @method $this {{ field.handle }}({{ field.factoryTypeHint|default('mixed $value') }}) Sets the {{ field.name }} custom field
+ * @method $this {{ field.handle }}({{ field.factoryTypeHint|default('mixed $value') }}) Sets the {{ field.name }} custom field {{ field.valueType }}
  {% endfor %}
  *
  {% for field in fields %}
- {% if field.valueType == 'craft\\elements\\db\\MatrixBlockQuery' %}
+ {% if 'craft\\elements\\db\\MatrixBlockQuery' in field.valueType %}
  {% for blockType in field.blockTypes %}
  {% if loop.first %}
  * @method $this addBlockTo{{ field.handle|ucfirst }}({{ blockType.fieldLayout.getCustomFieldElements()|map(f => f.getField().factoryTypeHint|default('mixed $value'))|join(', ') }})

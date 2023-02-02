@@ -10,13 +10,13 @@ class RenderCompiledClasses
     function handle($forceRecreate=false)
     {
         $storedFieldVersion = \Craft::$app->fields->getFieldVersion();
-        $compiledClassesPath = \Craft::$app->getPath()->getCompiledClassesPath();
+        $compiledClassesPath = \Craft::$app->getPath()->getVendorPath() . '/markhuot/craft-pest/src/storage/';
         $fieldVersionExists = $storedFieldVersion !== null;
         if (!$fieldVersionExists) {
             $storedFieldVersion = StringHelper::randomString(12);
         }
 
-        $compiledClassPath = $compiledClassesPath . DIRECTORY_SEPARATOR . 'FactoryFields_' . $storedFieldVersion . '.php';
+        $compiledClassPath = $compiledClassesPath . DIRECTORY_SEPARATOR . 'FactoryFields_'.$storedFieldVersion.'.php';
 
         if (file_exists($compiledClassPath) && !$forceRecreate) {
             return false;
@@ -37,7 +37,7 @@ class RenderCompiledClasses
 
     protected function cleanupOldMixins(string $except=null)
     {
-        $compiledClassesPath = \Craft::$app->getPath()->getCompiledClassesPath() . DIRECTORY_SEPARATOR;
+        $compiledClassesPath = \Craft::$app->getPath()->getVendorPath() . '/markhuot/craft-pest/src/storage/';
 
         FileHelper::clearDirectory($compiledClassesPath, [
             'filter' => function(string $path) use ($except): bool {
