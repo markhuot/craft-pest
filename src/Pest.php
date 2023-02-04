@@ -26,6 +26,8 @@ class Pest implements BootstrapInterface {
 
     function bootstrap($app)
     {
+        \Craft::setAlias('@markhuot/craftpest', __DIR__);
+
         if (\Craft::$app->request->isConsoleRequest) {
             \Craft::$app->controllerMap['pest'] = PestController::class;
         }
