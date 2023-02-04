@@ -1,6 +1,6 @@
 {
     "name": "markhuot/craft-pest",
-    "type": "craft-plugin",
+    "type": "yii2-extension",
     "description": "A Pest runner",
     "license": "proprietary",
     "authors": [
@@ -34,13 +34,7 @@
         ]
     },
     "extra": {
-        "name": "Pest",
-        "handle": "pest",
-        "changelogUrl": "#",
-        "class": "markhuot\\craftpest\\Pest",
-        "components": {
-            "http": "markhuot\\craftpest\\services\\Http"
-        },
+        "bootstrap": "markhuot\\craftpest\\Pest",
         "pest": {
             "plugins": [
                 "markhuot\\craftpest\\pest\\Coverage"
