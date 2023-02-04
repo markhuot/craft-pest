@@ -90,7 +90,7 @@ jobs:
       if: matrix.craftVersion != '^3.7'
 
     - name: Generate compiled classes
-      run: ./src/bin/craft pest/ide/generate-mixins
+      run: ./src/bin/craft pest/generate-mixins
 
     - name: Run PHPStan
       run: ./vendor/bin/phpstan analyse src
