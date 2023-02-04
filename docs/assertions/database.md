@@ -21,13 +21,13 @@ for the given condition.
 $this->assertDatabaseMissing('{{%content}}', ['title' => 'My Great Title']);
 ```
 
-## assertTrashed(craft\base\ElementInterface $element)
+## assertTrashed(craft\base\Element $element)
 Check that the given element has been trashed (soft deleted).
 ```php
 $this->assertTrashed($entry);
 ```
 
-## assertNotTrashed(craft\base\ElementInterface $element)
+## assertNotTrashed(craft\base\Element $element)
 Check that the given element has not been trashed (soft deleted).
 ```php
 $this->assertNotTrashed($entry);
