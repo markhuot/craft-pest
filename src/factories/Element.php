@@ -2,12 +2,9 @@
 
 namespace markhuot\craftpest\factories;
 
+use craft\fields\BaseRelationField;
 use craft\fields\Matrix;
-use craft\fields\Assets;
-use craft\fields\Categories;
-use craft\fields\Entries;
 use Illuminate\Support\Collection;
-use markhuot\craftpest\traits\FactoryFields;
 use function markhuot\craftpest\helpers\base\array_wrap;
 
 abstract class Element extends Factory
@@ -129,11 +126,7 @@ abstract class Element extends Factory
                 throw new \Exception('Could not find field with handle `' . $key . '` on `' . get_class($element) . '`');
             }
 
-            if (in_array(get_class($field), [
-                Entries::class,
-                Assets::class,
-                Categories::class,
-            ])) {
+            if (is_subclass_of($field, BaseRelationField::class)) {
                 $value = $this->resolveFactories(array_wrap($value))->map(function ($element) {
                     if (is_numeric($element)) {
                         return $element;

@@ -4,7 +4,7 @@ namespace markhuot\craftpest\factories;
 
 use craft\models\EntryType;
 use markhuot\craftpest\factories\Section as FactoriesSection;
-use markhuot\craftpest\traits\FactoryFields;
+use markhuot\craftpest\storage\FactoryFields;
 
 /**
  * Entry Factory
@@ -17,6 +17,8 @@ use markhuot\craftpest\traits\FactoryFields;
  * @method uri(string $uri)
  * @method enabled(bool $enabled)
  * @method parent(\craft\elements\Entry|Entry|string|int $parent)
+ *
+ * @phpstan-ignore-next-line ignored because the file is generated
  * @mixin FactoryFields
  */
 class Entry extends Element

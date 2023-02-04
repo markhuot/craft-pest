@@ -32,8 +32,6 @@ class RequestHandler
 
             test()->storeCookieCollection($response->cookies);
 
-            $this->app->trigger(\craft\web\Application::EVENT_AFTER_REQUEST);
-
             return $response;
         }
 
@@ -66,13 +64,16 @@ class RequestHandler
             return \Craft::$app->response;
         }
 
-        // Clear out output buffering that may still be left open because of an exception. Ideally
-        // we wouldn't need this but Yii/Craft leaves something open somewhere that we're not
-        // handling correctly here.
         finally {
+            // Clear out output buffering that may still be left open because of an exception. Ideally
+            // we wouldn't need this but Yii/Craft leaves something open somewhere that we're not
+            // handling correctly here.
             while (ob_get_level() > $obLevel) {
                 ob_end_clean();
             }
+
+            // Always send the after request so Craft can clean up after itself
+            $this->app->trigger(\craft\web\Application::EVENT_AFTER_REQUEST);
         }
     }
 
