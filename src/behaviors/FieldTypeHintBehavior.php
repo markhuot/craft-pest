@@ -2,6 +2,7 @@
 
 namespace markhuot\craftpest\behaviors;
 
+use craft\base\Field;
 use craft\base\FieldInterface;
 use craft\fields\Assets;
 use craft\fields\Categories;
@@ -14,7 +15,7 @@ use craft\fields\PlainText;
 use yii\base\Behavior;
 
 /**
- * @property FieldInterface $owner
+ * @property Field $owner
  */
 class FieldTypeHintBehavior extends Behavior
 {

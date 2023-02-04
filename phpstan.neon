@@ -13,4 +13,4 @@ parameters:
       - %currentWorkingDirectory%/vendor/craftcms/cms/src/behaviors/CustomFieldBehavior.php.template
     reportUnmatchedIgnoredErrors: false
     excludePaths:
-      - %currentWorkingDirectory%/src/services/Config.php
+      - %currentWorkingDirectory%/src/craft/*

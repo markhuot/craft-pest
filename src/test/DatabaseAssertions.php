@@ -2,6 +2,7 @@
 
 namespace markhuot\craftpest\test;
 
+use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\db\Query;
 use craft\db\Table;
@@ -64,7 +65,7 @@ trait DatabaseAssertions
      * $this->assertTrashed($entry);
      * ```
      */
-    function assertTrashed(ElementInterface $element)
+    function assertTrashed(Element $element)
     {
         $row = (new Query)->from(Table::ELEMENTS)->where(['id' => $element->id])->one();
 
@@ -78,7 +79,7 @@ trait DatabaseAssertions
      * $this->assertNotTrashed($entry);
      * ```
      */
-    function assertNotTrashed(ElementInterface $element)
+    function assertNotTrashed(Element $element)
     {
         $row = (new Query)->from(Table::ELEMENTS)->where(['id' => $element->id])->one();
 
