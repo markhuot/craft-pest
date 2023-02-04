@@ -17,6 +17,6 @@ class Config extends \markhuot\craftpest\overrides\Config
             return $original;
         }
 
-        return array_merge($original, require __DIR__ . '/../config/app.web.php');
+        return array_merge($original, require __DIR__ . '/../../config/app.web.php');
     }
 }

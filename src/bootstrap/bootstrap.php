@@ -1,7 +1,5 @@
 <?php
 
-use craft\services\Config;
-
 // Define path constants
 define('CRAFT_BASE_PATH', getcwd());
 define('CRAFT_VENDOR_PATH', CRAFT_BASE_PATH . '/vendor');
@@ -46,7 +44,6 @@ $_SERVER['REQUEST_URI'] = '/';
 $_SERVER['SCRIPT_NAME'] = '/index.php';
 $_SERVER['SCRIPT_FILENAME'] = 'index.php';
 
-/** @var \craft\web\Application $app */
 // Load and run Craft. We have two ways we can do this. The safe way or the flexible way.
 //
 // First, the safe way allows us to just lean on Craft and let it do its thing. The problem
@@ -71,11 +68,26 @@ $_SERVER['SCRIPT_FILENAME'] = 'index.php';
 //
 // Note: I'm only okay with this because we're doing it in Test. I would _never_ do this
 // in a production environment with code that serves content to users.
-$originalConfig = file_get_contents(CRAFT_VENDOR_PATH . '/craftcms/cms/src/services/Config.php');
-$originalConfig = preg_replace('/^<\?php/', '', $originalConfig);
-$originalConfig = preg_replace('/^namespace.*$/m', 'namespace markhuot\\craftpest\\overrides;', $originalConfig);
-eval($originalConfig);
-include __DIR__ . '/../services/Config.php';
+if (!function_exists('replace_class')) {
+    function replace_class(string $originalClass)
+    {
+        $fsPath = str_replace('\\', DIRECTORY_SEPARATOR, $originalClass) . '.php';
+
+        // Move the original class to a new namespace so we can inherit from it
+        $originalClassContents = file_get_contents(CRAFT_VENDOR_PATH . '/craftcms/cms/src/' . $fsPath);
+        $originalClassContents = preg_replace('/^<\?php/', '', $originalClassContents);
+        $originalClassContents = preg_replace('/^namespace.*$/m', 'namespace markhuot\\craftpest\\overrides;', $originalClassContents);
+        eval($originalClassContents);
+
+        // Require the new class, replacing the original class
+        include __DIR__ . '/../craft/' . $fsPath;
+    }
+}
+
+replace_class('services\\Config');
+replace_class('services\\ProjectConfig');
+
+/** @var \craft\web\Application $app */
 $app = require CRAFT_VENDOR_PATH . '/craftcms/cms/bootstrap/web.php';
 
 $app->projectConfig->writeYamlAutomatically = false;

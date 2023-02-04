@@ -91,18 +91,21 @@ trait RefreshesDatabase {
 
     function afterStore(FactoryStoreEvent $event)
     {
-        $isFieldFactory = is_a($event->sender, Field::class) || is_subclass_of($event->sender, Field::class);
-
-        // Fields are autocommitted so we'll track those for removal later
-        if ($isFieldFactory) {
-            $this->autoCommittedModels[] = $event->model;
-        }
-
         // If Yii thinks we're in a transaction but the transaction isn't
-        // active any more (probably because it was autocommitted) then we'll
-        // reset the internal state and re-start the transaction
+        // active anymore (probably because it was autocommitted) then we
+        // need to do the cleanup ourselves, manually.
+        //
+        // An example of this is autocommitting DDL transactions like adding
+        // a field. When a field is added any in-progress transactions are
+        // automatically committed. TO work around that we catch here that
+        // we _should_ be in a transaction, but no longer are. If we're in
+        // that orphaned state, then store the model that put us in this state
+        // (so it can be manually cleaned up later) and re-set our state so
+        // subsequent stores can go in to a transaction, as normal.
         $transaction = \Craft::$app->db->getTransaction();
         if ($transaction && !\Craft::$app->db->pdo->inTransaction()) {
+            $this->autoCommittedModels[] = $event->model;
+
             $transaction->commit();
             $this->beginTransaction();
         }
@@ -193,6 +196,9 @@ trait RefreshesDatabase {
         foreach ($this->autoCommittedModels as $model) {
             if (is_a($model, \craft\base\Field::class) || is_subclass_of($model, \craft\base\Field::class)) {
                 \Craft::$app->fields->deleteField($model);
+            }
+            else {
+                throw new \Exception('Found orphaned model [' . get_class($model) . '] that was not cleaned up in a transaction and of an unknown type for craft-pest to clean up. You must remove this model manually.');
             }
         }
     }

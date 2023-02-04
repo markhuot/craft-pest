@@ -8,7 +8,7 @@ cpresources
 /config
 .env
 bootstrap.php
-craft
+/craft
 src/bin/cpresources
 !src/bin/craft
 /storage/*
