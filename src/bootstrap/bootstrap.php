@@ -90,6 +90,4 @@ replace_class('services\\ProjectConfig');
 /** @var \craft\web\Application $app */
 $app = require CRAFT_VENDOR_PATH . '/craftcms/cms/bootstrap/web.php';
 
-$app->projectConfig->writeYamlAutomatically = false;
-
 return $app;
