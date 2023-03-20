@@ -2,12 +2,32 @@
 
 namespace markhuot\craftpest\actions;
 
+use craft\db\Table;
 use craft\helpers\FileHelper;
 use craft\helpers\StringHelper;
 
 class RenderCompiledClasses
 {
     function handle($forceRecreate=false)
+    {
+        $contentService = \Craft::$app->getContent();
+        $originalContentTable = $contentService->contentTable;
+        $originalFieldColumnPrefix = $contentService->fieldColumnPrefix;
+        $originalFieldContext = $contentService->fieldContext;
+        $contentService->contentTable = Table::CONTENT;
+        $contentService->fieldColumnPrefix = 'field_';
+        $contentService->fieldContext = 'global';
+
+        $this->render($forceRecreate);
+
+        $contentService->contentTable = $originalContentTable;
+        $contentService->fieldColumnPrefix = $originalFieldColumnPrefix;
+        $contentService->fieldContext = $originalFieldContext;
+
+        return true;
+    }
+
+    protected function render(bool $forceRecreate)
     {
         $storedFieldVersion = \Craft::$app->fields->getFieldVersion();
         $compiledClassesPath = __DIR__ . '/../storage/';
@@ -31,8 +51,6 @@ class RenderCompiledClasses
         ]);
 
         file_put_contents($compiledClassPath, $compiledClass);
-
-        return true;
     }
 
     protected function cleanupOldMixins(string $except=null)
