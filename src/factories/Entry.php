@@ -26,7 +26,7 @@ class Entry extends Element
     /** @var EntryType */
     protected $type;
 
-    /** @var string|\craft\models\Section */
+    /** @var string|\craft\models\Section|null */
     protected $sectionIdentifier;
 
     protected $priorityAttributes = ['sectionId', 'typeId'];

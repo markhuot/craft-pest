@@ -47,7 +47,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        craftVersion: ["^3.7", "^4.2"]
+        craftVersion: ["~3.7.33", "^4.2"]
 
     steps:
     - uses: actions/checkout@v3
@@ -61,7 +61,7 @@ jobs:
         CRAFT_VERSION: ${{ matrix.craftVersion }}
       run: |
         <?php
-        $env = "DYNAMIC_CACHE_KEY=" . (getenv("CRAFT_VERSION") != "3.7" ? time() : "");
+        $env = "DYNAMIC_CACHE_KEY=" . (getenv("CRAFT_VERSION") != "3.7.33" ? time() : "");
         file_put_contents(getenv('GITHUB_OUTPUT'), $env, FILE_APPEND);
       shell: php -f {0}
 
@@ -74,10 +74,10 @@ jobs:
           vendor
         key: ${{ runner.os }}-craft-vendor-${{ matrix.craftVersion }}-${{ steps.cache-key.outputs.DYNAMIC_CACHE_KEY }}-${{ hashFiles('composer.json') }}
         restore-keys: |
-          ${{ runner.os }}-craft-vendor-^3.7-
+          ${{ runner.os }}-craft-vendor-~3.7.33-
 
     - name: Install dependencies
-      run: composer update --with "craftcms/cms:^3.7" --prefer-dist --no-progress
+      run: composer update --with "craftcms/cms:~3.7.33" --prefer-dist --no-progress
 
     - name: Copy config files
       run: mkdir -p ./storage && cp -r ./stubs/config ./config
@@ -87,7 +87,7 @@ jobs:
 
     - name: Update to Craft ${{ matrix.craftVersion }}
       run: composer update --with "craftcms/cms:${{ matrix.craftVersion }}" -W && ./src/bin/craft migrate/all --no-backup=1 --interactive=0
-      if: matrix.craftVersion != '^3.7'
+      if: matrix.craftVersion != '~3.7.33'
 
     - name: Generate compiled classes
       run: ./src/bin/craft pest/ide/generate-mixins
