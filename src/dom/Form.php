@@ -2,6 +2,7 @@
 
 namespace markhuot\craftpest\dom;
 
+use craft\helpers\UrlHelper;
 use markhuot\craftpest\http\RequestBuilder;
 use markhuot\craftpest\test\Dd;
 use markhuot\craftpest\web\TestableResponse;
@@ -184,9 +185,18 @@ class Form
      */
     public function submit(): TestableResponse
     {
+        $action = $this->form->getFormNode()->getAttribute('action');
+        if (empty($action)) {
+            $action = \Craft::$app->request->getFullUri();
+
+            if (\Craft::$app->request->getIsCpRequest()) {
+                $action = UrlHelper::prependCpTrigger($action);
+            }
+        }
+    
         $request = new RequestBuilder(
             $this->form->getMethod(),
-            $this->form->getUri()
+            $action,
         );
 
         $request->setBody($this->form->getPhpValues());
