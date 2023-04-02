@@ -184,9 +184,18 @@ class Form
      */
     public function submit(): TestableResponse
     {
+        $action = $this->form->getFormNode()->getAttribute('action');
+        if (empty($action)) {
+            $action = \Craft::$app->request->getFullUri();
+
+            if (\Craft::$app->request->getIsCpRequest()) {
+                $action = UrlHelper::prependCpTrigger($action);
+            }
+        }
+    
         $request = new RequestBuilder(
             $this->form->getMethod(),
-            $this->form->getUri()
+            $action,
         );
 
         $request->setBody($this->form->getPhpValues());
