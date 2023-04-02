@@ -2,6 +2,7 @@
 
 namespace markhuot\craftpest\dom;
 
+use craft\helpers\UrlHelper;
 use markhuot\craftpest\http\RequestBuilder;
 use markhuot\craftpest\test\Dd;
 use markhuot\craftpest\web\TestableResponse;
