@@ -15,7 +15,7 @@
         "symfony/css-selector": "^5.3|^6.0",
         "symfony/dom-crawler": "^6.0.3",
         "symfony/process": "^5.3|^6.0",
-        "illuminate/collections": "^9.1",
+        "illuminate/collections": "^8.23.1",
         "pestphp/pest": "^1.21",
         "craftcms/cms": "^3.7|^4.0",
         "vlucas/phpdotenv": "^2.4|^3.4|^5.4",
