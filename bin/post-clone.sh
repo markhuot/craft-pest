@@ -6,8 +6,10 @@ if [ ! -d "storage" ]; then
   mkdir -p storage
 fi
 
-if [ ! -f ".env" ]; then
+if [ ! -f ".env" and -f "vendor/craftcms/craft/.env.example.dev" ]; then
   cp  vendor/craftcms/craft/.env.example.dev ./.env
+elif [ ! -f ".env" and -f "vendor/craftcms/craft/.env.example" ]; then
+  cp  vendor/craftcms/craft/.env.example ./.env
 fi
 
 if ! grep -q "CRAFT_RUN_QUEUE_AUTOMATICALLY=false" .env; then
