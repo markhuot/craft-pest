@@ -83,6 +83,9 @@ jobs:
     - name: Setup Craft Skeleton
       run: ./bin/post-clone.sh
 
+    - name: Copy config files
+      run: mkdir -p ./storage && cp -r ./vendor/markhuot/craft-pest-core/stubs/config/ ./config/
+
     - name: debug
       run: |
         echo ".env"
@@ -90,9 +93,6 @@ jobs:
         rm .env
         ls -al
         cat config/db.php
-
-    - name: Copy config files
-      run: mkdir -p ./storage && cp -r ./vendor/markhuot/craft-pest-core/stubs/config ./config
 
     - name: Install Craft
       run: ./craft install --username=admin --email=michael@bluth.com --password=secret --siteName=Pest --siteUrl=http://localhost:8080 --language=en-US
