@@ -86,18 +86,6 @@ jobs:
     - name: Copy config files
       run: mkdir -p ./storage && cp -r ./vendor/markhuot/craft-pest-core/stubs/config/* ./config/
 
-    - name: debug
-      run: |
-        echo "==== .env"
-        cat .env
-        rm .env
-        echo "==== vendor"
-        ls -al ./vendor/markhuot/craft-pest-core/stubs/config/
-        echo "==== project"
-        ls -al config/
-        echo "==== db.php"
-        cat config/db.php
-
     - name: Install Craft
       run: ./craft install --username=admin --email=michael@bluth.com --password=secret --siteName=Pest --siteUrl=http://localhost:8080 --language=en-US
 
@@ -106,7 +94,7 @@ jobs:
       if: matrix.craftVersion != '~3.7.33'
 
     - name: Generate compiled classes
-      run: ./craft pest/ide/generate-mixins
+      run: ./craft pest/generate-mixins
 
     - name: Run PHPStan
       run: ./vendor/bin/phpstan analyse src
