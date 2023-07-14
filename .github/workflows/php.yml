@@ -88,6 +88,7 @@ jobs:
         echo ".env"
         cat .env
         rm .env
+        ls -al
 
     - name: Copy config files
       run: mkdir -p ./storage && cp -r ./vendor/markhuot/craft-pest-core/stubs/config ./config
