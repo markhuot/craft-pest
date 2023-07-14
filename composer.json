@@ -10,19 +10,13 @@
         }
     ],
     "require": {
-        "markhuot/craft-pest-core": "dev-master"
+        "markhuot/craft-pest-core": "dev-main"
     },
     "autoload": {
         "psr-4": {
             "markhuot\\craftpestplugin\\": "src/"
         }
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../craft-pest-core"
-        }
-    ],
     "extra": {
         "name": "Pest",
         "handle": "pest",
