@@ -6,9 +6,9 @@ if [ ! -d "storage" ]; then
   mkdir -p storage
 fi
 
-if [ ! -f ".env" && -f "vendor/craftcms/craft/.env.example.dev" ]; then
+if [ ! -f ".env" ] && [ -f "vendor/craftcms/craft/.env.example.dev" ]; then
   cp  vendor/craftcms/craft/.env.example.dev ./.env
-elif [ ! -f ".env" && -f "vendor/craftcms/craft/.env.example" ]; then
+elif [ ! -f ".env" ] && [ -f "vendor/craftcms/craft/.env.example" ]; then
   cp  vendor/craftcms/craft/.env.example ./.env
 fi
 
