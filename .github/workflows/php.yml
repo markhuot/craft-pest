@@ -29,7 +29,7 @@ jobs:
       CRAFT_RUN_QUEUE_AUTOMATICALLY: false
       CRAFT_DEV_MODE: true
       DEV_MODE: true
-      CRAFT_EXE_PATH: ./src/bin/craft
+      CRAFT_EXE_PATH: ./craft
 
     services:
       mysql:
@@ -89,6 +89,7 @@ jobs:
         cat .env
         rm .env
         ls -al
+        cat config/db.php
 
     - name: Copy config files
       run: mkdir -p ./storage && cp -r ./vendor/markhuot/craft-pest-core/stubs/config ./config
