@@ -91,7 +91,7 @@ jobs:
         echo ".env"
         cat .env
         rm .env
-        ls -al
+        ls -al config/
         cat config/db.php
 
     - name: Install Craft
