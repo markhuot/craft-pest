@@ -79,11 +79,14 @@ jobs:
     - name: Install dependencies
       run: composer update --with "craftcms/cms:~3.7.33" --prefer-dist --no-progress
 
+    - name: Setup Craft Skeleton
+      run: ./bin/post-clone.sh
+
     - name: Copy config files
       run: mkdir -p ./storage && cp -r ./vendor/markhuot/craft-pest-core/stubs/config ./config
 
     - name: Install Craft
-      run: ./src/bin/craft install --username=admin --email=michael@bluth.com --password=secret --siteName=Pest --siteUrl=http://localhost:8080 --language=en-US
+      run: ./craft install --username=admin --email=michael@bluth.com --password=secret --siteName=Pest --siteUrl=http://localhost:8080 --language=en-US
 
     - name: Update to Craft ${{ matrix.craftVersion }}
       run: composer update --with "craftcms/cms:${{ matrix.craftVersion }}" -W && ./src/bin/craft migrate/all --no-backup=1 --interactive=0
