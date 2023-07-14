@@ -10,42 +10,24 @@
         }
     ],
     "require": {
-        "fakerphp/faker": "^1.16",
-        "mockery/mockery": "^1.5",
-        "symfony/css-selector": "^5.3|^6.0",
-        "symfony/dom-crawler": "^6.0.3",
-        "symfony/process": "^5.3|^6.0",
-        "illuminate/collections": "^9.1",
-        "pestphp/pest": "^1.21",
-        "craftcms/cms": "^3.7|^4.0",
-        "vlucas/phpdotenv": "^2.4|^3.4|^5.4",
-        "yiisoft/yii2-shell": "^2.0"
+        "markhuot/craft-pest-core": "dev-master"
     },
     "autoload": {
         "psr-4": {
-            "markhuot\\craftpest\\": "src/"
-        },
-        "files": [
-            "src/helpers/Base.php",
-            "src/helpers/Craft.php",
-            "src/helpers/Http.php",
-            "src/helpers/Model.php",
-            "src/helpers/Test.php"
-        ]
+            "markhuot\\craftpestplugin\\": "src/"
+        }
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../craft-pest-core"
+        }
+    ],
     "extra": {
         "name": "Pest",
         "handle": "pest",
         "changelogUrl": "#",
-        "class": "markhuot\\craftpest\\Pest",
-        "components": {
-            "http": "markhuot\\craftpest\\services\\Http"
-        },
-        "pest": {
-            "plugins": [
-                "markhuot\\craftpest\\pest\\Coverage"
-            ]
-        }
+        "class": "markhuot\\craftpestplugin\\Pest"
     },
     "config": {
         "allow-plugins": {
