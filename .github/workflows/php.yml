@@ -88,10 +88,14 @@ jobs:
 
     - name: debug
       run: |
-        echo ".env"
+        echo "==== .env"
         cat .env
         rm .env
+        echo "==== vendor"
+        ls -al ./vendor/markhuot/craft-pest-core/stubs/config/
+        echo "==== project"
         ls -al config/
+        echo "==== db.php"
         cat config/db.php
 
     - name: Install Craft
