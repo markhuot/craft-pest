@@ -18,6 +18,12 @@
             "markhuot\\craftpestplugin\\": "src/"
         }
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../craft-pest-core"
+        }
+    ],
     "extra": {
         "name": "Pest",
         "handle": "pest",
