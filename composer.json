@@ -10,6 +10,7 @@
         }
     ],
     "require": {
+        "craftcms/cms": "^3.7|^4.0",
         "markhuot/craft-pest-core": "dev-main"
     },
     "autoload": {
