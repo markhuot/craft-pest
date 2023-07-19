@@ -155,3 +155,12 @@ it('asserts location path by shorthand')
     ->get('/responses/302-query-string')
     ->assertLocationPath('/');
 
+it('returns HTML for exceptions')
+    ->get('/responses/500')
+    ->assertStatus(500);
+
+it('can skip html errors and bubble the actual exception')
+    ->withoutExceptionHandling()
+    ->expectException(\yii\web\ServerErrorHttpException::class)
+    ->get('/responses/500');
+

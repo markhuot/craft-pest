@@ -44,8 +44,8 @@ it('should not be logged in on subsequent tests', function () {
 it('acts as a user on get requests', function () {
     $user = \markhuot\craftpest\factories\User::factory()->create();
 
-    $this->expectException(\Twig\Error\RuntimeError::class);
-    $this->actingAs($user)->get('admin/settings');
+    $this->expectException(\yii\web\ForbiddenHttpException::class);
+    $this->actingAs($user)->withoutExceptionHandling()->get('admin/settings');
 });
 
 it('creates admin users', function () {
