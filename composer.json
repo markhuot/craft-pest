@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "craftcms/cms": "^3.7|^4.0",
+        "craftcms/cms": "^3.7|^4.0|@dev",
         "markhuot/craft-pest-core": "dev-main"
     },
     "autoload": {
@@ -18,6 +18,16 @@
             "markhuot\\craftpestplugin\\": "src/"
         }
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../craft-pest-core"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/markhuot/cms"
+        }
+    ],
     "extra": {
         "name": "Pest",
         "handle": "pest",
