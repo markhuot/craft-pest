@@ -20,10 +20,6 @@
     },
     "repositories": [
         {
-            "type": "path",
-            "url": "../craft-pest-core"
-        },
-        {
             "type": "vcs",
             "url": "https://github.com/markhuot/cms"
         }
