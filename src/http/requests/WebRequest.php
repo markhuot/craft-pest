@@ -129,7 +129,7 @@ abstract class WebRequest extends \craft\web\Request
             '_isConsoleRequest' => false,
             '_fullPath' => $uri,
             '_path' => $uri,
-            '_fullUri' => $uri.'?'.$queryString,
+            '_fullUri' => $uri,
             '_ipAddress' => '::1',
             '_rawBody' => '',
             '_bodyParams' => [],
