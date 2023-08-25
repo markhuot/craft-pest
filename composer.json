@@ -18,12 +18,6 @@
             "markhuot\\craftpestplugin\\": "src/"
         }
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/markhuot/cms"
-        }
-    ],
     "extra": {
         "name": "Pest",
         "handle": "pest",
