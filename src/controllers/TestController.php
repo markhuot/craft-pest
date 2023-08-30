@@ -1,6 +1,6 @@
 <?php
 
-namespace markhuot\craftpest\controllers;
+namespace markhuot\craftpestplugin\controllers;
 
 use craft\web\Controller;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace markhuot\craftpest;
+namespace markhuot\craftpestplugin;
 
 use craft\base\Field;
 use craft\base\Plugin;
@@ -24,12 +24,6 @@ class Pest extends Plugin {
 
     function init()
     {
-        $this->controllerNamespace = 'markhuot\\craftpest\\controllers';
-
-        if (\Craft::$app->request->isConsoleRequest) {
-            $this->controllerNamespace = 'markhuot\\craftpest\\console';
-        }
-
         parent::init();
 
         Event::on(
@@ -48,39 +42,6 @@ class Pest extends Plugin {
                         copy(__DIR__ . '/../stubs/init/phpunit.xml', CRAFT_BASE_PATH . '/phpunit.xml');
                     }
                 }
-            }
-        );
-
-        Event::on(
-            Entry::class,
-            Entry::EVENT_DEFINE_BEHAVIORS,
-            function (DefineBehaviorsEvent $event) {
-                $event->behaviors[] = ExpectableBehavior::class;
-                $event->behaviors[] = TestableElementBehavior::class;
-            }
-        );
-
-        Event::on(
-            ElementQuery::class,
-            ElementQuery::EVENT_DEFINE_BEHAVIORS,
-            function (DefineBehaviorsEvent $event) {
-                $event->behaviors[] = TestableElementQueryBehavior::class;
-            }
-        );
-
-        Event::on(
-            Field::class,
-            Field::EVENT_DEFINE_BEHAVIORS,
-            function (DefineBehaviorsEvent $event) {
-                $event->behaviors[] = FieldTypeHintBehavior::class;
-            }
-        );
-
-        Event::on(
-            Fields::class,
-            Fields::EVENT_AFTER_SAVE_FIELD,
-            function () {
-                (new RenderCompiledClasses)->handle();
             }
         );
     }
