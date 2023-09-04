@@ -3,7 +3,6 @@
 namespace markhuot\craftpest;
 
 use craft\base\Field;
-use craft\base\Plugin;
 use craft\elements\db\ElementQuery;
 use craft\elements\Entry;
 use craft\events\DefineBehaviorsEvent;
@@ -15,41 +14,23 @@ use markhuot\craftpest\behaviors\ExpectableBehavior;
 use markhuot\craftpest\behaviors\FieldTypeHintBehavior;
 use markhuot\craftpest\behaviors\TestableElementBehavior;
 use markhuot\craftpest\behaviors\TestableElementQueryBehavior;
+use markhuot\craftpest\console\IdeController;
+use markhuot\craftpest\console\PestController;
+use yii\base\BootstrapInterface;
 use yii\base\Event;
 
 /**
  * @method static self getInstance()
  */
-class Pest extends Plugin {
+class Pest implements BootstrapInterface {
 
-    function init()
+    function bootstrap($app)
     {
-        $this->controllerNamespace = 'markhuot\\craftpest\\controllers';
+        \Craft::setAlias('@markhuot/craftpest', __DIR__);
 
         if (\Craft::$app->request->isConsoleRequest) {
-            $this->controllerNamespace = 'markhuot\\craftpest\\console';
+            \Craft::$app->controllerMap['pest'] = PestController::class;
         }
-
-        parent::init();
-
-        Event::on(
-            Plugins::class,
-            Plugins::EVENT_AFTER_INSTALL_PLUGIN,
-            function (PluginEvent $event) {
-                if (is_a($event->plugin, Pest::class)) {
-                    if (!is_dir(CRAFT_BASE_PATH . '/tests')) {
-                        mkdir(CRAFT_BASE_PATH . '/tests');
-                    }
-                    if (!file_exists(CRAFT_BASE_PATH . '/tests/Pest.php')) {
-                        copy(__DIR__ . '/../stubs/init/ExampleTest.php', CRAFT_BASE_PATH . '/tests/ExampleTest.php');
-                        copy(__DIR__ . '/../stubs/init/Pest.php', CRAFT_BASE_PATH . '/tests/Pest.php');
-                    }
-                    if (!file_exists(CRAFT_BASE_PATH . '/phpunit.xml')) {
-                        copy(__DIR__ . '/../stubs/init/phpunit.xml', CRAFT_BASE_PATH . '/phpunit.xml');
-                    }
-                }
-            }
-        );
 
         Event::on(
             Entry::class,

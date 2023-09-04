@@ -4,11 +4,27 @@ namespace markhuot\craftpest\console;
 
 use craft\console\Controller;
 use craft\helpers\FileHelper;
+use markhuot\craftpest\actions\RenderCompiledClasses;
+use markhuot\craftpest\Pest;
 use Symfony\Component\Process\Process;
 use yii\console\ExitCode;
 use function markhuot\craftpest\helpers\base\version_greater_than_or_equal_to;
 
-class TestController extends Controller {
+class PestController extends Controller
+{
+
+    public bool $force = false;
+
+    function options($actionID): array
+    {
+        if (in_array($actionID, ['init', 'generate-mixins'], true)) {
+            return [
+                'force',
+            ];
+        }
+
+        return [];
+    }
 
     /**
      * Run the Pest tests
@@ -31,29 +47,19 @@ class TestController extends Controller {
      * Do the install
      */
     protected function runInit() {
+        if (file_exists(CRAFT_BASE_PATH . '/phpunit.xml') && !$this->force) {
+            echo 'A phpunit.xml file already exists in this project. If you want to replace the existing testing infrastructure re-run this command with the `--force` flag.'."\n";
+        }
+
+        if (!is_dir(CRAFT_BASE_PATH . '/tests')) {
+            mkdir(CRAFT_BASE_PATH . '/tests');
+        }
+        if (!file_exists(CRAFT_BASE_PATH . '/tests/Pest.php')) {
+            copy(__DIR__ . '/../../stubs/init/ExampleTest.php', CRAFT_BASE_PATH . '/tests/ExampleTest.php');
+            copy(__DIR__ . '/../../stubs/init/Pest.php', CRAFT_BASE_PATH . '/tests/Pest.php');
+        }
         if (!file_exists(CRAFT_BASE_PATH . '/phpunit.xml')) {
-            $process = new Process(['./vendor/bin/pest', '--init']);
-            $process->setTty(true);
-            $process->start();
-
-            foreach ($process as $type => $data) {
-                if ($type === $process::OUT) {
-                    echo $data;
-                } else {
-                    echo $data;
-                }
-            }
-
-            if (!is_dir(CRAFT_BASE_PATH . '/tests')) {
-                mkdir(CRAFT_BASE_PATH . '/tests');
-            }
-            if (!file_exists(CRAFT_BASE_PATH . '/tests/Pest.php')) {
-                copy(__DIR__ . '/../stubs/init/ExampleTest.php', CRAFT_BASE_PATH . '/tests/ExampleTest.php');
-                copy(__DIR__ . '/../stubs/init/Pest.php', CRAFT_BASE_PATH . '/tests/Pest.php');
-            }
-            if (!file_exists(CRAFT_BASE_PATH . '/phpunit.xml')) {
-                copy(__DIR__ . '/../stubs/init/phpunit.xml', CRAFT_BASE_PATH . '/phpunit.xml');
-            }
+            copy(__DIR__ . '/../../stubs/init/phpunit.xml', CRAFT_BASE_PATH . '/phpunit.xml');
         }
     }
 
@@ -143,5 +149,19 @@ class TestController extends Controller {
         $compileTemplates(\Craft::getAlias('@templates'));
 
         return 0;
+    }
+
+    function actionGenerateMixins()
+    {
+        $result = (new RenderCompiledClasses)->handle($this->force);
+
+        if ($result) {
+            echo "Mixins successfully generated!\n";
+        }
+        else {
+            echo "Mixins already exist, skipping.\n";
+        }
+
+        return ExitCode::OK;
     }
 }
