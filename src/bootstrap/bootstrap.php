@@ -10,7 +10,7 @@ if (file_exists(CRAFT_BASE_PATH . '/.env')) {
     if (method_exists('\Dotenv\Dotenv', 'createUnsafeImmutable')) {
         /** @phpstan-ignore-next-line */
         \Dotenv\Dotenv::createUnsafeImmutable(CRAFT_BASE_PATH)->safeLoad();
-    } elseif (method_exists('\Dotenv\Dotenv', 'create')) {
+    } elseif (method_exists('\Dotenv\Dotenv', 'createImmutable')) {
         /** @phpstan-ignore-next-line */
         \Dotenv\Dotenv::createImmutable(CRAFT_BASE_PATH)->load();
     } else {
