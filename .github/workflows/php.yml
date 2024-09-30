@@ -36,7 +36,6 @@ jobs:
       CRAFT_DB_USER: root
       CRAFT_DB_PASSWORD: root
       CRAFT_DB_TABLE_PREFIX: craft_
-      CRAFT_TEMPLATES_PATH: ./tests/templates
       CRAFT_OMIT_SCRIPT_NAME_IN_URLS: true
       CRAFT_DEV_MODE: true
       DEV_MODE: true
@@ -97,6 +96,11 @@ jobs:
 
     - name: Install plugin
       run: php craft plugin/install pest
+
+    - name: Setup homepage template
+      run: |
+        mkdir -p templates
+        echo "Hello world" > templates/index.twig
 
     - name: Run basic test
       run: php craft pest/test
