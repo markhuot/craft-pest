@@ -85,9 +85,9 @@ jobs:
     - name: Copy config files
       run: |
         mkdir -p ./storage
-        cp -r .vendor/markhuot/craft-pest-core/stubs/config/app.php ./config/app.php
-        cp -r .vendor/markhuot/craft-pest-core/stubs/config/general.php ./config/general.php
-        cp -r .vendor/markhuot/craft-pest-core/stubs/config/project-${{ matrix.version.config }}/ ./config/project/
+        cp -r ./vendor/markhuot/craft-pest-core/stubs/config/app.php ./config/app.php
+        cp -r ./vendor/markhuot/craft-pest-core/stubs/config/general.php ./config/general.php
+        cp -r ./vendor/markhuot/craft-pest-core/stubs/config/project-${{ matrix.version.config }}/ ./config/project/
 
     - name: Wait for MySQL
       run: until mysqladmin ping -h 127.0.0.1 -u root -proot; do sleep 1; done
