@@ -1,0 +1,101 @@
+name: Run Tests
+
+on:
+  pull_request:
+  push:
+    branches: 
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        version: 
+          - constraint: ~4.5.0
+            config: 4
+          - constraint: ~4.6.0
+            config: 4
+          - constraint:  ~4.7.0
+            config: 4
+          - constraint: ~5.0.0
+            config: 5
+
+    env:
+      CRAFT_APP_ID: pest
+      CRAFT_ENVIRONMENT: dev
+      CRAFT_SECURITY_KEY: asdy8f7tgaysdfas987gduyvfas87dfghui
+      CRAFT_DB_DRIVER: mysql
+      CRAFT_DB_SERVER: 127.0.0.1
+      CRAFT_DB_PORT: 3306
+      CRAFT_DB_DATABASE: pest
+      CRAFT_DB_USER: root
+      CRAFT_DB_PASSWORD: root
+      CRAFT_DB_TABLE_PREFIX: craft_
+      CRAFT_TEMPLATES_PATH: ./tests/templates
+      CRAFT_OMIT_SCRIPT_NAME_IN_URLS: true
+      CRAFT_DEV_MODE: true
+      DEV_MODE: true
+      CRAFT_EXE_PATH: ./src/bin/craft
+      PRIMARY_SITE_URL: http://localhost:8080
+
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: pest
+        ports:
+          - 3306:3306
+        #options: >-
+        #  --health-cmd "mysqladmin ping --silent"
+        #  --health-interval 10s
+        #  --health-timeout 5s
+        #  --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+
+    - name: Validate composer.json and composer.lock
+      run: composer validate --strict
+
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          composer.lock
+          vendor
+        key: ${{ runner.os }}-craft-${{ matrix.version.constraint }}-vendor-${{ hashFiles('composer.json') }}
+
+    - name: Install dependencies
+      run: |
+        composer require "craftcms/cms:${{ matrix.version.constraint }}" --prefer-dist --no-progress
+        ./bin/post-clone.sh
+
+    - name: Copy config files
+      run: |
+        mkdir -p ./storage
+        cp -r .vendor/markhuot/craft-pest-core/stubs/config/app.php ./config/app.php
+        cp -r .vendor/markhuot/craft-pest-core/stubs/config/general.php ./config/general.php
+        cp -r .vendor/markhuot/craft-pest-core/stubs/config/project-${{ matrix.version.config }}/ ./config/project/
+
+    - name: Wait for MySQL
+      run: until mysqladmin ping -h 127.0.0.1 -u root -proot; do sleep 1; done
+
+    - name: Install Craft
+      run: php craft install --interactive=0 --username=admin --email=michael@bluth.com --password=secret --siteName=Pest --siteUrl=http://localhost:8080 --language=en-US
+
+    - name: Install plugin
+      run: php craft plugin/install pest
+
+    - name: Run basic test
+      run: php craft pest/test
