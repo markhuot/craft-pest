@@ -22,7 +22,7 @@ if (! $fs) {
 
 $volume = $app->volumes->getVolumeByHandle('local');
 if (! $volume) {
-    $volume = new \craft\models\Volume();
+    $volume = new \craft\models\Volume;
     $volume->name = 'Local';
     $volume->handle = 'local';
     $volume->fs = $fs;

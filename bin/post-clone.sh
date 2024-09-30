@@ -1,33 +1,33 @@
 #!/bin/bash
 
-composer require --dev craftcms/craft
-
 if [ ! -d "storage" ]; then
   mkdir -p storage
 fi
 
-if [ ! -f ".env" ] && [ -f "vendor/craftcms/craft/.env.example.dev" ]; then
-  cp  vendor/craftcms/craft/.env.example.dev ./.env
-elif [ ! -f ".env" ] && [ -f "vendor/craftcms/craft/.env.example" ]; then
-  cp  vendor/craftcms/craft/.env.example ./.env
+if [ ! -f ".env" ]; then
+  cp  vendor/craftcms/craft/.env.example.dev ./.env.example
 fi
 
-if ! grep -q "CRAFT_RUN_QUEUE_AUTOMATICALLY=false" .env; then
-  echo "" >> .env
-  echo "CRAFT_RUN_QUEUE_AUTOMATICALLY=false" >> .env
-  echo "" >> .env
+if ! grep -q "CRAFT_RUN_QUEUE_AUTOMATICALLY=" .env.example; then
+  echo "" >> .env.example
+  echo "CRAFT_RUN_QUEUE_AUTOMATICALLY=false" >> .env.example
+  echo "" >> .env.example
 fi
 
-if [ ! -f "config/app.php" ]; then
-  mkdir -p config
-  echo "<?php return [
-      'components' => [
-          'queue' => [
-              'class' => \yii\queue\sync\Queue::class,
-              'handle' => true, // if tasks should be executed immediately
-          ],
-      ],
-  ];" > config/app.php
+if ! grep -q "CRAFT_TEMPLATES_PATH=" .env.example; then
+  echo "" >> .env.example
+  echo "CRAFT_TEMPLATES_PATH=./tests/templates" >> .env.example
+  echo "" >> .env.example
+fi
+
+if ! grep -q "CRAFT_OMIT_SCRIPT_NAME_IN_URLS=" .env.example; then
+  echo "" >> .env.example
+  echo "CRAFT_OMIT_SCRIPT_NAME_IN_URLS=true" >> .env.example
+  echo "" >> .env.example
+fi
+
+if [ ! -d "config" ]; then
+  cp -r stubs/config ./
 fi
 
 if [ ! -d "web" ]; then
@@ -43,5 +43,4 @@ if [ ! -f "bootstrap.php" ]; then
   cp  vendor/craftcms/craft/bootstrap.php ./
 fi
 
-composer remove --dev craftcms/craft
-
+php craft setup/keys

@@ -79,6 +79,7 @@ jobs:
     - name: Install dependencies
       run: |
         composer require "craftcms/cms:${{ matrix.version.constraint }}" --prefer-dist --no-progress
+        composer require "craftcms/craft" --prefer-dist --no-progress
         ./bin/post-clone.sh
 
     - name: Copy config files
