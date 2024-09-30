@@ -10,8 +10,8 @@
         }
     ],
     "require": {
-        "craftcms/cms": "^3.7|^4.0",
-        "markhuot/craft-pest-core": "dev-main"
+        "craftcms/cms": "^4.5|^5.0.0-beta.1",
+        "markhuot/craft-pest-core": "^2.0.0"
     },
     "autoload": {
         "psr-4": {
@@ -32,9 +32,5 @@
         }
     },
     "minimum-stability": "dev",
-    "prefer-stable": true,
-    "require-dev": {
-        "craftcms/phpstan": "dev-main",
-        "symfony/var-dumper": "^5.0|^6.0"
-    }
+    "prefer-stable": true
 }
