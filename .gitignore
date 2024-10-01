@@ -6,6 +6,7 @@ cpresources
 /src/bin/index.php
 .phpunit.result.cache
 /config
+/web
 .env
 bootstrap.php
 /craft

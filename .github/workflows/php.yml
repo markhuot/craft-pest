@@ -4,7 +4,7 @@ on:
   pull_request:
   push:
     branches: 
-      - master
+      - main
 
 permissions:
   contents: read
@@ -12,6 +12,18 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        version: 
+          - constraint: ~4.5.0
+            config: 4
+          - constraint: ~4.6.0
+            config: 4
+          - constraint:  ~4.7.0
+            config: 4
+          - constraint: ~5.0.0
+            config: 5
 
     env:
       CRAFT_APP_ID: pest
@@ -24,46 +36,35 @@ jobs:
       CRAFT_DB_USER: root
       CRAFT_DB_PASSWORD: root
       CRAFT_DB_TABLE_PREFIX: craft_
-      CRAFT_TEMPLATES_PATH: ./tests/templates
       CRAFT_OMIT_SCRIPT_NAME_IN_URLS: true
       CRAFT_DEV_MODE: true
       DEV_MODE: true
       CRAFT_EXE_PATH: ./src/bin/craft
+      PRIMARY_SITE_URL: http://localhost:8080
 
     services:
       mysql:
-        image: mysql
+        image: mysql:8
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: pest
         ports:
           - 3306:3306
-        options: >-
-          --health-cmd "mysqladmin ping --silent"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    strategy:
-      fail-fast: false
-      matrix:
-        craftVersion: ["~3.7.33", "^4.2"]
+        #options: >-
+        #  --health-cmd "mysqladmin ping --silent"
+        #  --health-interval 10s
+        #  --health-timeout 5s
+        #  --health-retries 5
 
     steps:
     - uses: actions/checkout@v3
 
+    - uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
-
-    - name: Create dynamic cache key
-      id: cache-key
-      env:
-        CRAFT_VERSION: ${{ matrix.craftVersion }}
-      run: |
-        <?php
-        $env = "DYNAMIC_CACHE_KEY=" . (getenv("CRAFT_VERSION") != "3.7.33" ? time() : "");
-        file_put_contents(getenv('GITHUB_OUTPUT'), $env, FILE_APPEND);
-      shell: php -f {0}
 
     - name: Cache Composer packages
       id: composer-cache
@@ -72,28 +73,34 @@ jobs:
         path: |
           composer.lock
           vendor
-        key: ${{ runner.os }}-craft-vendor-${{ matrix.craftVersion }}-${{ steps.cache-key.outputs.DYNAMIC_CACHE_KEY }}-${{ hashFiles('composer.json') }}
-        restore-keys: |
-          ${{ runner.os }}-craft-vendor-~3.7.33-
+        key: ${{ runner.os }}-craft-${{ matrix.version.constraint }}-vendor-${{ hashFiles('composer.json') }}
 
     - name: Install dependencies
-      run: composer update --with "craftcms/cms:~3.7.33" --prefer-dist --no-progress
+      run: |
+        composer require "craftcms/cms:${{ matrix.version.constraint }}" --prefer-dist --no-progress
+        composer require "craftcms/craft" --prefer-dist --no-progress
+        ./bin/post-clone.sh
 
     - name: Copy config files
-      run: mkdir -p ./storage && cp -r ./stubs/config ./config
+      run: |
+        mkdir -p ./storage
+        cp -r ./vendor/markhuot/craft-pest-core/stubs/config/app.php ./config/app.php
+        cp -r ./vendor/markhuot/craft-pest-core/stubs/config/general.php ./config/general.php
+        cp -r ./vendor/markhuot/craft-pest-core/stubs/config/project-${{ matrix.version.config }}/ ./config/project/
+
+    - name: Wait for MySQL
+      run: until mysqladmin ping -h 127.0.0.1 -u root -proot; do sleep 1; done
 
     - name: Install Craft
-      run: ./src/bin/craft install --username=admin --email=michael@bluth.com --password=secret --siteName=Pest --siteUrl=http://localhost:8080 --language=en-US
+      run: php craft install --interactive=0 --username=admin --email=michael@bluth.com --password=secret --siteName=Pest --siteUrl=http://localhost:8080 --language=en-US
 
-    - name: Update to Craft ${{ matrix.craftVersion }}
-      run: composer update --with "craftcms/cms:${{ matrix.craftVersion }}" -W && ./src/bin/craft migrate/all --no-backup=1 --interactive=0
-      if: matrix.craftVersion != '~3.7.33'
+    - name: Install plugin
+      run: php craft plugin/install pest
 
-    - name: Generate compiled classes
-      run: ./src/bin/craft pest/ide/generate-mixins
+    - name: Setup homepage template
+      run: |
+        mkdir -p templates
+        echo "Hello world" > templates/index.twig
 
-    - name: Run PHPStan
-      run: ./vendor/bin/phpstan analyse src
-
-    - name: Run test suite
-      run: ./vendor/bin/pest
+    - name: Run basic test
+      run: php craft pest/test
